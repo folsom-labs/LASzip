@@ -2,9 +2,9 @@
 ===============================================================================
 
   FILE:  laszipdllexample.cpp
-  
+
   CONTENTS:
-  
+
     This source code implements several different  easy-to-follow examples on
     how to use the LASzip DLL. The first and the second examples implement a
     small compression and decompression utilitity. The third example shows
@@ -24,17 +24,17 @@
 
     This software is distributed WITHOUT ANY WARRANTY and without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-  
+
   CHANGE HISTORY:
-  
+
     23 September 2015 -- 11th example writes without a-priori bounding box or counters
     22 September 2015 -- 10th upconverts to LAS 1.4 with pre-existing "extra bytes"
      5 September 2015 -- eighth and nineth example show pre-existing "extra bytes"
     19 July 2015 -- sixth and seventh example show LAS 1.4 compatibility mode
      2 April 2015 -- fourth and fifth example with integrated spatially indexing
-    11 August 2013 -- added third example for exporting geo-referenced points 
-    29 July 2013 -- created for the LASzip DLL after returning to Sommerhausen 
-  
+    11 August 2013 -- added third example for exporting geo-referenced points
+    29 July 2013 -- created for the LASzip DLL after returning to Sommerhausen
+
 ===============================================================================
 */
 
@@ -79,7 +79,7 @@ static void dll_error(laszip_POINTER laszip)
 static void byebye(bool error=false, bool wait=false, laszip_POINTER laszip=0)
 {
   if (error)
-  {  
+  {
     dll_error(laszip);
   }
   if (wait)
@@ -89,8 +89,6 @@ static void byebye(bool error=false, bool wait=false, laszip_POINTER laszip=0)
   }
   exit(error);
 }
-
-#define EXAMPLE 11
 
 extern void example1(int argc, char* file_name_in, char* file_name_out);
 extern void example2(int argc, char* file_name_in, char* file_name_out);
@@ -126,7 +124,8 @@ int main(int argc, char *argv[])
   {
     char file_name[256];
     fprintf(stderr,"%s is better run in the command line\n", argv[0]);
-    fprintf(stderr,"enter input file%s: ", ((EXAMPLE == 3) ? " (not used)" : "")); fgets(file_name, 256, stdin);
+    // not used for example3
+    fprintf(stderr,"enter input file%s: "); fgets(file_name, 256, stdin);
     file_name[strlen(file_name)-1] = '\0';
     file_name_in = strdup(file_name);
     fprintf(stderr,"enter output file: "); fgets(file_name, 256, stdin);
@@ -147,60 +146,17 @@ int main(int argc, char *argv[])
     usage();
   }
 
-  if (EXAMPLE == 1)
-  {
-    example1(argc, file_name_in, file_name_out);
-  }
-  
-  if (EXAMPLE == 2)
-  {
-    example2(argc, file_name_in, file_name_out);
-  }
-
-  if (EXAMPLE == 3)
-  {
-    example3(argc, file_name_in, file_name_out);
-  }
-
-  if (EXAMPLE == 4)
-  {
-    example4(argc, file_name_in, file_name_out);
-  }
-
-  if (EXAMPLE == 5)
-  {
-    example5(argc, file_name_in, file_name_out);
-  }
-
-  if (EXAMPLE == 6)
-  {
-    example6(argc, file_name_in, file_name_out);
-  }
-
-  if (EXAMPLE == 7)
-  {
-    example7(argc, file_name_in, file_name_out);
-  }
-
-  if (EXAMPLE == 8)
-  {
-    example8(argc, file_name_in, file_name_out);
-  }
-
-  if (EXAMPLE == 9)
-  {
-    example9(argc, file_name_in, file_name_out);
-  }
-
-  if (EXAMPLE == 10)
-  {
-    example10(argc, file_name_in, file_name_out);
-  }
-
-  if (EXAMPLE == 11)
-  {
-    example11(argc, file_name_in, file_name_out);
-  }
+  //example1(argc, file_name_in, file_name_out);
+  //example2(argc, file_name_in, file_name_out);
+  //example3(argc, file_name_in, file_name_out);
+  //example4(argc, file_name_in, file_name_out);
+  //example5(argc, file_name_in, file_name_out);
+  example6(argc, file_name_in, file_name_out);
+  //example7(argc, file_name_in, file_name_out);
+  //example8(argc, file_name_in, file_name_out);
+  //example9(argc, file_name_in, file_name_out);
+  //example10(argc, file_name_in, file_name_out);
+  //example11(argc, file_name_in, file_name_out);
 
   return 0;
 }
