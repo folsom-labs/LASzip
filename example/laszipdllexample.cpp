@@ -90,32 +90,24 @@ static void byebye(bool error=false, bool wait=false, laszip_POINTER laszip=0)
   exit(error);
 }
 
-static double taketime()
-{
-  return (double)(clock())/CLOCKS_PER_SEC;
-}
-
 #define EXAMPLE 11
 
-extern void example1(int argc, char* file_name_in, char* file_name_out, double start_time);
-extern void example2(int argc, char* file_name_in, char* file_name_out, double start_time);
-extern void example3(int argc, char* file_name_in, char* file_name_out, double start_time);
-extern void example4(int argc, char* file_name_in, char* file_name_out, double start_time);
-extern void example5(int argc, char* file_name_in, char* file_name_out, double start_time);
-extern void example6(int argc, char* file_name_in, char* file_name_out, double start_time);
-extern void example7(int argc, char* file_name_in, char* file_name_out, double start_time);
-extern void example8(int argc, char* file_name_in, char* file_name_out, double start_time);
-extern void example9(int argc, char* file_name_in, char* file_name_out, double start_time);
-extern void example10(int argc, char* file_name_in, char* file_name_out, double start_time);
-extern void example11(int argc, char* file_name_in, char* file_name_out, double start_time);
+extern void example1(int argc, char* file_name_in, char* file_name_out);
+extern void example2(int argc, char* file_name_in, char* file_name_out);
+extern void example3(int argc, char* file_name_in, char* file_name_out);
+extern void example4(int argc, char* file_name_in, char* file_name_out);
+extern void example5(int argc, char* file_name_in, char* file_name_out);
+extern void example6(int argc, char* file_name_in, char* file_name_out);
+extern void example7(int argc, char* file_name_in, char* file_name_out);
+extern void example8(int argc, char* file_name_in, char* file_name_out);
+extern void example9(int argc, char* file_name_in, char* file_name_out);
+extern void example10(int argc, char* file_name_in, char* file_name_out);
+extern void example11(int argc, char* file_name_in, char* file_name_out);
 
 int main(int argc, char *argv[])
 {
-  double start_time = 0.0;
   char* file_name_in = 0;
   char* file_name_out = 0;
-
-  fprintf(stderr, "PRIu64: %s\n", PRIu64);
 
   laszip_U8 version_major;
   laszip_U8 version_minor;
@@ -155,61 +147,59 @@ int main(int argc, char *argv[])
     usage();
   }
 
-  start_time = taketime();
-
   if (EXAMPLE == 1)
   {
-    example1(argc, file_name_in, file_name_out, start_time);
+    example1(argc, file_name_in, file_name_out);
   }
   
   if (EXAMPLE == 2)
   {
-    example2(argc, file_name_in, file_name_out, start_time);
+    example2(argc, file_name_in, file_name_out);
   }
 
   if (EXAMPLE == 3)
   {
-    example3(argc, file_name_in, file_name_out, start_time);
+    example3(argc, file_name_in, file_name_out);
   }
 
   if (EXAMPLE == 4)
   {
-    example4(argc, file_name_in, file_name_out, start_time);
+    example4(argc, file_name_in, file_name_out);
   }
 
   if (EXAMPLE == 5)
   {
-    example5(argc, file_name_in, file_name_out, start_time);
+    example5(argc, file_name_in, file_name_out);
   }
 
   if (EXAMPLE == 6)
   {
-    example6(argc, file_name_in, file_name_out, start_time);
+    example6(argc, file_name_in, file_name_out);
   }
 
   if (EXAMPLE == 7)
   {
-    example7(argc, file_name_in, file_name_out, start_time);
+    example7(argc, file_name_in, file_name_out);
   }
 
   if (EXAMPLE == 8)
   {
-    example8(argc, file_name_in, file_name_out, start_time);
+    example8(argc, file_name_in, file_name_out);
   }
 
   if (EXAMPLE == 9)
   {
-    example9(argc, file_name_in, file_name_out, start_time);
+    example9(argc, file_name_in, file_name_out);
   }
 
   if (EXAMPLE == 10)
   {
-    example10(argc, file_name_in, file_name_out, start_time);
+    example10(argc, file_name_in, file_name_out);
   }
 
   if (EXAMPLE == 11)
   {
-    example11(argc, file_name_in, file_name_out, start_time);
+    example11(argc, file_name_in, file_name_out);
   }
 
   return 0;

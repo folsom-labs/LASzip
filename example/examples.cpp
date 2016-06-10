@@ -39,10 +39,11 @@ static double taketime()
   return (double)(clock())/CLOCKS_PER_SEC;
 }
 
-void example1(int argc, char* file_name_in, char* file_name_out, double start_time)
+void example1(int argc, char* file_name_in, char* file_name_out)
 {
   fprintf(stderr,"running EXAMPLE_ONE (reading *without* and writing *without* compatibility mode)\n");
 
+  double start_time = taketime();
   laszip_POINTER laszip_reader;
   if (laszip_create(&laszip_reader))
   {
@@ -179,10 +180,12 @@ void example1(int argc, char* file_name_in, char* file_name_out, double start_ti
   fprintf(stderr,"total time: %g sec for reading %scompressed and writing %scompressed\n", taketime()-start_time, (is_compressed ? "" : "un"), (compress ? "" : "un"));
 }
 
-void example2(int argc, char* file_name_in, char* file_name_out, double start_time)
+void example2(int argc, char* file_name_in, char* file_name_out)
 {
   laszip_U32 i;
   fprintf(stderr,"running EXAMPLE_TWO (another way of reading *without* and writing *without* compatibility mode)\n");
+
+  double start_time = taketime();
 
   laszip_POINTER laszip_reader;
   if (laszip_create(&laszip_reader))
@@ -440,10 +443,11 @@ void example2(int argc, char* file_name_in, char* file_name_out, double start_ti
   fprintf(stderr,"total time: %g sec for reading %scompressed and writing %scompressed\n", taketime()-start_time, (is_compressed ? "" : "un"), (compress ? "" : "un"));
 }
 
-void example3(int argc, char* file_name_in, char* file_name_out, double start_time)
+void example3(int argc, char* file_name_in, char* file_name_out)
 {
   fprintf(stderr,"running EXAMPLE_THREE (writing five points of type 1 to LAS 1.2 file)\n");
 
+  double start_time = taketime();
   laszip_POINTER laszip_writer;
   if (laszip_create(&laszip_writer))
   {
@@ -743,10 +747,11 @@ void example3(int argc, char* file_name_in, char* file_name_out, double start_ti
   fprintf(stderr,"total time: %g sec for writing %scompressed\n", taketime()-start_time, (compress ? "" : "un"));
 }
 
-void example4(int argc, char* file_name_in, char* file_name_out, double start_time)
+void example4(int argc, char* file_name_in, char* file_name_out)
 {
   fprintf(stderr,"running EXAMPLE_FOUR (reading area-of-interest from a file exploiting possibly existing spatial indexing information)\n");
 
+  double start_time = taketime();
   laszip_POINTER laszip_reader;
   if (laszip_create(&laszip_reader))
   {
@@ -927,10 +932,11 @@ void example4(int argc, char* file_name_in, char* file_name_out, double start_ti
   fprintf(stderr,"total time: %g sec for reading %scompressed and writing %scompressed\n", taketime()-start_time, (is_compressed ? "" : "un"), (compress ? "" : "un"));
 }
 
-void example5(int argc, char* file_name_in, char* file_name_out, double start_time)
+void example5(int argc, char* file_name_in, char* file_name_out)
 {
 	fprintf(stderr,"running EXAMPLE_FIVE (reading from one file and writing to another file while simultaneously generating a spatial index)\n");
 
+  double start_time = taketime();
 	laszip_POINTER laszip_reader;
 	if (laszip_create(&laszip_reader))
 	{
@@ -1078,11 +1084,12 @@ void example5(int argc, char* file_name_in, char* file_name_out, double start_ti
 	fprintf(stderr,"total time: %g sec for reading %scompressed and writing indexed & %scompressed\n", taketime()-start_time, (is_compressed ? "" : "un"), (compress ? "" : "un"));
 }
 
-void example6(int argc, char* file_name_in, char* file_name_out, double start_time)
+void example6(int argc, char* file_name_in, char* file_name_out)
 {
-	int i;
+	  int i;
     fprintf(stderr,"running EXAMPLE_SIX (writing five points of type 6 to LAS 1.4 without compatibility)\n");
 
+    double start_time = taketime();
     laszip_POINTER laszip_writer;
     if (laszip_create(&laszip_writer))
     {
@@ -1382,11 +1389,12 @@ void example6(int argc, char* file_name_in, char* file_name_out, double start_ti
     fprintf(stderr,"total time: %g sec for writing %scompressed\n", taketime()-start_time, (compress ? "" : "un"));
   } // end of EXAMPLE_SIX
 
-void example7(int argc, char* file_name_in, char* file_name_out, double start_time)
+void example7(int argc, char* file_name_in, char* file_name_out)
 {
   	int i;
     fprintf(stderr,"running EXAMPLE_SEVEN (writing five points of type 6 to LAS 1.4 *with* compatibility to compressed LAZ *and* also uncompressed LAS)\n");
 
+    double start_time = taketime();
     laszip_POINTER laszip_writer;
     if (laszip_create(&laszip_writer))
     {
@@ -1666,7 +1674,6 @@ void example7(int argc, char* file_name_in, char* file_name_out, double start_ti
       byebye(true, argc==1, laszip_writer);
     }
     p_count++;
-
     
     // get the number of points written so far
 
@@ -1694,10 +1701,11 @@ void example7(int argc, char* file_name_in, char* file_name_out, double start_ti
     fprintf(stderr,"total time: %g sec for writing %scompressed\n", taketime()-start_time, (compress ? "" : "un"));
 } // end of EXAMPLE_SEVEN
   
-void example8(int argc, char* file_name_in, char* file_name_out, double start_time)
+void example8(int argc, char* file_name_in, char* file_name_out)
 {
     fprintf(stderr,"running EXAMPLE_EIGHT (always *with* compatibility mode when reading but when writing *only* for compressed output)\n");
 
+    double start_time = taketime();
     laszip_POINTER laszip_reader;
     if (laszip_create(&laszip_reader))
     {
@@ -1855,11 +1863,12 @@ void example8(int argc, char* file_name_in, char* file_name_out, double start_ti
     fprintf(stderr,"total time: %g sec for reading %scompressed and writing %scompressed\n", taketime()-start_time, (is_compressed ? "" : "un"), (compress ? "" : "un"));
 } // end of EXAMPLE_EIGHT
 
-void example9(int argc, char* file_name_in, char* file_name_out, double start_time)
+void example9(int argc, char* file_name_in, char* file_name_out)
 {
-	int i;
+	   int i;
     fprintf(stderr,"running EXAMPLE_NINE (writing LAS 1.4 points with \"extra bytes\" *with* compatibility to compressed LAZ *and* also uncompressed LAS)\n");
 
+    double start_time = taketime();
     laszip_POINTER laszip_writer;
     if (laszip_create(&laszip_writer))
     {
@@ -2214,10 +2223,11 @@ void example9(int argc, char* file_name_in, char* file_name_out, double start_ti
     fprintf(stderr,"total time: %g sec for writing %scompressed\n", taketime()-start_time, (compress ? "" : "un"));
 } // end of EXAMPLE_NINE
 
-void example10(int argc, char* file_name_in, char* file_name_out, double start_time)
+void example10(int argc, char* file_name_in, char* file_name_out)
 {
-	int i;
+	  int i;
     fprintf(stderr,"running EXAMPLE_TEN (read LAS 1.0-1.3 file, upconvert old to new point types, write LAS 1.4 compatibility mode *only* for compressed output)\n");
+    double start_time = taketime();
 
     laszip_POINTER laszip_reader;
     if (laszip_create(&laszip_reader))
@@ -2553,10 +2563,11 @@ void example10(int argc, char* file_name_in, char* file_name_out, double start_t
 
   } // end of EXAMPLE_TEN
 
-void example11(int argc, char* file_name_in, char* file_name_out, double start_time)
+void example11(int argc, char* file_name_in, char* file_name_out)
 {
-	int i;
+	  int i;
     fprintf(stderr,"running EXAMPLE_ELEVEN (writing points to LAS 1.4 without a-priori knowlegde of bounding box or point count (compatibility only for LAZ))\n");
+    double start_time = taketime();
 
     laszip_POINTER laszip_writer;
     if (laszip_create(&laszip_writer))
@@ -2909,7 +2920,4 @@ void example11(int argc, char* file_name_in, char* file_name_out, double start_t
     }
   
     fprintf(stderr,"total time: %g sec for writing %scompressed\n", taketime()-start_time, (compress ? "" : "un"));
-
-    fprintf(stderr,"DLL ERROR: setting coordinates for point %lld\n", p_count);
-    //fprintf(stderr,"DLL ERROR: setting coordinates for point %I64d\n", p_count);
 } // end of EXAMPLE_ELEVEN
