@@ -43,7 +43,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "laszip_dll.h"
+#include "laszip/laszip_api.h"
 
 void usage(bool wait=false)
 {
@@ -114,14 +114,6 @@ int main(int argc, char *argv[])
   double start_time = 0.0;
   char* file_name_in = 0;
   char* file_name_out = 0;
-
-  // load LASzip DLL
-
-  if (laszip_load_dll())
-  {
-    fprintf(stderr,"DLL ERROR: loading LASzip DLL\n");
-    byebye(true, argc==1);
-  }
 
   // get version of LASzip DLL
 
@@ -3112,14 +3104,6 @@ int main(int argc, char *argv[])
     fprintf(stderr,"total time: %g sec for writing %scompressed\n", taketime()-start_time, (compress ? "" : "un"));
 
   } // end of EXAMPLE_ELEVEN
-
-  // unload LASzip DLL
-
-  if (laszip_unload_dll())
-  {
-    fprintf(stderr,"DLL ERROR: unloading LASzip DLL\n");
-    byebye(true, argc==1);
-  }
 
   return 0;
 }
