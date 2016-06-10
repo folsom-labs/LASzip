@@ -75,7 +75,8 @@ void example1(int argc, char* file_name_in, char* file_name_out, double start_ti
 
   // report how many points the file has
 
-  fprintf(stderr,"file '%s' contains %I64d points\n", file_name_in, npoints);
+  fprintf(stderr,"file '%s' contains %lld points\n", file_name_in, npoints);
+  //fprintf(stderr,"file '%s' contains %I64d points\n", file_name_in, npoints);
 
   // get a pointer to the points that will be read
 
@@ -122,7 +123,8 @@ void example1(int argc, char* file_name_in, char* file_name_out, double start_ti
 
     if (laszip_read_point(laszip_reader))
     {
-      fprintf(stderr,"DLL ERROR: reading point %I64d\n", p_count);
+      fprintf(stderr,"DLL ERROR: reading point %lld\n", p_count);
+      //fprintf(stderr,"DLL ERROR: reading point %" PRId64 "\n", p_count);
       byebye(true, argc==1, laszip_reader);
     }
 
@@ -130,7 +132,8 @@ void example1(int argc, char* file_name_in, char* file_name_out, double start_ti
 
     if (laszip_set_point(laszip_writer, point))
     {
-      fprintf(stderr,"DLL ERROR: setting point %I64d\n", p_count);
+      fprintf(stderr,"DLL ERROR: setting point %lld\n", p_count);
+      //fprintf(stderr,"DLL ERROR: setting point %I64d\n", p_count);
       byebye(true, argc==1, laszip_writer);
     }
 
@@ -138,14 +141,16 @@ void example1(int argc, char* file_name_in, char* file_name_out, double start_ti
 
     if (laszip_write_point(laszip_writer))
     {
-      fprintf(stderr,"DLL ERROR: writing point %I64d\n", p_count);
+      fprintf(stderr,"DLL ERROR: writing point %lld\n", p_count);
+      //fprintf(stderr,"DLL ERROR: writing point %I64d\n", p_count);
       byebye(true, argc==1, laszip_writer);
     }
 
     p_count++;
   }
 
-  fprintf(stderr,"successfully read and written %I64d points\n", p_count);
+  fprintf(stderr,"successfully read and written %lld points\n", p_count);
+  //fprintf(stderr,"successfully read and written %I64d points\n", p_count);
 
   if (laszip_close_writer(laszip_writer))
   {
@@ -211,7 +216,8 @@ void example2(int argc, char* file_name_in, char* file_name_out, double start_ti
 
   // report how many points the file has
 
-  fprintf(stderr,"file '%s' contains %I64d points\n", file_name_in, npoints);
+  fprintf(stderr,"file '%s' contains %lld points\n", file_name_in, npoints);
+  //fprintf(stderr,"file '%s' contains %I64d points\n", file_name_in, npoints);
 
   laszip_POINTER laszip_writer;
   if (laszip_create(&laszip_writer))
@@ -351,7 +357,8 @@ void example2(int argc, char* file_name_in, char* file_name_out, double start_ti
 
     if (laszip_read_point(laszip_reader))
     {
-      fprintf(stderr,"DLL ERROR: reading point %I64d\n", p_count);
+      fprintf(stderr,"DLL ERROR: reading point %lld\n", p_count);
+      //fprintf(stderr,"DLL ERROR: reading point %I64d\n", p_count);
       byebye(true, argc==1, laszip_reader);
     }
 
@@ -395,14 +402,16 @@ void example2(int argc, char* file_name_in, char* file_name_out, double start_ti
 
     if (laszip_write_point(laszip_writer))
     {
-      fprintf(stderr,"DLL ERROR: writing point %I64d\n", p_count);
+      fprintf(stderr,"DLL ERROR: writing point %lld\n", p_count);
+      //fprintf(stderr,"DLL ERROR: writing point %I64d\n", p_count);
       byebye(true, argc==1, laszip_writer);
     }
 
     p_count++;
   }
 
-  fprintf(stderr,"successfully read and written %I64d points\n", p_count);
+  fprintf(stderr,"successfully read and written %lld points\n", p_count);
+  //fprintf(stderr,"successfully read and written %I64d points\n", p_count);
 
   if (laszip_close_writer(laszip_writer))
   {
@@ -566,7 +575,8 @@ void example3(int argc, char* file_name_in, char* file_name_out, double start_ti
 
   if (laszip_set_coordinates(laszip_writer, coordinates))
   {
-    fprintf(stderr,"DLL ERROR: setting coordinates for point %I64d\n", p_count);
+    fprintf(stderr,"DLL ERROR: setting coordinates for point %lld\n", p_count);
+    //fprintf(stderr,"DLL ERROR: setting coordinates for point %I64d\n", p_count);
     byebye(true, argc==1, laszip_writer);
   }
 
@@ -581,7 +591,8 @@ void example3(int argc, char* file_name_in, char* file_name_out, double start_ti
 
   if (laszip_write_point(laszip_writer))
   {
-    fprintf(stderr,"DLL ERROR: writing point %I64d\n", p_count);
+    fprintf(stderr,"DLL ERROR: writing point %lld\n", p_count);
+    //fprintf(stderr,"DLL ERROR: writing point %I64d\n", p_count);
     byebye(true, argc==1, laszip_writer);
   }
   p_count++;
@@ -594,7 +605,8 @@ void example3(int argc, char* file_name_in, char* file_name_out, double start_ti
 
   if (laszip_set_coordinates(laszip_writer, coordinates))
   {
-    fprintf(stderr,"DLL ERROR: setting coordinates for point %I64d\n", p_count);
+    fprintf(stderr,"DLL ERROR: setting coordinates for point %lld\n", p_count);
+    //fprintf(stderr,"DLL ERROR: setting coordinates for point %I64d\n", p_count);
     byebye(true, argc==1, laszip_writer);
   }
 
@@ -609,7 +621,8 @@ void example3(int argc, char* file_name_in, char* file_name_out, double start_ti
 
   if (laszip_write_point(laszip_writer))
   {
-    fprintf(stderr,"DLL ERROR: writing point %I64d\n", p_count);
+    fprintf(stderr,"DLL ERROR: writing point %lld\n", p_count);
+    //fprintf(stderr,"DLL ERROR: writing point %I64d\n", p_count);
     byebye(true, argc==1, laszip_writer);
   }
   p_count++;
@@ -622,7 +635,8 @@ void example3(int argc, char* file_name_in, char* file_name_out, double start_ti
 
   if (laszip_set_coordinates(laszip_writer, coordinates))
   {
-    fprintf(stderr,"DLL ERROR: setting coordinates for point %I64d\n", p_count);
+    fprintf(stderr,"DLL ERROR: setting coordinates for point %lld\n", p_count);
+    //fprintf(stderr,"DLL ERROR: setting coordinates for point %I64d\n", p_count);
     byebye(true, argc==1, laszip_writer);
   }
 
@@ -637,7 +651,8 @@ void example3(int argc, char* file_name_in, char* file_name_out, double start_ti
 
   if (laszip_write_point(laszip_writer))
   {
-    fprintf(stderr,"DLL ERROR: writing point %I64d\n", p_count);
+    fprintf(stderr,"DLL ERROR: writing point %lld\n", p_count);
+    //fprintf(stderr,"DLL ERROR: writing point %I64d\n", p_count);
     byebye(true, argc==1, laszip_writer);
   }
   p_count++;
@@ -650,7 +665,8 @@ void example3(int argc, char* file_name_in, char* file_name_out, double start_ti
 
   if (laszip_set_coordinates(laszip_writer, coordinates))
   {
-    fprintf(stderr,"DLL ERROR: setting coordinates for point %I64d\n", p_count);
+    fprintf(stderr,"DLL ERROR: setting coordinates for point %lld\n", p_count);
+    //fprintf(stderr,"DLL ERROR: setting coordinates for point %I64d\n", p_count);
     byebye(true, argc==1, laszip_writer);
   }
 
@@ -665,7 +681,8 @@ void example3(int argc, char* file_name_in, char* file_name_out, double start_ti
 
   if (laszip_write_point(laszip_writer))
   {
-    fprintf(stderr,"DLL ERROR: writing point %I64d\n", p_count);
+    fprintf(stderr,"DLL ERROR: writing point %lld\n", p_count);
+    //fprintf(stderr,"DLL ERROR: writing point %I64d\n", p_count);
     byebye(true, argc==1, laszip_writer);
   }
   p_count++;
@@ -678,7 +695,8 @@ void example3(int argc, char* file_name_in, char* file_name_out, double start_ti
 
   if (laszip_set_coordinates(laszip_writer, coordinates))
   {
-    fprintf(stderr,"DLL ERROR: setting coordinates for point %I64d\n", p_count);
+    fprintf(stderr,"DLL ERROR: setting coordinates for point %lld\n", p_count);
+    //fprintf(stderr,"DLL ERROR: setting coordinates for point %I64d\n", p_count);
     byebye(true, argc==1, laszip_writer);
   }
 
@@ -693,7 +711,8 @@ void example3(int argc, char* file_name_in, char* file_name_out, double start_ti
 
   if (laszip_write_point(laszip_writer))
   {
-    fprintf(stderr,"DLL ERROR: writing point %I64d\n", p_count);
+    fprintf(stderr,"DLL ERROR: writing point %lld\n", p_count);
+    //fprintf(stderr,"DLL ERROR: writing point %I64d\n", p_count);
     byebye(true, argc==1, laszip_writer);
   }
   p_count++;
@@ -706,7 +725,8 @@ void example3(int argc, char* file_name_in, char* file_name_out, double start_ti
     byebye(true, argc==1, laszip_writer);
   }
 
-  fprintf(stderr,"successfully written %I64d points\n", p_count);
+  fprintf(stderr,"successfully written %lld points\n", p_count);
+  //fprintf(stderr,"successfully written %I64d points\n", p_count);
 
   if (laszip_close_writer(laszip_writer))
   {
@@ -778,7 +798,8 @@ void example4(int argc, char* file_name_in, char* file_name_out, double start_ti
 
   // report how many points the file has
 
-  fprintf(stderr,"file '%s' contains %I64d points\n", file_name_in, npoints);
+  fprintf(stderr,"file '%s' contains %lld points\n", file_name_in, npoints);
+  //fprintf(stderr,"file '%s' contains %I64d points\n", file_name_in, npoints);
 
   // create a rectangular box enclosing a subset of points at the center of the full bounding box
 
@@ -842,7 +863,8 @@ void example4(int argc, char* file_name_in, char* file_name_out, double start_ti
   {
     if (laszip_read_inside_point(laszip_reader, &is_done))
     {
-      fprintf(stderr,"DLL ERROR: reading point %I64d\n", p_count);
+      fprintf(stderr,"DLL ERROR: reading point %lld\n", p_count);
+      //fprintf(stderr,"DLL ERROR: reading point %I64d\n", p_count);
       byebye(true, argc==1, laszip_reader);
     }
 
@@ -853,26 +875,30 @@ void example4(int argc, char* file_name_in, char* file_name_out, double start_ti
 
     if (laszip_set_point(laszip_writer, point))
     {
-      fprintf(stderr,"DLL ERROR: setting point %I64d\n", p_count);
+      fprintf(stderr,"DLL ERROR: setting point %lld\n", p_count);
+      //fprintf(stderr,"DLL ERROR: setting point %I64d\n", p_count);
       byebye(true, argc==1, laszip_writer);
     }
 
     if (laszip_write_point(laszip_writer))
     {
-      fprintf(stderr,"DLL ERROR: writing point %I64d\n", p_count);
+      fprintf(stderr,"DLL ERROR: writing point %lld\n", p_count);
+      //fprintf(stderr,"DLL ERROR: writing point %I64d\n", p_count);
       byebye(true, argc==1, laszip_writer);
     }
 
     if (laszip_update_inventory(laszip_writer))
     {
-      fprintf(stderr,"DLL ERROR: updating inventory for point %I64d\n", p_count);
+      fprintf(stderr,"DLL ERROR: updating inventory for point %lld\n", p_count);
+      //fprintf(stderr,"DLL ERROR: updating inventory for point %I64d\n", p_count);
       byebye(true, argc==1, laszip_writer);
     }
 
     p_count++;
   }
 
-  fprintf(stderr,"successfully read and written %I64d points\n", p_count);
+  fprintf(stderr,"successfully read and written %lld points\n", p_count);
+  //fprintf(stderr,"successfully read and written %I64d points\n", p_count);
 
   if (laszip_close_writer(laszip_writer))
   {
@@ -937,7 +963,8 @@ void example5(int argc, char* file_name_in, char* file_name_out, double start_ti
 
 	// report how many points the file has
 
-	fprintf(stderr,"file '%s' contains %I64d points\n", file_name_in, npoints);
+	fprintf(stderr,"file '%s' contains %lld points\n", file_name_in, npoints);
+	//fprintf(stderr,"file '%s' contains %I64d points\n", file_name_in, npoints);
 
 	// get a pointer to the points that will be read
 
@@ -995,7 +1022,8 @@ void example5(int argc, char* file_name_in, char* file_name_out, double start_ti
 
 	  if (laszip_read_point(laszip_reader))
 	  {
-	    fprintf(stderr,"DLL ERROR: reading point %I64d\n", p_count);
+	    fprintf(stderr,"DLL ERROR: reading point %lld\n", p_count);
+	    //fprintf(stderr,"DLL ERROR: reading point %I64d\n", p_count);
 	    byebye(true, argc==1, laszip_reader);
 	  }
 
@@ -1003,7 +1031,8 @@ void example5(int argc, char* file_name_in, char* file_name_out, double start_ti
 
 	  if (laszip_set_point(laszip_writer, point))
 	  {
-	    fprintf(stderr,"DLL ERROR: setting point %I64d\n", p_count);
+	    fprintf(stderr,"DLL ERROR: setting point %lld\n", p_count);
+	    //fprintf(stderr,"DLL ERROR: setting point %I64d\n", p_count);
 	    byebye(true, argc==1, laszip_writer);
 	  }
 
@@ -1011,14 +1040,16 @@ void example5(int argc, char* file_name_in, char* file_name_out, double start_ti
 
 	  if (laszip_write_indexed_point(laszip_writer))
 	  {
-	    fprintf(stderr,"DLL ERROR: writing indexed point %I64d\n", p_count);
+	    fprintf(stderr,"DLL ERROR: writing indexed point %lld\n", p_count);
+	    //fprintf(stderr,"DLL ERROR: writing indexed point %I64d\n", p_count);
 	    byebye(true, argc==1, laszip_writer);
 	  }
 
 	  p_count++;
 	}
 
-	fprintf(stderr,"successfully read and written %I64d indexed points\n", p_count);
+	fprintf(stderr,"successfully read and written %lld indexed points\n", p_count);
+	//fprintf(stderr,"successfully read and written %I64d indexed points\n", p_count);
 
 	if (laszip_close_writer(laszip_writer))
 	{
@@ -1168,7 +1199,8 @@ void example6(int argc, char* file_name_in, char* file_name_out, double start_ti
 
     if (laszip_set_coordinates(laszip_writer, coordinates))
     {
-      fprintf(stderr,"DLL ERROR: setting coordinates for point %I64d\n", p_count);
+      fprintf(stderr,"DLL ERROR: setting coordinates for point %lld\n", p_count);
+      //fprintf(stderr,"DLL ERROR: setting coordinates for point %I64d\n", p_count);
       byebye(true, argc==1, laszip_writer);
     }
 
@@ -1186,7 +1218,8 @@ void example6(int argc, char* file_name_in, char* file_name_out, double start_ti
 
     if (laszip_write_point(laszip_writer))
     {
-      fprintf(stderr,"DLL ERROR: writing point %I64d\n", p_count);
+      fprintf(stderr,"DLL ERROR: writing point %lld\n", p_count);
+      //fprintf(stderr,"DLL ERROR: writing point %I64d\n", p_count);
       byebye(true, argc==1, laszip_writer);
     }
     p_count++;
@@ -1199,7 +1232,8 @@ void example6(int argc, char* file_name_in, char* file_name_out, double start_ti
 
     if (laszip_set_coordinates(laszip_writer, coordinates))
     {
-      fprintf(stderr,"DLL ERROR: setting coordinates for point %I64d\n", p_count);
+      fprintf(stderr,"DLL ERROR: setting coordinates for point %lld\n", p_count);
+      //fprintf(stderr,"DLL ERROR: setting coordinates for point %I64d\n", p_count);
       byebye(true, argc==1, laszip_writer);
     }
 
@@ -1217,7 +1251,8 @@ void example6(int argc, char* file_name_in, char* file_name_out, double start_ti
 
     if (laszip_write_point(laszip_writer))
     {
-      fprintf(stderr,"DLL ERROR: writing point %I64d\n", p_count);
+      fprintf(stderr,"DLL ERROR: writing point %lld\n", p_count);
+      //fprintf(stderr,"DLL ERROR: writing point %I64d\n", p_count);
       byebye(true, argc==1, laszip_writer);
     }
     p_count++;
@@ -1230,7 +1265,8 @@ void example6(int argc, char* file_name_in, char* file_name_out, double start_ti
 
     if (laszip_set_coordinates(laszip_writer, coordinates))
     {
-      fprintf(stderr,"DLL ERROR: setting coordinates for point %I64d\n", p_count);
+      fprintf(stderr,"DLL ERROR: setting coordinates for point %lld\n", p_count);
+      //fprintf(stderr,"DLL ERROR: setting coordinates for point %I64d\n", p_count);
       byebye(true, argc==1, laszip_writer);
     }
 
@@ -1248,7 +1284,8 @@ void example6(int argc, char* file_name_in, char* file_name_out, double start_ti
 
     if (laszip_write_point(laszip_writer))
     {
-      fprintf(stderr,"DLL ERROR: writing point %I64d\n", p_count);
+      fprintf(stderr,"DLL ERROR: writing point %lld\n", p_count);
+      //fprintf(stderr,"DLL ERROR: writing point %I64d\n", p_count);
       byebye(true, argc==1, laszip_writer);
     }
     p_count++;
@@ -1261,7 +1298,8 @@ void example6(int argc, char* file_name_in, char* file_name_out, double start_ti
 
     if (laszip_set_coordinates(laszip_writer, coordinates))
     {
-      fprintf(stderr,"DLL ERROR: setting coordinates for point %I64d\n", p_count);
+      fprintf(stderr,"DLL ERROR: setting coordinates for point %lld\n", p_count);
+      //fprintf(stderr,"DLL ERROR: setting coordinates for point %I64d\n", p_count);
       byebye(true, argc==1, laszip_writer);
     }
 
@@ -1279,7 +1317,8 @@ void example6(int argc, char* file_name_in, char* file_name_out, double start_ti
 
     if (laszip_write_point(laszip_writer))
     {
-      fprintf(stderr,"DLL ERROR: writing point %I64d\n", p_count);
+      fprintf(stderr,"DLL ERROR: writing point %lld\n", p_count);
+      //fprintf(stderr,"DLL ERROR: writing point %I64d\n", p_count);
       byebye(true, argc==1, laszip_writer);
     }
     p_count++;
@@ -1292,7 +1331,8 @@ void example6(int argc, char* file_name_in, char* file_name_out, double start_ti
 
     if (laszip_set_coordinates(laszip_writer, coordinates))
     {
-      fprintf(stderr,"DLL ERROR: setting coordinates for point %I64d\n", p_count);
+      fprintf(stderr,"DLL ERROR: setting coordinates for point %lld\n", p_count);
+      //fprintf(stderr,"DLL ERROR: setting coordinates for point %I64d\n", p_count);
       byebye(true, argc==1, laszip_writer);
     }
 
@@ -1310,7 +1350,8 @@ void example6(int argc, char* file_name_in, char* file_name_out, double start_ti
 
     if (laszip_write_point(laszip_writer))
     {
-      fprintf(stderr,"DLL ERROR: writing point %I64d\n", p_count);
+      fprintf(stderr,"DLL ERROR: writing point %lld\n", p_count);
+      //fprintf(stderr,"DLL ERROR: writing point %I64d\n", p_count);
       byebye(true, argc==1, laszip_writer);
     }
     p_count++;
@@ -1323,7 +1364,8 @@ void example6(int argc, char* file_name_in, char* file_name_out, double start_ti
       byebye(true, argc==1, laszip_writer);
     }
 
-    fprintf(stderr,"successfully written %I64d points\n", p_count);
+    fprintf(stderr,"successfully written %lld points\n", p_count);
+    //fprintf(stderr,"successfully written %I64d points\n", p_count);
 
     if (laszip_close_writer(laszip_writer))
     {
@@ -1468,7 +1510,8 @@ void example7(int argc, char* file_name_in, char* file_name_out, double start_ti
 
     if (laszip_set_coordinates(laszip_writer, coordinates))
     {
-      fprintf(stderr,"DLL ERROR: setting coordinates for point %I64d\n", p_count);
+      fprintf(stderr,"DLL ERROR: setting coordinates for point %lld\n", p_count);
+      //fprintf(stderr,"DLL ERROR: setting coordinates for point %I64d\n", p_count);
       byebye(true, argc==1, laszip_writer);
     }
 
@@ -1486,7 +1529,8 @@ void example7(int argc, char* file_name_in, char* file_name_out, double start_ti
 
     if (laszip_write_point(laszip_writer))
     {
-      fprintf(stderr,"DLL ERROR: writing point %I64d\n", p_count);
+      fprintf(stderr,"DLL ERROR: writing point %lld\n", p_count);
+      //fprintf(stderr,"DLL ERROR: writing point %I64d\n", p_count);
       byebye(true, argc==1, laszip_writer);
     }
     p_count++;
@@ -1499,7 +1543,8 @@ void example7(int argc, char* file_name_in, char* file_name_out, double start_ti
 
     if (laszip_set_coordinates(laszip_writer, coordinates))
     {
-      fprintf(stderr,"DLL ERROR: setting coordinates for point %I64d\n", p_count);
+      fprintf(stderr,"DLL ERROR: setting coordinates for point %lld\n", p_count);
+      //fprintf(stderr,"DLL ERROR: setting coordinates for point %I64d\n", p_count);
       byebye(true, argc==1, laszip_writer);
     }
 
@@ -1517,7 +1562,8 @@ void example7(int argc, char* file_name_in, char* file_name_out, double start_ti
 
     if (laszip_write_point(laszip_writer))
     {
-      fprintf(stderr,"DLL ERROR: writing point %I64d\n", p_count);
+      fprintf(stderr,"DLL ERROR: writing point %lld\n", p_count);
+      //fprintf(stderr,"DLL ERROR: writing point %I64d\n", p_count);
       byebye(true, argc==1, laszip_writer);
     }
     p_count++;
@@ -1530,7 +1576,8 @@ void example7(int argc, char* file_name_in, char* file_name_out, double start_ti
 
     if (laszip_set_coordinates(laszip_writer, coordinates))
     {
-      fprintf(stderr,"DLL ERROR: setting coordinates for point %I64d\n", p_count);
+      fprintf(stderr,"DLL ERROR: setting coordinates for point %lld\n", p_count);
+      //fprintf(stderr,"DLL ERROR: setting coordinates for point %I64d\n", p_count);
       byebye(true, argc==1, laszip_writer);
     }
 
@@ -1548,7 +1595,8 @@ void example7(int argc, char* file_name_in, char* file_name_out, double start_ti
 
     if (laszip_write_point(laszip_writer))
     {
-      fprintf(stderr,"DLL ERROR: writing point %I64d\n", p_count);
+      fprintf(stderr,"DLL ERROR: writing point %lld\n", p_count);
+      //fprintf(stderr,"DLL ERROR: writing point %I64d\n", p_count);
       byebye(true, argc==1, laszip_writer);
     }
     p_count++;
@@ -1561,7 +1609,8 @@ void example7(int argc, char* file_name_in, char* file_name_out, double start_ti
 
     if (laszip_set_coordinates(laszip_writer, coordinates))
     {
-      fprintf(stderr,"DLL ERROR: setting coordinates for point %I64d\n", p_count);
+      fprintf(stderr,"DLL ERROR: setting coordinates for point %lld\n", p_count);
+      //fprintf(stderr,"DLL ERROR: setting coordinates for point %I64d\n", p_count);
       byebye(true, argc==1, laszip_writer);
     }
 
@@ -1579,7 +1628,8 @@ void example7(int argc, char* file_name_in, char* file_name_out, double start_ti
 
     if (laszip_write_point(laszip_writer))
     {
-      fprintf(stderr,"DLL ERROR: writing point %I64d\n", p_count);
+      fprintf(stderr,"DLL ERROR: writing point %lld\n", p_count);
+      //fprintf(stderr,"DLL ERROR: writing point %I64d\n", p_count);
       byebye(true, argc==1, laszip_writer);
     }
     p_count++;
@@ -1592,7 +1642,8 @@ void example7(int argc, char* file_name_in, char* file_name_out, double start_ti
 
     if (laszip_set_coordinates(laszip_writer, coordinates))
     {
-      fprintf(stderr,"DLL ERROR: setting coordinates for point %I64d\n", p_count);
+      fprintf(stderr,"DLL ERROR: setting coordinates for point %lld\n", p_count);
+      //fprintf(stderr,"DLL ERROR: setting coordinates for point %I64d\n", p_count);
       byebye(true, argc==1, laszip_writer);
     }
 
@@ -1610,7 +1661,8 @@ void example7(int argc, char* file_name_in, char* file_name_out, double start_ti
 
     if (laszip_write_point(laszip_writer))
     {
-      fprintf(stderr,"DLL ERROR: writing point %I64d\n", p_count);
+      fprintf(stderr,"DLL ERROR: writing point %lld\n", p_count);
+      //fprintf(stderr,"DLL ERROR: writing point %I64d\n", p_count);
       byebye(true, argc==1, laszip_writer);
     }
     p_count++;
@@ -1624,7 +1676,8 @@ void example7(int argc, char* file_name_in, char* file_name_out, double start_ti
       byebye(true, argc==1, laszip_writer);
     }
 
-    fprintf(stderr,"successfully written %I64d points\n", p_count);
+    fprintf(stderr,"successfully written %lld points\n", p_count);
+    //fprintf(stderr,"successfully written %I64d points\n", p_count);
 
     if (laszip_close_writer(laszip_writer))
     {
@@ -1686,7 +1739,8 @@ void example8(int argc, char* file_name_in, char* file_name_out, double start_ti
 
     // report how many points the file has
 
-    fprintf(stderr,"file '%s' contains %I64d points\n", file_name_in, npoints);
+    fprintf(stderr,"file '%s' contains %lld points\n", file_name_in, npoints);
+    //fprintf(stderr,"file '%s' contains %I64d points\n", file_name_in, npoints);
 
     // get a pointer to the points that will be read
 
@@ -1747,7 +1801,8 @@ void example8(int argc, char* file_name_in, char* file_name_out, double start_ti
 
       if (laszip_read_point(laszip_reader))
       {
-        fprintf(stderr,"DLL ERROR: reading point %I64\n", p_count);
+        fprintf(stderr,"DLL ERROR: reading point %lld\n", p_count);
+        //fprintf(stderr,"DLL ERROR: reading point %I64\n", p_count);
         byebye(true, argc==1, laszip_reader);
       }
 
@@ -1755,20 +1810,23 @@ void example8(int argc, char* file_name_in, char* file_name_out, double start_ti
 
       if (laszip_set_point(laszip_writer, point))
       {
-        fprintf(stderr,"DLL ERROR: setting point %I64\n", p_count);
+        fprintf(stderr,"DLL ERROR: setting point %lld\n", p_count);
+        //fprintf(stderr,"DLL ERROR: setting point %I64\n", p_count);
         byebye(true, argc==1, laszip_writer);
       }
 
       if (laszip_write_point(laszip_writer))
       {
-        fprintf(stderr,"DLL ERROR: writing point %I64\n", p_count);
+        fprintf(stderr,"DLL ERROR: writing point %lld\n", p_count);
+        //fprintf(stderr,"DLL ERROR: writing point %I64\n", p_count);
         byebye(true, argc==1, laszip_writer);
       }
 
       p_count++;
     }
 
-    fprintf(stderr,"successfully read and written %I64d points\n", p_count);
+    fprintf(stderr,"successfully read and written %lld points\n", p_count);
+    //fprintf(stderr,"successfully read and written %I64d points\n", p_count);
 
     if (laszip_close_writer(laszip_writer))
     {
@@ -1943,7 +2001,8 @@ void example9(int argc, char* file_name_in, char* file_name_out, double start_ti
 
     if (laszip_set_coordinates(laszip_writer, coordinates))
     {
-      fprintf(stderr,"DLL ERROR: setting coordinates for point %I64d\n", p_count);
+      fprintf(stderr,"DLL ERROR: setting coordinates for point %lld\n", p_count);
+      //fprintf(stderr,"DLL ERROR: setting coordinates for point %I64d\n", p_count);
       byebye(true, argc==1, laszip_writer);
     }
 
@@ -1967,7 +2026,8 @@ void example9(int argc, char* file_name_in, char* file_name_out, double start_ti
 
     if (laszip_write_point(laszip_writer))
     {
-      fprintf(stderr,"DLL ERROR: writing point %I64d\n", p_count);
+      fprintf(stderr,"DLL ERROR: writing point %lld\n", p_count);
+      //fprintf(stderr,"DLL ERROR: writing point %I64d\n", p_count);
       byebye(true, argc==1, laszip_writer);
     }
     p_count++;
@@ -1980,7 +2040,8 @@ void example9(int argc, char* file_name_in, char* file_name_out, double start_ti
 
     if (laszip_set_coordinates(laszip_writer, coordinates))
     {
-      fprintf(stderr,"DLL ERROR: setting coordinates for point %I64d\n", p_count);
+      fprintf(stderr,"DLL ERROR: setting coordinates for point %lld\n", p_count);
+      //fprintf(stderr,"DLL ERROR: setting coordinates for point %I64d\n", p_count);
       byebye(true, argc==1, laszip_writer);
     }
 
@@ -2004,7 +2065,8 @@ void example9(int argc, char* file_name_in, char* file_name_out, double start_ti
 
     if (laszip_write_point(laszip_writer))
     {
-      fprintf(stderr,"DLL ERROR: writing point %I64d\n", p_count);
+      fprintf(stderr,"DLL ERROR: writing point %lld\n", p_count);
+      //fprintf(stderr,"DLL ERROR: writing point %I64d\n", p_count);
       byebye(true, argc==1, laszip_writer);
     }
     p_count++;
@@ -2017,7 +2079,8 @@ void example9(int argc, char* file_name_in, char* file_name_out, double start_ti
 
     if (laszip_set_coordinates(laszip_writer, coordinates))
     {
-      fprintf(stderr,"DLL ERROR: setting coordinates for point %I64d\n", p_count);
+      fprintf(stderr,"DLL ERROR: setting coordinates for point %lld\n", p_count);
+      //fprintf(stderr,"DLL ERROR: setting coordinates for point %I64d\n", p_count);
       byebye(true, argc==1, laszip_writer);
     }
 
@@ -2041,7 +2104,8 @@ void example9(int argc, char* file_name_in, char* file_name_out, double start_ti
 
     if (laszip_write_point(laszip_writer))
     {
-      fprintf(stderr,"DLL ERROR: writing point %I64d\n", p_count);
+      fprintf(stderr,"DLL ERROR: writing point %lld\n", p_count);
+      //fprintf(stderr,"DLL ERROR: writing point %I64d\n", p_count);
       byebye(true, argc==1, laszip_writer);
     }
     p_count++;
@@ -2054,7 +2118,8 @@ void example9(int argc, char* file_name_in, char* file_name_out, double start_ti
 
     if (laszip_set_coordinates(laszip_writer, coordinates))
     {
-      fprintf(stderr,"DLL ERROR: setting coordinates for point %I64d\n", p_count);
+      fprintf(stderr,"DLL ERROR: setting coordinates for point %lld\n", p_count);
+      //fprintf(stderr,"DLL ERROR: setting coordinates for point %I64d\n", p_count);
       byebye(true, argc==1, laszip_writer);
     }
 
@@ -2078,7 +2143,8 @@ void example9(int argc, char* file_name_in, char* file_name_out, double start_ti
 
     if (laszip_write_point(laszip_writer))
     {
-      fprintf(stderr,"DLL ERROR: writing point %I64d\n", p_count);
+      fprintf(stderr,"DLL ERROR: writing point %lld\n", p_count);
+      //fprintf(stderr,"DLL ERROR: writing point %I64d\n", p_count);
       byebye(true, argc==1, laszip_writer);
     }
     p_count++;
@@ -2091,7 +2157,8 @@ void example9(int argc, char* file_name_in, char* file_name_out, double start_ti
 
     if (laszip_set_coordinates(laszip_writer, coordinates))
     {
-      fprintf(stderr,"DLL ERROR: setting coordinates for point %I64d\n", p_count);
+      fprintf(stderr,"DLL ERROR: setting coordinates for point %lld\n", p_count);
+      //fprintf(stderr,"DLL ERROR: setting coordinates for point %I64d\n", p_count);
       byebye(true, argc==1, laszip_writer);
     }
 
@@ -2115,7 +2182,8 @@ void example9(int argc, char* file_name_in, char* file_name_out, double start_ti
 
     if (laszip_write_point(laszip_writer))
     {
-      fprintf(stderr,"DLL ERROR: writing point %I64d\n", p_count);
+      fprintf(stderr,"DLL ERROR: writing point %lld\n", p_count);
+      //fprintf(stderr,"DLL ERROR: writing point %I64d\n", p_count);
       byebye(true, argc==1, laszip_writer);
     }
     p_count++;
@@ -2128,7 +2196,8 @@ void example9(int argc, char* file_name_in, char* file_name_out, double start_ti
       byebye(true, argc==1, laszip_writer);
     }
 
-    fprintf(stderr,"successfully written %I64d points\n", p_count);
+    fprintf(stderr,"successfully written %lld points\n", p_count);
+    //fprintf(stderr,"successfully written %I64d points\n", p_count);
 
     if (laszip_close_writer(laszip_writer))
     {
@@ -2199,7 +2268,8 @@ void example10(int argc, char* file_name_in, char* file_name_out, double start_t
 
     // report how many points the file has
 
-    fprintf(stderr,"file '%s' contains %I64d points\n", file_name_in, npoints);
+    fprintf(stderr,"file '%s' contains %lld points\n", file_name_in, npoints);
+    //fprintf(stderr,"file '%s' contains %I64d points\n", file_name_in, npoints);
 
     // get a pointer to the points that will be read
 
@@ -2408,7 +2478,8 @@ void example10(int argc, char* file_name_in, char* file_name_out, double start_t
 
       if (laszip_read_point(laszip_reader))
       {
-        fprintf(stderr,"DLL ERROR: reading point %I64\n", p_count);
+        fprintf(stderr,"DLL ERROR: reading point %lld\n", p_count);
+        //fprintf(stderr,"DLL ERROR: reading point %I64\n", p_count);
         byebye(true, argc==1, laszip_reader);
       }
 
@@ -2443,14 +2514,16 @@ void example10(int argc, char* file_name_in, char* file_name_out, double start_t
 
       if (laszip_write_point(laszip_writer))
       {
-        fprintf(stderr,"DLL ERROR: writing point %I64\n", p_count);
+        fprintf(stderr,"DLL ERROR: writing point %lld\n", p_count);
+        //fprintf(stderr,"DLL ERROR: writing point %I64\n", p_count);
         byebye(true, argc==1, laszip_writer);
       }
 
       p_count++;
     }
 
-    fprintf(stderr,"successfully read and written %I64d points\n", p_count);
+    fprintf(stderr,"successfully read and written %lld points\n", p_count);
+    //fprintf(stderr,"successfully read and written %I64d points\n", p_count);
 
     if (laszip_close_writer(laszip_writer))
     {
@@ -2605,7 +2678,8 @@ void example11(int argc, char* file_name_in, char* file_name_out, double start_t
 
     if (laszip_set_coordinates(laszip_writer, coordinates))
     {
-      fprintf(stderr,"DLL ERROR: setting coordinates for point %I64d\n", p_count);
+      fprintf(stderr,"DLL ERROR: setting coordinates for point %lld\n", p_count);
+      //fprintf(stderr,"DLL ERROR: setting coordinates for point %I64d\n", p_count);
       byebye(true, argc==1, laszip_writer);
     }
 
@@ -2623,7 +2697,8 @@ void example11(int argc, char* file_name_in, char* file_name_out, double start_t
 
     if (laszip_write_point(laszip_writer))
     {
-      fprintf(stderr,"DLL ERROR: writing point %I64d\n", p_count);
+      fprintf(stderr,"DLL ERROR: writing point %lld\n", p_count);
+      //fprintf(stderr,"DLL ERROR: writing point %I64d\n", p_count);
       byebye(true, argc==1, laszip_writer);
     }
 
@@ -2631,7 +2706,8 @@ void example11(int argc, char* file_name_in, char* file_name_out, double start_t
 
     if (laszip_update_inventory(laszip_writer))
     {
-      fprintf(stderr,"DLL ERROR: updating inventory for point %I64d\n", p_count);
+      fprintf(stderr,"DLL ERROR: updating inventory for point %lld\n", p_count);
+      //fprintf(stderr,"DLL ERROR: updating inventory for point %I64d\n", p_count);
       byebye(true, argc==1, laszip_writer);
     }
 
@@ -2645,7 +2721,8 @@ void example11(int argc, char* file_name_in, char* file_name_out, double start_t
 
     if (laszip_set_coordinates(laszip_writer, coordinates))
     {
-      fprintf(stderr,"DLL ERROR: setting coordinates for point %I64d\n", p_count);
+      fprintf(stderr,"DLL ERROR: setting coordinates for point %lld\n", p_count);
+      //fprintf(stderr,"DLL ERROR: setting coordinates for point %I64d\n", p_count);
       byebye(true, argc==1, laszip_writer);
     }
 
@@ -2663,7 +2740,8 @@ void example11(int argc, char* file_name_in, char* file_name_out, double start_t
 
     if (laszip_write_point(laszip_writer))
     {
-      fprintf(stderr,"DLL ERROR: writing point %I64d\n", p_count);
+      fprintf(stderr,"DLL ERROR: writing point %lld\n", p_count);
+      //fprintf(stderr,"DLL ERROR: writing point %I64d\n", p_count);
       byebye(true, argc==1, laszip_writer);
     }
 
@@ -2671,7 +2749,8 @@ void example11(int argc, char* file_name_in, char* file_name_out, double start_t
 
     if (laszip_update_inventory(laszip_writer))
     {
-      fprintf(stderr,"DLL ERROR: updating inventory for point %I64d\n", p_count);
+      fprintf(stderr,"DLL ERROR: updating inventory for point %lld\n", p_count);
+      //fprintf(stderr,"DLL ERROR: updating inventory for point %I64d\n", p_count);
       byebye(true, argc==1, laszip_writer);
     }
 
@@ -2685,7 +2764,8 @@ void example11(int argc, char* file_name_in, char* file_name_out, double start_t
 
     if (laszip_set_coordinates(laszip_writer, coordinates))
     {
-      fprintf(stderr,"DLL ERROR: setting coordinates for point %I64d\n", p_count);
+      fprintf(stderr,"DLL ERROR: setting coordinates for point %lld\n", p_count);
+      //fprintf(stderr,"DLL ERROR: setting coordinates for point %I64d\n", p_count);
       byebye(true, argc==1, laszip_writer);
     }
 
@@ -2703,7 +2783,8 @@ void example11(int argc, char* file_name_in, char* file_name_out, double start_t
 
     if (laszip_write_point(laszip_writer))
     {
-      fprintf(stderr,"DLL ERROR: writing point %I64d\n", p_count);
+      fprintf(stderr,"DLL ERROR: writing point %lld\n", p_count);
+      //fprintf(stderr,"DLL ERROR: writing point %I64d\n", p_count);
       byebye(true, argc==1, laszip_writer);
     }
 
@@ -2711,7 +2792,8 @@ void example11(int argc, char* file_name_in, char* file_name_out, double start_t
 
     if (laszip_update_inventory(laszip_writer))
     {
-      fprintf(stderr,"DLL ERROR: updating inventory for point %I64d\n", p_count);
+      fprintf(stderr,"DLL ERROR: updating inventory for point %lld\n", p_count);
+      //fprintf(stderr,"DLL ERROR: updating inventory for point %I64d\n", p_count);
       byebye(true, argc==1, laszip_writer);
     }
 
@@ -2725,7 +2807,8 @@ void example11(int argc, char* file_name_in, char* file_name_out, double start_t
 
     if (laszip_set_coordinates(laszip_writer, coordinates))
     {
-      fprintf(stderr,"DLL ERROR: setting coordinates for point %I64d\n", p_count);
+      fprintf(stderr,"DLL ERROR: setting coordinates for point %lld\n", p_count);
+      //fprintf(stderr,"DLL ERROR: setting coordinates for point %I64d\n", p_count);
       byebye(true, argc==1, laszip_writer);
     }
 
@@ -2743,7 +2826,8 @@ void example11(int argc, char* file_name_in, char* file_name_out, double start_t
 
     if (laszip_write_point(laszip_writer))
     {
-      fprintf(stderr,"DLL ERROR: writing point %I64d\n", p_count);
+      fprintf(stderr,"DLL ERROR: writing point %lld\n", p_count);
+      //fprintf(stderr,"DLL ERROR: writing point %I64d\n", p_count);
       byebye(true, argc==1, laszip_writer);
     }
 
@@ -2751,7 +2835,8 @@ void example11(int argc, char* file_name_in, char* file_name_out, double start_t
 
     if (laszip_update_inventory(laszip_writer))
     {
-      fprintf(stderr,"DLL ERROR: updating inventory for point %I64d\n", p_count);
+      fprintf(stderr,"DLL ERROR: updating inventory for point %lld\n", p_count);
+      //fprintf(stderr,"DLL ERROR: updating inventory for point %I64d\n", p_count);
       byebye(true, argc==1, laszip_writer);
     }
 
@@ -2765,7 +2850,8 @@ void example11(int argc, char* file_name_in, char* file_name_out, double start_t
 
     if (laszip_set_coordinates(laszip_writer, coordinates))
     {
-      fprintf(stderr,"DLL ERROR: setting coordinates for point %I64d\n", p_count);
+      fprintf(stderr,"DLL ERROR: setting coordinates for point %lld\n", p_count);
+      //fprintf(stderr,"DLL ERROR: setting coordinates for point %I64d\n", p_count);
       byebye(true, argc==1, laszip_writer);
     }
 
@@ -2783,7 +2869,8 @@ void example11(int argc, char* file_name_in, char* file_name_out, double start_t
 
     if (laszip_write_point(laszip_writer))
     {
-      fprintf(stderr,"DLL ERROR: writing point %I64d\n", p_count);
+      fprintf(stderr,"DLL ERROR: writing point %lld\n", p_count);
+      //fprintf(stderr,"DLL ERROR: writing point %I64d\n", p_count);
       byebye(true, argc==1, laszip_writer);
     }
 
@@ -2791,7 +2878,8 @@ void example11(int argc, char* file_name_in, char* file_name_out, double start_t
 
     if (laszip_update_inventory(laszip_writer))
     {
-      fprintf(stderr,"DLL ERROR: updating inventory for point %I64d\n", p_count);
+      fprintf(stderr,"DLL ERROR: updating inventory for point %lld\n", p_count);
+      //fprintf(stderr,"DLL ERROR: updating inventory for point %I64d\n", p_count);
       byebye(true, argc==1, laszip_writer);
     }
 
@@ -2805,7 +2893,8 @@ void example11(int argc, char* file_name_in, char* file_name_out, double start_t
       byebye(true, argc==1, laszip_writer);
     }
 
-    fprintf(stderr,"successfully written %I64d points\n", p_count);
+    fprintf(stderr,"successfully written %lld points\n", p_count);
+    //fprintf(stderr,"successfully written %" PRId64 " points\n", p_count);
 
     if (laszip_close_writer(laszip_writer))
     {
@@ -2820,4 +2909,7 @@ void example11(int argc, char* file_name_in, char* file_name_out, double start_t
     }
   
     fprintf(stderr,"total time: %g sec for writing %scompressed\n", taketime()-start_time, (compress ? "" : "un"));
+
+    fprintf(stderr,"DLL ERROR: setting coordinates for point %lld\n", p_count);
+    //fprintf(stderr,"DLL ERROR: setting coordinates for point %I64d\n", p_count);
 } // end of EXAMPLE_ELEVEN

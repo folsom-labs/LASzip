@@ -42,6 +42,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <inttypes.h>
 
 #include "laszip_api.h"
 
@@ -115,7 +116,7 @@ int main(int argc, char *argv[])
   char* file_name_in = 0;
   char* file_name_out = 0;
 
-  // get version of LASzip DLL
+  fprintf(stderr, "PRIu64: %s\n", PRIu64);
 
   laszip_U8 version_major;
   laszip_U8 version_minor;
