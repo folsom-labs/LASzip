@@ -1,12 +1,14 @@
 package main
 
 import (
+	"bytes"
 	"encoding/binary"
 	"fmt"
 	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 )
 
 func fatalIfErr(err error) {
@@ -163,8 +165,8 @@ func dumpHeaderLikeLasInfo(hdr *LasPublicHeader, w io.Writer) {
 	fmt.Fprintf(w, "  %-28s %d\n", "Reserved:", hdr.GlobalEncoding)
 	// TODO: read and format GUID
 	fmt.Fprintf(w, "  %-28s '%s'\n", "Project ID/GUID:", "00000000-0000-0000-0000-000000000000")
-	fmt.Fprintf(w, "  %-28s %s\n", "System ID:", hdr.SystemIdentifier)
-	fmt.Fprintf(w, "  %-28s %s\n", "Generating Software:", hdr.GeneratingSoftware)
+	fmt.Fprintf(w, "  %-28s '%s'\n", "System ID:", hdr.SystemIdentifier)
+	fmt.Fprintf(w, "  %-28s '%s'\n", "Generating Software:", hdr.GeneratingSoftware)
 	fmt.Fprintf(w, "  %-28s %d/%d\n", "File Creation Day/Year:", hdr.FileCreationDayOfYear, hdr.FileCreationYear)
 	fmt.Fprintf(w, "  %-28s %d\n", "Header Byte Size", hdr.HeaderSize)
 	fmt.Fprintf(w, "  %-28s %d\n", "Data Offset:", hdr.OffsetToPointData)
@@ -315,11 +317,48 @@ func readLasFile(path string) {
 	dumpHeaderLikeLasInfo(hdr, os.Stdout)
 }
 
-/*
 func compareLasInfo(sLasInfo, sMe string) {
-  linesLasInfo := strings.Split()
+	linesLasInfo := strings.Split(sLasInfo, "\n")
+	linesMe := strings.Split(sMe, "\n")
+	n := len(linesLasInfo)
+	if len(linesMe) < n {
+		n = len(linesMe)
+	}
+	for i := 0; i < n; i++ {
+		lineLasInfo := linesLasInfo[i]
+		lineMe := linesMe[i]
+		lineLasInfoStripped := strings.TrimSpace(lineLasInfo)
+		lineMeStripped := strings.TrimSpace(lineMe)
+
+		if lineLasInfoStripped != lineMeStripped {
+			fmt.Printf("lines %d are different\n", i+1)
+			fmt.Printf("%s: lassinfo\n", lineLasInfo)
+			fmt.Printf("%s: me\n", lineMe)
+			fmt.Printf("%s: lassinfo stripped\n", lineLasInfoStripped)
+			fmt.Printf("%s: me stripped\n", lineMeStripped)
+			return
+		}
+		fmt.Printf("lines %d are same: '%s'\n", i+1, lineMe)
+	}
 }
-*/
+
+func getLasInfoCompatibleOutput(path string) string {
+	f, err := os.Open(path)
+	fatalIfErr(err)
+	defer f.Close()
+	r := NewLasReader(f)
+	hdr, err := r.ReadHeader()
+	fatalIfErr(err)
+	var buf bytes.Buffer
+	dumpHeaderLikeLasInfo(hdr, &buf)
+	return string(buf.Bytes())
+}
+
+func compareLassInfoOutput(path string) {
+	lasInfoOut := runLasInfo(path)
+	meOut := getLasInfoCompatibleOutput(path)
+	compareLasInfo(lasInfoOut, meOut)
+}
 
 // Testing decoding of .las files
 // We run las2txt on .las file and compare the results with our rendering
@@ -335,7 +374,8 @@ func main() {
 	}
 	path := args[0]
 	verifyFileExists(path)
+	compareLassInfoOutput(path)
 	//las2txtOut := runLas2Txt(path)
 	//fmt.Printf("%s", las2txtOut)
-	readLasFile(path)
+	//readLasFile(path)
 }
