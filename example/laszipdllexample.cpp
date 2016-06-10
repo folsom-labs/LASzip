@@ -111,7 +111,6 @@ extern void example11(int argc, char* file_name_in, char* file_name_out, double 
 
 int main(int argc, char *argv[])
 {
-  laszip_U32 i;
   double start_time = 0.0;
   char* file_name_in = 0;
   char* file_name_out = 0;

@@ -99,7 +99,7 @@ private:
   ByteStreamIn* instream;
 
   void renorm_dec_interval();
-  U32 base, value, length;
+  U32 value, length;
 };
 
 #endif

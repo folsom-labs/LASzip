@@ -1392,7 +1392,9 @@ laszip_remove_vlr(
           laszip_dll->header.number_of_variable_length_records--;
           //
           // HOBU: should this be for ( i = 0; ...) ?
-          for (i = i; i < laszip_dll->header.number_of_variable_length_records; i++)
+          // TODO: verify this is correct
+          //for (i = i; i < laszip_dll->header.number_of_variable_length_records; i++)
+          for (; i < laszip_dll->header.number_of_variable_length_records; i++)
           {
             laszip_dll->header.vlrs[i] = laszip_dll->header.vlrs[i+1];
           }
