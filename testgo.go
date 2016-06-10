@@ -60,9 +60,8 @@ type LasPublicHeader struct {
 }
 
 // ReadLasPublicHeader reads LasPublicHeader from a reader
-func ReadLasPublicHeader(rIn io.Reader) (*LasPublicHeader, error) {
+func ReadLasPublicHeader(r *BinaryReader) (*LasPublicHeader, error) {
 	var hdr LasPublicHeader
-	r := NewBinaryReader(rIn)
 	sig := r.ReadFixedString(4)
 	if sig != "LASF" {
 		return nil, fmt.Errorf("Invalid signature, expected 'LASF', got '%s'", sig)
@@ -119,10 +118,77 @@ func dumpHeader(hdr *LasPublicHeader, w io.Writer) {
 	fmt.Fprintf(w, "NumberOfVariableLengthRecords: %d\n", hdr.NumberOfVariableLengthRecords)
 }
 
+func formatPointsByReturn(d [5]uint32) string {
+	s := ""
+	for i := 0; i < 5; i++ {
+		s += fmt.Sprintf("%d ", d[i])
+	}
+	return s[:len(s)-1]
+}
+
+// for easy testing, dump header like lassinfo tool (http://www.liblas.org/utilities/lasinfo.html
+/* It looks like:
+---------------------------------------------------------
+  Header Summary
+---------------------------------------------------------
+
+  Version:                     1.2
+  Source ID:                   0
+  Reserved:                    0
+  Project ID/GUID:             '00000000-0000-0000-0000-000000000000'
+  System ID:                   ''
+  Generating Software:         'TerraScan'
+  File Creation Day/Year:      0/0
+  Header Byte Size             227
+  Data Offset:                 1220
+  Header Padding:              0
+  Number Var. Length Records:  3
+  Point Data Format:           1
+  Number of Point Records:     10653
+  Compressed:                  False
+  Number of Points by Return:  9079 1244 288 42 0
+  Scale Factor X Y Z:          0.01000000000000 0.01000000000000 0.01000000000000
+  Offset X Y Z:                -0.00 -0.00 -0.00
+  Min X Y Z:                   635589.01 848886.45 406.59
+  Max X Y Z:                   638994.75 853535.43 593.73
+*/
+func dumpHeaderLikeLasInfo(hdr *LasPublicHeader, w io.Writer) {
+	fmt.Fprintf(w, `---------------------------------------------------------
+  Header Summary
+---------------------------------------------------------
+
+`)
+	fmt.Fprintf(w, "  %-28s %d.%d\n", "Version:", hdr.VersionMajor, hdr.VersionMinor)
+	fmt.Fprintf(w, "  %-28s %d\n", "Source ID:", hdr.FileSourceID)
+	fmt.Fprintf(w, "  %-28s %d\n", "Reserved:", hdr.GlobalEncoding)
+	// TODO: read and format GUID
+	fmt.Fprintf(w, "  %-28s '%s'\n", "Project ID/GUID:", "00000000-0000-0000-0000-000000000000")
+	fmt.Fprintf(w, "  %-28s %s\n", "System ID:", hdr.SystemIdentifier)
+	fmt.Fprintf(w, "  %-28s %s\n", "Generating Software:", hdr.GeneratingSoftware)
+	fmt.Fprintf(w, "  %-28s %d/%d\n", "File Creation Day/Year:", hdr.FileCreationDayOfYear, hdr.FileCreationYear)
+	fmt.Fprintf(w, "  %-28s %d\n", "Header Byte Size", hdr.HeaderSize)
+	fmt.Fprintf(w, "  %-28s %d\n", "Data Offset:", hdr.OffsetToPointData)
+	// TODO: what is this?
+	fmt.Fprintf(w, "  %-28s %d\n", "Header Padding:", 0)
+	fmt.Fprintf(w, "  %-28s %d\n", "Number Var. Length Records:", hdr.NumberOfVariableLengthRecords)
+	fmt.Fprintf(w, "  %-28s %d\n", "Point Data Format:", hdr.PointDataFormatID)
+
+	fmt.Fprintf(w, "  %-28s %d\n", "Number of Point Records:", hdr.PointDataRecordLength)
+	fmt.Fprintf(w, "  %-28s %s\n", "Compressed:", "False")
+	fmt.Fprintf(w, "  %-28s %d\n", "Header Padding:", 0)
+	fmt.Fprintf(w, "  %-28s %s\n", "Number of Points by Return:", formatPointsByReturn(hdr.NumberOfPointsByReturn))
+
+	fmt.Fprintf(w, "  %-28s %.14f %.14f %.14f\n", "Scale Factor X Y Z:", hdr.XScaleFactor, hdr.YScaleFactor, hdr.ZScaleFactor)
+	fmt.Fprintf(w, "  %-28s %.2f %.2f %.2f\n", "Offset X Y Z:", hdr.XOffset, hdr.YOffset, hdr.ZOffset)
+	fmt.Fprintf(w, "  %-28s %.2f %.2f %.2f\n", "Min X Y Z:", hdr.MinX, hdr.MinY, hdr.MinZ)
+	fmt.Fprintf(w, "  %-28s %.2f %.2f %.2f\n", "Max X Y Z:", hdr.MaxX, hdr.MaxY, hdr.MaxZ)
+}
+
 // BinaryReader is a helper for reading binary data
 type BinaryReader struct {
-	r     io.Reader
-	Error error
+	r             io.Reader
+	BytesConsumed int
+	Error         error
 }
 
 // LasReader is a reader for .las files
@@ -141,7 +207,9 @@ func NewLasReader(r io.Reader) *LasReader {
 
 // ReadHeader reads public header
 func (r *LasReader) ReadHeader() (*LasPublicHeader, error) {
-	r.Header, r.Error = ReadLasPublicHeader(r.r)
+	br := NewBinaryReader(r.r)
+	r.Header, r.Error = ReadLasPublicHeader(br)
+	fmt.Printf("bytes consumed: %d\n", br.BytesConsumed)
 	return r.Header, r.Error
 }
 
@@ -167,6 +235,7 @@ func (r *BinaryReader) ReadFixedString(nChars int) string {
 		res = string(data)
 	}
 	r.Error = err
+	r.BytesConsumed += nChars
 	return res
 }
 
@@ -182,6 +251,7 @@ func (r *BinaryReader) ReadUint8() byte {
 		return res
 	}
 	r.Error = binary.Read(r.r, binary.LittleEndian, &res)
+	r.BytesConsumed++
 	return res
 }
 
@@ -192,6 +262,7 @@ func (r *BinaryReader) ReadUint16() uint16 {
 		return res
 	}
 	r.Error = binary.Read(r.r, binary.LittleEndian, &res)
+	r.BytesConsumed += 2
 	return res
 }
 
@@ -202,6 +273,7 @@ func (r *BinaryReader) ReadUint32() uint32 {
 		return res
 	}
 	r.Error = binary.Read(r.r, binary.LittleEndian, &res)
+	r.BytesConsumed += 4
 	return res
 }
 
@@ -212,6 +284,7 @@ func (r *BinaryReader) ReadFloat64() float64 {
 		return res
 	}
 	r.Error = binary.Read(r.r, binary.LittleEndian, &res)
+	r.BytesConsumed += 8
 	return res
 }
 
@@ -224,6 +297,14 @@ func runLas2Txt(path string) string {
 	return string(d)
 }
 
+func runLasInfo(path string) string {
+	// docs: http://www.liblas.org/utilities/lasinfo.html
+	cmd := exec.Command("lasinfo", "-i", path)
+	d, err := cmd.CombinedOutput()
+	fatalIfErr(err)
+	return string(d)
+}
+
 func readLasFile(path string) {
 	f, err := os.Open(path)
 	fatalIfErr(err)
@@ -231,8 +312,14 @@ func readLasFile(path string) {
 	r := NewLasReader(f)
 	hdr, err := r.ReadHeader()
 	fatalIfErr(err)
-	dumpHeader(hdr, os.Stdout)
+	dumpHeaderLikeLasInfo(hdr, os.Stdout)
 }
+
+/*
+func compareLasInfo(sLasInfo, sMe string) {
+  linesLasInfo := strings.Split()
+}
+*/
 
 // Testing decoding of .las files
 // We run las2txt on .las file and compare the results with our rendering
