@@ -41,20 +41,6 @@
 #ifndef LASZIP_DLL_H
 #define LASZIP_DLL_H
 
-#ifdef _WIN32
-#   ifdef LASZIP_DYN_LINK
-#       ifdef LASZIP_SOURCE
-#           define LASZIP_API __declspec(dllexport)
-#       else
-#           define LASZIP_API __declspec(dllimport)
-#       endif
-#   else
-#       define LASZIP_API
-#   endif
-#else
-#   define LASZIP_API
-#endif
-
 #ifdef __cplusplus
 extern "C"
 {
@@ -195,6 +181,8 @@ typedef struct laszip_point
 /*---------------------------------------------------------------------------*/
 /*---------------- DLL functions to manage the LASzip DLL -------------------*/
 /*---------------------------------------------------------------------------*/
+
+#define LASZIP_API
 
 /*---------------------------------------------------------------------------*/
 LASZIP_API laszip_I32

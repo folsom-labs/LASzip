@@ -43,7 +43,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "laszip/laszip_api.h"
+#include "laszip_api.h"
 
 void usage(bool wait=false)
 {
