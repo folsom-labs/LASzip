@@ -42,20 +42,14 @@
 #include <set>
 using namespace std;
 
-#ifdef UNORDERED
-  // Check if on OS X and using cland (unordered map isn't part of tr1 namespace)
-  #if defined(__APPLE__) && defined(__clang__)
-    #include <unordered_map>
-  #else
-    #include <tr1/unordered_map>
-    using namespace tr1;
-  #endif
-typedef unordered_map<I32, LASintervalStartCell*> my_cell_hash;
+// Check if on OS X and using cland (unordered map isn't part of tr1 namespace)
+#if defined(__APPLE__) && defined(__clang__)
+  #include <unordered_map>
 #else
-#include <hash_map>
-using namespace std;
-typedef hash_map<I32, LASintervalStartCell*> my_cell_hash;
+  #include <tr1/unordered_map>
+  using namespace tr1;
 #endif
+typedef unordered_map<I32, LASintervalStartCell*> my_cell_hash;
 
 typedef multimap<U32, LASintervalCell*> my_cell_map;
 typedef set<LASintervalStartCell*> my_cell_set;
