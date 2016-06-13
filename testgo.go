@@ -186,9 +186,8 @@ func dumpHeaderLikeLasInfo(hdr *LasPublicHeader, w io.Writer) {
 	fmt.Fprintf(w, "  %-28s %d\n", "Number Var. Length Records:", hdr.NumberOfVariableLengthRecords)
 	fmt.Fprintf(w, "  %-28s %d\n", "Point Data Format:", hdr.PointDataFormatID)
 
-	fmt.Fprintf(w, "  %-28s %d\n", "Number of Point Records:", hdr.PointDataRecordLength)
+	fmt.Fprintf(w, "  %-28s %d\n", "Number of Point Records:", hdr.NumberOfPointRecords)
 	fmt.Fprintf(w, "  %-28s %s\n", "Compressed:", "False")
-	fmt.Fprintf(w, "  %-28s %d\n", "Header Padding:", 0)
 	fmt.Fprintf(w, "  %-28s %s\n", "Number of Points by Return:", formatPointsByReturn(hdr.NumberOfPointsByReturn))
 
 	fmt.Fprintf(w, "  %-28s %.14f %.14f %.14f\n", "Scale Factor X Y Z:", hdr.XScaleFactor, hdr.YScaleFactor, hdr.ZScaleFactor)
@@ -352,9 +351,20 @@ func dumpHex(s string, nPerLine int) {
 	}
 }
 
+func trimEmptyStringsRight(a []string) []string {
+	for {
+		n := len(a) - 1
+		if n < 0 || len(a[n]) > 0 {
+			return a
+		}
+		a = a[:n]
+	}
+}
+
 func compareLasInfo(sLasInfo, sMe string) {
-	linesLasInfo := strings.Split(sLasInfo, "\n")
-	linesMe := strings.Split(sMe, "\n")
+	linesLasInfo := trimEmptyStringsRight(strings.Split(sLasInfo, "\n"))
+	linesMe := trimEmptyStringsRight(strings.Split(sMe, "\n"))
+
 	n := len(linesLasInfo)
 	if len(linesMe) < n {
 		n = len(linesMe)
@@ -373,9 +383,9 @@ func compareLasInfo(sLasInfo, sMe string) {
 			//dumpHex(lineMe, 8)
 			fmt.Printf("%s: lassinfo stripped\n", lineLasInfoStripped)
 			fmt.Printf("%s: me stripped\n", lineMeStripped)
-			return
+		} else {
+			fmt.Printf("lines %d are same: '%s'\n", i+1, lineMe)
 		}
-		fmt.Printf("lines %d are same: '%s'\n", i+1, lineMe)
 	}
 }
 
