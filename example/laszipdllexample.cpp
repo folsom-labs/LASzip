@@ -125,7 +125,7 @@ int main(int argc, char *argv[])
     char file_name[256];
     fprintf(stderr,"%s is better run in the command line\n", argv[0]);
     // not used for example3
-    fprintf(stderr,"enter input file%s: "); fgets(file_name, 256, stdin);
+    fprintf(stderr,"enter input file: "); fgets(file_name, 256, stdin);
     file_name[strlen(file_name)-1] = '\0';
     file_name_in = strdup(file_name);
     fprintf(stderr,"enter output file: "); fgets(file_name, 256, stdin);
