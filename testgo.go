@@ -61,6 +61,14 @@ type LasPublicHeader struct {
 	MinZ                          float64
 }
 
+// we support 1.0, 1.1, 1.2, 1.3, 1.4
+func validVersion(major, minor byte) bool {
+	if major != 1 || minor > 4 {
+		return false
+	}
+	return true
+}
+
 // ReadLasPublicHeader reads LasPublicHeader from a reader
 func ReadLasPublicHeader(r *BinaryReader) (*LasPublicHeader, error) {
 	var hdr LasPublicHeader
@@ -77,6 +85,9 @@ func ReadLasPublicHeader(r *BinaryReader) (*LasPublicHeader, error) {
 	r.Skip(16)
 	hdr.VersionMajor = r.ReadUint8()
 	hdr.VersionMinor = r.ReadUint8()
+	if !validVersion(hdr.VersionMajor, hdr.VersionMinor) {
+		return nil, fmt.Errorf("Invalid version: %d.%d (we understand 1.0-1.4)", hdr.VersionMajor, hdr.VersionMinor)
+	}
 	hdr.SystemIdentifier = r.ReadFixedString(32)
 	hdr.GeneratingSoftware = r.ReadFixedString(32)
 	hdr.FileCreationDayOfYear = r.ReadUint16()
@@ -235,6 +246,7 @@ func (r *BinaryReader) ReadFixedString(nChars int) string {
 	}
 	if err == nil {
 		res = string(data)
+		res = strings.TrimRight(res, "\000")
 	}
 	r.Error = err
 	r.BytesConsumed += nChars
@@ -317,6 +329,29 @@ func readLasFile(path string) {
 	dumpHeaderLikeLasInfo(hdr, os.Stdout)
 }
 
+func dumpHexLine(s string) {
+	n := len(s)
+	if n == 0 {
+		return
+	}
+	line := ""
+	for i := 0; i < n; i++ {
+		line += fmt.Sprintf("%02x ", s[i])
+	}
+	fmt.Printf("%s\n", line)
+}
+
+func dumpHex(s string, nPerLine int) {
+	for len(s) > 0 {
+		n := len(s)
+		if n > nPerLine {
+			n = nPerLine
+		}
+		dumpHexLine(s[:n])
+		s = s[n:]
+	}
+}
+
 func compareLasInfo(sLasInfo, sMe string) {
 	linesLasInfo := strings.Split(sLasInfo, "\n")
 	linesMe := strings.Split(sMe, "\n")
@@ -332,8 +367,10 @@ func compareLasInfo(sLasInfo, sMe string) {
 
 		if lineLasInfoStripped != lineMeStripped {
 			fmt.Printf("lines %d are different\n", i+1)
-			fmt.Printf("%s: lassinfo\n", lineLasInfo)
-			fmt.Printf("%s: me\n", lineMe)
+			//fmt.Printf("%s: lassinfo\n", lineLasInfo)
+			//fmt.Printf("%s: me\n", lineMe)
+			//dumpHex(lineLasInfo, 8)
+			//dumpHex(lineMe, 8)
 			fmt.Printf("%s: lassinfo stripped\n", lineLasInfoStripped)
 			fmt.Printf("%s: me stripped\n", lineMeStripped)
 			return
