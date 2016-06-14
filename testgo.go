@@ -59,6 +59,11 @@ type LasPublicHeader struct {
 	MinY                          float64
 	MaxZ                          float64
 	MinZ                          float64
+
+	// calculated fields
+	// corresponds to bit 0 of GlobalEncoding. If true, GPS Time in Point Records
+	// is standard GPS TIME (satellite GPS Time) minus 10e9.
+	IsGPSTimeStandard bool
 }
 
 // we support 1.0, 1.1, 1.2, 1.3, 1.4
@@ -67,6 +72,11 @@ func validVersion(major, minor byte) bool {
 		return false
 	}
 	return true
+}
+
+func uint16IsBitSet(v uint16, bitNo int) bool {
+	var mask uint16 = 1 << uint16(bitNo)
+	return v&mask == 0
 }
 
 // ReadLasPublicHeader reads LasPublicHeader from a reader
@@ -119,6 +129,9 @@ func ReadLasPublicHeader(r *BinaryReader) (*LasPublicHeader, error) {
 	hdr.MaxZ = r.ReadFloat64()
 	hdr.MinZ = r.ReadFloat64()
 
+	// TODO: read more fields if v1.3 or v1.4
+
+	hdr.IsGPSTimeStandard = uint16IsBitSet(hdr.GlobalEncoding, 0)
 	return &hdr, r.Error
 }
 
