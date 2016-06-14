@@ -55,9 +55,10 @@ type VariableLengthRecord struct {
 
 // PointDataRecord0 describes Point Data Record format 0
 type PointDataRecord0 struct {
-	X              int32
-	Y              int32
-	Z              int32
+	X int32
+	Y int32
+	Z int32
+	// pulse return magnitude
 	Intensity      uint16
 	flags          uint8
 	Classification uint8
@@ -66,11 +67,35 @@ type PointDataRecord0 struct {
 	PointSourceID  uint16
 
 	// those are calculated from flags
-	ReturnNumber      int // bits 0,1,2
-	NumberOfReturns   int // bits 3, 4, 5; given pulse
+	// pulse return number for a given output pulse
+	ReturnNumber int // bits 0,1,2
+	// pulse return number for a given output pulse
+	// values: 1, 2...
+	NumberOfReturns int // bits 3, 4, 5; given pulse
+	// true for positive scan direction (scan left to right side of in-track direction)
 	ScanDirectionFlag bool
-	EdgeOfFlightLine  bool
+	// true if point at the end of the scan (last point in a given scan line
+	// before scan changes direction)
+	EdgeOfFlightLine bool
 }
+
+// ClassificationType defines ASPRS LIDAR point classification
+type ClassificationType int
+
+const (
+	Created ClassificationType = 0
+	Unclassified
+	Ground
+	LowVegetation
+	MediumVegetation
+	HighVegetation
+	BuildingLowPoint
+	ModelKeyPoint
+	Water
+	Reserved1
+	Reserved2
+	OverlapPoints
+)
 
 // LasReader is a reader for .las files
 type LasReader struct {
@@ -78,6 +103,26 @@ type LasReader struct {
 	Header                *LasPublicHeader
 	VariableLengthRecords []*VariableLengthRecord
 	Error                 error
+}
+
+func uint16IsBitSet(v uint16, bitNo int) bool {
+	var mask uint16 = 1 << uint16(bitNo)
+	return v&mask == 0
+}
+
+func uint8IsBitSet(v uint8, bitNo int) bool {
+	var mask uint8 = 1 << uint8(bitNo)
+	return v&mask == 0
+}
+
+// return first nBits from b as int and the remaining bits shifted
+func eatBits(b uint8, nBits uint) (int, uint8) {
+	mask := uint8(1<<nBits) - 1
+	res := int(b & mask)
+	//fmt.Printf("b: 0x%x, nBits: %d, mask: 0x%x, res: %d", b, nBits, mask, res)
+	b = b >> uint(nBits)
+	//fmt.Printf(", b after: 0x%b\n", b)
+	return res, b
 }
 
 // we support 1.0, 1.1, 1.2, 1.3, 1.4
@@ -88,9 +133,27 @@ func isValidVersion(major, minor byte) bool {
 	return true
 }
 
-func uint16IsBitSet(v uint16, bitNo int) bool {
-	var mask uint16 = 1 << uint16(bitNo)
-	return v&mask == 0
+// GetClassification returns ASPRS ClassificationType, bits 0..4 of Classification
+func (p *PointDataRecord0) GetClassification() ClassificationType {
+	n, _ := eatBits(p.Classification, 5)
+	return ClassificationType(n)
+}
+
+// IsSynthetic returns true if not from LIDAR
+func (p *PointDataRecord0) IsSynthetic() bool {
+	return uint8IsBitSet(p.Classification, 5)
+}
+
+// IsKeyPoint returns true if considered a model key-point and thus should not
+// be witheld in a thinning algorithm
+func (p *PointDataRecord0) IsKeyPoint() bool {
+	return uint8IsBitSet(p.Classification, 6)
+}
+
+// IsWithheld returns true if point should not be included in processing
+// (synonymous with IsDeleted)
+func (p *PointDataRecord0) IsWithheld() bool {
+	return uint8IsBitSet(p.Classification, 7)
 }
 
 // NewLasReader creates a LasReader
@@ -174,37 +237,6 @@ func ReadVariableLengthRecord(r *BinaryReader) (*VariableLengthRecord, error) {
 
 	hdr.Data = r.ReadBytes(int(hdr.RecordLengthAfterHeader))
 	return &hdr, r.Error
-}
-
-/*
-// PointDataRecord0 describes Point Data Record format 0
-type PointDataRecord0 struct {
-	X              int32
-	Y              int32
-	Z              int32
-	Intensity      uint16
-	flags          uint8
-	Classification uint8
-	ScanAngleRank  uint8
-	UserData       uint8
-	PointSourceID  uint16
-
-	// those are calculated from flags
-	ReturnNumber      int // bits 0,1,2
-	NumberOfReturns   int // bits 3, 4, 5; given pulse
-	ScanDirectionFlag bool
-	EdgeOfFlightLine  bool
-}
-*/
-
-// return first nBits from b as int and the remaining bits shifted
-func eatBits(b uint8, nBits uint) (int, uint8) {
-	mask := uint8(1<<nBits) - 1
-	res := int(b & mask)
-	//fmt.Printf("b: 0x%x, nBits: %d, mask: 0x%x, res: %d", b, nBits, mask, res)
-	b = b >> uint(nBits)
-	//fmt.Printf(", b after: 0x%b\n", b)
-	return res, b
 }
 
 // ReadPointDataRecord0 reads Point Data Record Format 0
