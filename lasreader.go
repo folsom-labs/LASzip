@@ -62,9 +62,13 @@ type PointDataRecord0 struct {
 	Intensity      uint16
 	flags          uint8
 	Classification uint8
-	ScanAngleRank  uint8
-	UserData       uint8
-	PointSourceID  uint16
+	// -90 .. +90, 0 is nadir, -90 is to the left side of the aircraft in the
+	// direction of flight
+	ScanAngleRank uint8
+	UserData      uint8
+	// Where did point come from, 0 means this file, otherwise should be
+	// FileSourceID
+	PointSourceID uint16
 
 	// those are calculated from flags
 	// pulse return number for a given output pulse
@@ -77,6 +81,20 @@ type PointDataRecord0 struct {
 	// true if point at the end of the scan (last point in a given scan line
 	// before scan changes direction)
 	EdgeOfFlightLine bool
+}
+
+// PointDataRecord1 describes Point Data Record format 1
+type PointDataRecord1 struct {
+	PointDataRecord0
+	GPSTime float64
+}
+
+// PointDataRecord2 describes Point Data Record format 2
+type PointDataRecord2 struct {
+	PointDataRecord0
+	Red   uint16
+	Green uint16
+	Blue  uint16
 }
 
 // ClassificationType defines ASPRS LIDAR point classification
@@ -261,6 +279,34 @@ func ReadPointDataRecord0(r *BinaryReader) (*PointDataRecord0, error) {
 	n, b = eatBits(b, 1)
 	p.EdgeOfFlightLine = (n == 1)
 
+	return &p, r.Error
+}
+
+// ReadPointDataRecord1 reads Point Data Record Format 1
+func ReadPointDataRecord1(r *BinaryReader) (*PointDataRecord1, error) {
+	p0, err := ReadPointDataRecord0(r)
+	p := PointDataRecord1{
+		PointDataRecord0: *p0,
+		GPSTime:          r.ReadFloat64(),
+	}
+	if err != nil {
+		return &p, err
+	}
+	return &p, r.Error
+}
+
+// ReadPointDataRecord2 reads Point Data Record Format 2
+func ReadPointDataRecord2(r *BinaryReader) (*PointDataRecord2, error) {
+	p0, err := ReadPointDataRecord0(r)
+	p := PointDataRecord2{
+		PointDataRecord0: *p0,
+		Red:              r.ReadUint16(),
+		Green:            r.ReadUint16(),
+		Blue:             r.ReadUint16(),
+	}
+	if err != nil {
+		return &p, err
+	}
 	return &p, r.Error
 }
 
