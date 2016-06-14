@@ -97,6 +97,15 @@ type PointDataRecord2 struct {
 	Blue  uint16
 }
 
+// PointDataRecord3 describes Point Data Record format 3
+type PointDataRecord3 struct {
+	PointDataRecord0
+	GPSTime float64
+	Red     uint16
+	Green   uint16
+	Blue    uint16
+}
+
 // ClassificationType defines ASPRS LIDAR point classification
 type ClassificationType int
 
@@ -300,6 +309,22 @@ func ReadPointDataRecord2(r *BinaryReader) (*PointDataRecord2, error) {
 	p0, err := ReadPointDataRecord0(r)
 	p := PointDataRecord2{
 		PointDataRecord0: *p0,
+		Red:              r.ReadUint16(),
+		Green:            r.ReadUint16(),
+		Blue:             r.ReadUint16(),
+	}
+	if err != nil {
+		return &p, err
+	}
+	return &p, r.Error
+}
+
+// ReadPointDataRecord3 reads Point Data Record Format 3
+func ReadPointDataRecord3(r *BinaryReader) (*PointDataRecord3, error) {
+	p0, err := ReadPointDataRecord0(r)
+	p := PointDataRecord3{
+		PointDataRecord0: *p0,
+		GPSTime:          r.ReadFloat64(),
 		Red:              r.ReadUint16(),
 		Green:            r.ReadUint16(),
 		Blue:             r.ReadUint16(),
