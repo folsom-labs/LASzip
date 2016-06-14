@@ -53,6 +53,25 @@ type VariableLengthRecord struct {
 	Data []byte
 }
 
+// PointDataRecord0 describes Point Data Record format 0
+type PointDataRecord0 struct {
+	X              int32
+	Y              int32
+	Z              int32
+	Intensity      uint16
+	flags          uint8
+	Classification uint8
+	ScanAngleRank  uint8
+	UserData       uint8
+	PointSourceID  uint16
+
+	// those are calculated from flags
+	ReturnNumber      int // bits 0,1,2
+	NumberOfReturns   int // bits 3, 4, 5; given pulse
+	ScanDirectionFlag bool
+	EdgeOfFlightLine  bool
+}
+
 // LasReader is a reader for .las files
 type LasReader struct {
 	r                     io.Reader
@@ -155,6 +174,62 @@ func ReadVariableLengthRecord(r *BinaryReader) (*VariableLengthRecord, error) {
 
 	hdr.Data = r.ReadBytes(int(hdr.RecordLengthAfterHeader))
 	return &hdr, r.Error
+}
+
+/*
+// PointDataRecord0 describes Point Data Record format 0
+type PointDataRecord0 struct {
+	X              int32
+	Y              int32
+	Z              int32
+	Intensity      uint16
+	flags          uint8
+	Classification uint8
+	ScanAngleRank  uint8
+	UserData       uint8
+	PointSourceID  uint16
+
+	// those are calculated from flags
+	ReturnNumber      int // bits 0,1,2
+	NumberOfReturns   int // bits 3, 4, 5; given pulse
+	ScanDirectionFlag bool
+	EdgeOfFlightLine  bool
+}
+*/
+
+// return first nBits from b as int and the remaining bits shifted
+func eatBits(b uint8, nBits uint) (int, uint8) {
+	mask := uint8(1<<nBits) - 1
+	res := int(b & mask)
+	//fmt.Printf("b: 0x%x, nBits: %d, mask: 0x%x, res: %d", b, nBits, mask, res)
+	b = b >> uint(nBits)
+	//fmt.Printf(", b after: 0x%b\n", b)
+	return res, b
+}
+
+// ReadPointDataRecord0 reads Point Data Record Format 0
+func ReadPointDataRecord0(r *BinaryReader) (*PointDataRecord0, error) {
+	var p PointDataRecord0
+
+	p.X = r.ReadInt32()
+	p.Y = r.ReadInt32()
+	p.Z = r.ReadInt32()
+	p.Intensity = r.ReadUint16()
+	p.flags = r.ReadUint8()
+	p.Classification = r.ReadUint8()
+	p.ScanAngleRank = r.ReadUint8()
+	p.UserData = r.ReadUint8()
+	p.PointSourceID = r.ReadUint16()
+
+	b := p.flags
+	p.ReturnNumber, b = eatBits(b, 3)
+	p.NumberOfReturns, b = eatBits(b, 3)
+	n, b := eatBits(b, 1)
+	p.ScanDirectionFlag = (n == 1)
+	n, b = eatBits(b, 1)
+	p.EdgeOfFlightLine = (n == 1)
+
+	return &p, r.Error
 }
 
 // ReadHeaders reads public headers and Variable Length Records
