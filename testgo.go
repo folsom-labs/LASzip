@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"encoding/binary"
 	"fmt"
 	"io"
 	"os"
@@ -15,6 +14,12 @@ func fatalIfErr(err error) {
 	if err != nil {
 		fmt.Printf("error: '%s'\n", err)
 		os.Exit(1)
+	}
+}
+
+func fatalIf(cond bool) {
+	if cond {
+		panic("condition failed")
 	}
 }
 
@@ -64,6 +69,31 @@ type LasPublicHeader struct {
 	// corresponds to bit 0 of GlobalEncoding. If true, GPS Time in Point Records
 	// is standard GPS TIME (satellite GPS Time) minus 10e9.
 	IsGPSTimeStandard bool
+}
+
+// VariableLengthRecord describes Variable Length Record Header and its data
+// It's placed after LasPublicHeader
+type VariableLengthRecord struct {
+	reserved                uint16
+	UserID                  string
+	RecordID                uint16
+	RecordLengthAfterHeader uint16
+	Description             string
+
+	Data []byte
+}
+
+// ReadVariableLengthRecord reads VariableLengthRecord
+func ReadVariableLengthRecord(r *BinaryReader) (*VariableLengthRecord, error) {
+	var hdr VariableLengthRecord
+	hdr.reserved = r.ReadUint16()
+	hdr.UserID = r.ReadFixedString(16)
+	hdr.RecordID = r.ReadUint16()
+	hdr.RecordLengthAfterHeader = r.ReadUint16()
+	hdr.Description = r.ReadFixedString(32)
+
+	hdr.Data = r.ReadBytes(int(hdr.RecordLengthAfterHeader))
+	return &hdr, r.Error
 }
 
 // we support 1.0, 1.1, 1.2, 1.3, 1.4
@@ -131,17 +161,41 @@ func ReadLasPublicHeader(r *BinaryReader) (*LasPublicHeader, error) {
 
 	// TODO: read more fields if v1.3 or v1.4
 
+	// set calculated fields
 	hdr.IsGPSTimeStandard = uint16IsBitSet(hdr.GlobalEncoding, 0)
+
+	// skip fields at the end of the header we don't yet understand
+	gap := int(hdr.HeaderSize) - r.BytesConsumed
+	fatalIf(gap < 0)
+	r.Skip(gap)
+
 	return &hdr, r.Error
 }
 
 func dumpHeader(hdr *LasPublicHeader, w io.Writer) {
 	fmt.Fprintf(w, "Version: %d.%d\n", hdr.VersionMajor, hdr.VersionMinor)
+	fmt.Fprintf(w, "FileSourceID: %d\n", hdr.FileSourceID)
 	fmt.Fprintf(w, "SystemIdentifier: %s\n", hdr.SystemIdentifier)
 	fmt.Fprintf(w, "GeneratingSoftare: %s\n", hdr.GeneratingSoftware)
 	fmt.Fprintf(w, "HeaderSize: %d\n", hdr.HeaderSize)
 	fmt.Fprintf(w, "OffsetToPointData: %d\n", hdr.OffsetToPointData)
 	fmt.Fprintf(w, "NumberOfVariableLengthRecords: %d\n", hdr.NumberOfVariableLengthRecords)
+
+	fmt.Fprintf(w, "PointDataFormatID: %d\n", hdr.PointDataFormatID)
+
+	fmt.Fprintf(w, "NumberOfPointRecords: %d\n", hdr.NumberOfPointRecords)
+	fmt.Fprintf(w, "NumerOfPointsByReturn: %s\n", formatPointsByReturn(hdr.NumberOfPointsByReturn))
+	fmt.Fprintf(w, "Scale factor X Y Z: %.14f %.14f %.14f\n", hdr.XScaleFactor, hdr.YScaleFactor, hdr.ZScaleFactor)
+	fmt.Fprintf(w, "Offset X Y Z: %.2f %.2f %.2f\n", hdr.XOffset, hdr.YOffset, hdr.ZOffset)
+	fmt.Fprintf(w, "Min X Y Z: %.2f %.2f %.2f\n", hdr.MinX, hdr.MinY, hdr.MinZ)
+	fmt.Fprintf(w, "Max X Y Z: %.2f %.2f %.2f\n", hdr.MaxX, hdr.MaxY, hdr.MaxZ)
+}
+
+func dumpVariableLengthHeader(hdr *VariableLengthRecord, w io.Writer) {
+	fmt.Fprintf(w, "UserID: %s\n", hdr.UserID)
+	fmt.Fprintf(w, "RecordID: %d\n", hdr.RecordID)
+	fmt.Fprintf(w, "RecordLengthAfterHeader: %d\n", hdr.RecordLengthAfterHeader)
+	fmt.Fprintf(w, "Description: %s\n", hdr.Description)
 }
 
 func formatPointsByReturn(d [5]uint32) string {
@@ -209,18 +263,12 @@ func dumpHeaderLikeLasInfo(hdr *LasPublicHeader, w io.Writer) {
 	fmt.Fprintf(w, "  %-28s %.2f %.2f %.2f\n", "Max X Y Z:", hdr.MaxX, hdr.MaxY, hdr.MaxZ)
 }
 
-// BinaryReader is a helper for reading binary data
-type BinaryReader struct {
-	r             io.Reader
-	BytesConsumed int
-	Error         error
-}
-
 // LasReader is a reader for .las files
 type LasReader struct {
-	r      io.Reader
-	Header *LasPublicHeader
-	Error  error
+	r                     io.Reader
+	Header                *LasPublicHeader
+	VariableLengthRecords []*VariableLengthRecord
+	Error                 error
 }
 
 // NewLasReader creates a LasReader
@@ -230,88 +278,33 @@ func NewLasReader(r io.Reader) *LasReader {
 	}
 }
 
+// ReadHeaders reads public headers and Variable Length Records
+func (r *LasReader) ReadHeaders() error {
+	var err error
+	r.Header, err = r.ReadHeader()
+	if err != nil {
+		return err
+	}
+	br := NewBinaryReader(r.r)
+	n := int(r.Header.NumberOfVariableLengthRecords)
+	var records []*VariableLengthRecord
+	for i := 0; i < n; i++ {
+		r, err := ReadVariableLengthRecord(br)
+		if err != nil {
+			return err
+		}
+		records = append(records, r)
+	}
+	r.VariableLengthRecords = records
+	return nil
+}
+
 // ReadHeader reads public header
 func (r *LasReader) ReadHeader() (*LasPublicHeader, error) {
 	br := NewBinaryReader(r.r)
 	r.Header, r.Error = ReadLasPublicHeader(br)
-	fmt.Printf("bytes consumed: %d\n", br.BytesConsumed)
+	//fmt.Printf("bytes consumed: %d\n", br.BytesConsumed)
 	return r.Header, r.Error
-}
-
-// NewBinaryReader creates a new binary reader
-func NewBinaryReader(r io.Reader) *BinaryReader {
-	return &BinaryReader{
-		r: r,
-	}
-}
-
-// ReadFixedString reads a fixed string of nChars characters
-func (r *BinaryReader) ReadFixedString(nChars int) string {
-	var res string
-	if r.Error != nil {
-		return res
-	}
-	data := make([]byte, nChars, nChars)
-	n, err := r.r.Read(data[:])
-	if err == nil && n != nChars {
-		err = fmt.Errorf("ReadFixedString: wanted to read %d bytes, only read %d", nChars, n)
-	}
-	if err == nil {
-		res = string(data)
-		res = strings.TrimRight(res, "\000")
-	}
-	r.Error = err
-	r.BytesConsumed += nChars
-	return res
-}
-
-// Skip skips n bytes
-func (r *BinaryReader) Skip(nBytes int) {
-	r.ReadFixedString(nBytes)
-}
-
-// ReadUint8 reads a byte
-func (r *BinaryReader) ReadUint8() byte {
-	var res byte
-	if r.Error != nil {
-		return res
-	}
-	r.Error = binary.Read(r.r, binary.LittleEndian, &res)
-	r.BytesConsumed++
-	return res
-}
-
-// ReadUint16 reads uint16
-func (r *BinaryReader) ReadUint16() uint16 {
-	var res uint16
-	if r.Error != nil {
-		return res
-	}
-	r.Error = binary.Read(r.r, binary.LittleEndian, &res)
-	r.BytesConsumed += 2
-	return res
-}
-
-// ReadUint32 reads uint32
-func (r *BinaryReader) ReadUint32() uint32 {
-	var res uint32
-	if r.Error != nil {
-		return res
-	}
-	r.Error = binary.Read(r.r, binary.LittleEndian, &res)
-	r.BytesConsumed += 4
-	return res
-}
-
-// ReadFloat64 reads float64
-func (r *BinaryReader) ReadFloat64() float64 {
-	var res float64
-	if r.Error != nil {
-		return res
-	}
-	r.Error = binary.Read(r.r, binary.LittleEndian, &res)
-	r.BytesConsumed += 8
-	return res
 }
 
 func runLas2Txt(path string) string {
@@ -336,9 +329,23 @@ func readLasFile(path string) {
 	fatalIfErr(err)
 	defer f.Close()
 	r := NewLasReader(f)
-	hdr, err := r.ReadHeader()
+	err = r.ReadHeaders()
 	fatalIfErr(err)
-	dumpHeaderLikeLasInfo(hdr, os.Stdout)
+	dumpHeaderLikeLasInfo(r.Header, os.Stdout)
+}
+
+func readLasFile2(path string) {
+	f, err := os.Open(path)
+	fatalIfErr(err)
+	defer f.Close()
+	r := NewLasReader(f)
+	err = r.ReadHeaders()
+	fatalIfErr(err)
+	dumpHeader(r.Header, os.Stdout)
+	for _, record := range r.VariableLengthRecords {
+		fmt.Println("")
+		dumpVariableLengthHeader(record, os.Stdout)
+	}
 }
 
 func dumpHexLine(s string) {
@@ -407,10 +414,10 @@ func getLasInfoCompatibleOutput(path string) string {
 	fatalIfErr(err)
 	defer f.Close()
 	r := NewLasReader(f)
-	hdr, err := r.ReadHeader()
+	err = r.ReadHeaders()
 	fatalIfErr(err)
 	var buf bytes.Buffer
-	dumpHeaderLikeLasInfo(hdr, &buf)
+	dumpHeaderLikeLasInfo(r.Header, &buf)
 	return string(buf.Bytes())
 }
 
@@ -434,8 +441,9 @@ func main() {
 	}
 	path := args[0]
 	verifyFileExists(path)
-	compareLassInfoOutput(path)
+	//compareLassInfoOutput(path)
+	readLasFile2(path)
+
 	//las2txtOut := runLas2Txt(path)
 	//fmt.Printf("%s", las2txtOut)
-	//readLasFile(path)
 }
