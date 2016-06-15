@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"strings"
 )
 
 /*
@@ -295,7 +296,8 @@ func DecodeGeoKeyInfo(geoInfo *GeoKeyInfo) (*GeoTags, error) {
 			var v GeoTagString
 			v.TagID = int(key.KeyID)
 			v.Name = TagIDToName(v.TagID)
-			v.Value = string(geoInfo.ASCIIParams[idx : idx+n])
+			s := string(geoInfo.ASCIIParams[idx : idx+n])
+			v.Value = strings.TrimRight(s, "|")
 			res.TagsString = append(res.TagsString, v)
 		}
 	}
