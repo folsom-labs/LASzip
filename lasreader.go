@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"io"
 )
@@ -66,41 +65,6 @@ type VariableLengthRecord struct {
 	RecordLengthAfterHeader uint16
 	Description             string
 
-	Data []byte
-}
-
-// GeoKeyRaw describes a key
-type GeoKeyRaw struct {
-	// value in GeoTIFF spec
-	KeyID uint16
-	// 0 - data is in ValueOffset as unsigned short
-	// 34736 - data is at ValueOffset index of GeoDoubleParams record
-	// 34767 - data is at ValueOffset index of GetAsciiParams record
-	TIFFTagLocation uint16
-	// number of characters in string values of GeoAsciiParam record
-	Count       uint16
-	ValueOffset uint16
-}
-
-// GeoKeyDirectory describes VariableLengthRecord.Data when
-// UserID == LasfProjection and RecordID == GeoKeyDirectoryTag
-type GeoKeyDirectory struct {
-	KeyDirectoryVersion uint16 // must be 1
-	KeyRevision         uint16 // must be 1
-	MinorRevision       uint16 // must be 0
-	NumberOfKeys        uint16
-	KeysRaw             []GeoKeyRaw
-}
-
-// GeoDoubleParams has data from GeoDoubleParamsTag record
-type GeoDoubleParams struct {
-	Values []float64
-}
-
-// GeoASCIIParams has data from GeoASCIIParamsTag record
-type GeoASCIIParams struct {
-	// array of ascii data. null-separated strings, referenced  by
-	// GeoKey
 	Data []byte
 }
 
@@ -183,12 +147,11 @@ const (
 
 // LasReader is a reader for .las files
 type LasReader struct {
-	r                     io.Reader
+	r                     io.ReadSeeker
 	Header                *LasPublicHeader
 	VariableLengthRecords []*VariableLengthRecord
-	GeoKeyDirectory       *GeoKeyDirectory
-	GeoDoubleParams       []float64
-	GeoASCIIParams        *GeoASCIIParams
+	GeoKeyInfo            GeoKeyInfo
+	GeoTags               *GeoTags // decoded version of GeoKeyInfo
 	Classifications       []Classification
 	Error                 error
 }
@@ -245,7 +208,7 @@ func (p *PointDataRecord0) IsWithheld() bool {
 }
 
 // NewLasReader creates a LasReader
-func NewLasReader(r io.Reader) *LasReader {
+func NewLasReader(r io.ReadSeeker) *LasReader {
 	return &LasReader{
 		r: r,
 	}
@@ -358,18 +321,18 @@ func (r *LasReader) ReadGeoDoubleParams(br *BinaryReader, vlr *VariableLengthRec
 		return fmt.Errorf("Unexpected size of GeoDoubleParamsTag record. Is %d and expected to be multiple of 8", vlr.RecordLengthAfterHeader)
 	}
 	n := int(vlr.RecordLengthAfterHeader) / 8
+	var params []float64
 	for i := 0; i < n; i++ {
 		param := br.ReadFloat64()
-		r.GeoDoubleParams = append(r.GeoDoubleParams, param)
+		params = append(params, param)
 	}
+	r.GeoKeyInfo.DoubleParams = params
 	return br.Error
 }
 
 // ReadGeoASCIIParams reads GeoASCIIParams record
 func (r *LasReader) ReadGeoASCIIParams(br *BinaryReader, vlr *VariableLengthRecord) error {
-	var rec GeoASCIIParams
-	rec.Data = br.ReadBytes(int(vlr.RecordLengthAfterHeader))
-	r.GeoASCIIParams = &rec
+	r.GeoKeyInfo.ASCIIParams = br.ReadBytes(int(vlr.RecordLengthAfterHeader))
 	return br.Error
 }
 
@@ -399,10 +362,10 @@ func (r *LasReader) ReadGeoKeyDirectory(br *BinaryReader) error {
 		key.KeyID = br.ReadUint16()
 		key.TIFFTagLocation = br.ReadUint16()
 		key.Count = br.ReadUint16()
-		key.ValueOffset = br.ReadUint16()
+		key.ValueOrOffset = br.ReadUint16()
 		rec.KeysRaw = append(rec.KeysRaw, key)
 	}
-	r.GeoKeyDirectory = &rec
+	r.GeoKeyInfo.Directory = &rec
 	return br.Error
 }
 
@@ -490,38 +453,8 @@ func (r *LasReader) ReadHeaders() error {
 			return err
 		}
 	}
-	geoDir := r.GeoKeyDirectory
-	if geoDir == nil {
-		return errors.New("missing GeoKeyDirectoryTag record")
-	}
-	if geoDir.KeyDirectoryVersion != 1 {
-		return fmt.Errorf("GeoKeyDirectory.KeyDirectoryVersion is %d, expected 1", geoDir.KeyDirectoryVersion)
-	}
-	if geoDir.KeyRevision != 1 {
-		return fmt.Errorf("GeoKeyDirectory.KeyRevision is %d, expected 1", geoDir.KeyRevision)
-	}
-	if geoDir.MinorRevision != 0 {
-		return fmt.Errorf("GeoKeyDirectory.MinorRevision is %d, expected 0", geoDir.MinorRevision)
-	}
-	for _, key := range geoDir.KeysRaw {
-		loc := key.TIFFTagLocation
-		switch loc {
-		case 0:
-			// do nothing
-		case GeoDoubleParamsTag:
-			if r.GeoDoubleParams == nil {
-				return fmt.Errorf("key location in double params but GeoDoubleParamsTag record not present")
-				// TODO: update key with converted value ?
-			}
-		case GeoASCIIParamsTag:
-			// Note: 1.2 spec uses 34767 and not 34737, which I assume is a typo
-			if r.GeoASCIIParams == nil {
-				return fmt.Errorf("key location in ASCII params but GeoASCIIParamsTag record not present")
-				// TODO: update key with converted value ?
-			}
-		}
-	}
-	return nil
+	r.GeoTags, err = DecodeGeoKeyInfo(&r.GeoKeyInfo)
+	return err
 }
 
 // ReadHeader reads public header
