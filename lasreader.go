@@ -154,6 +154,10 @@ type LasReader struct {
 	GeoTags               *GeoTags // decoded version of GeoKeyInfo
 	Classifications       []Classification
 	Error                 error
+
+	// for optimizing sequential point reading, we remember what
+	// point was read last time
+	lastPointRead int
 }
 
 func uint16IsBitSet(v uint16, bitNo int) bool {
@@ -210,7 +214,8 @@ func (p *PointDataRecord0) IsWithheld() bool {
 // NewLasReader creates a LasReader
 func NewLasReader(r io.ReadSeeker) *LasReader {
 	return &LasReader{
-		r: r,
+		r:             r,
+		lastPointRead: -1,
 	}
 }
 
@@ -466,4 +471,75 @@ func (r *LasReader) ReadHeader() (*LasPublicHeader, error) {
 	r.Header, r.Error = ReadLasPublicHeader(br)
 	//fmt.Printf("bytes consumed: %d\n", br.BytesConsumed)
 	return r.Header, r.Error
+}
+
+// ReadPoint reads a point 0..r.Header.NumberOfPointRecords-1
+// It returns value of PointDataRecord0, PointDataRecord1, PointDataRecord2 etc.
+// so the caller needs to type-assert to interpret the data
+func (r *LasReader) ReadPoint(n int) (interface{}, error) {
+	if n < 0 || n >= int(r.Header.NumberOfPointRecords) {
+		return nil, fmt.Errorf("%d is invalid point number, must be >= 0 and < %d", n, r.Header.NumberOfPointRecords)
+	}
+	if r.lastPointRead != n-1 {
+		offset := int64(r.Header.OffsetToPointData) + (int64(n) * int64(r.Header.PointDataRecordLength))
+		newOffset, err := r.r.Seek(offset, 0)
+		if err != nil {
+			return nil, err
+		}
+		fatalIf(newOffset != offset)
+	}
+	br := NewBinaryReader(r.r)
+	var res interface{}
+	var err error
+	switch r.Header.PointDataFormatID {
+	case 0:
+		res, err = ReadPointDataRecord0(br)
+	case 1:
+		res, err = ReadPointDataRecord1(br)
+	case 2:
+		res, err = ReadPointDataRecord2(br)
+	case 3:
+		res, err = ReadPointDataRecord3(br)
+	default:
+		return nil, fmt.Errorf("%d is unsupported PointDataFormatID", r.Header.PointDataFormatID)
+	}
+	if err != nil {
+		return nil, err
+	}
+	toSkip := int(r.Header.PointDataRecordLength) - br.BytesConsumed
+	fatalIf(toSkip < 0)
+	br.Skip(toSkip)
+	//r.lastPointRead = n
+	return res, br.Error
+}
+
+// TransformPoints converts points as found in PointDataRecord0 to real value
+func (r *LasReader) TransformPoints(x, y, z int32) (float64, float64, float64) {
+	resX := r.Header.XOffset + (float64(x) * r.Header.XScaleFactor)
+	resY := r.Header.YOffset + (float64(y) * r.Header.YScaleFactor)
+	resZ := r.Header.ZOffset + (float64(z) * r.Header.ZScaleFactor)
+	return resX, resY, resZ
+}
+
+// ReadPoint0 reads a point and returns common data in PointDataRecord0
+// Helper function for cases that don't care about additional data in other
+// types of point records
+func (r *LasReader) ReadPoint0(n int) (*PointDataRecord0, error) {
+	p, err := r.ReadPoint(n)
+	if err != nil {
+		return nil, err
+	}
+	switch v := p.(type) {
+	case *PointDataRecord0:
+		return v, nil
+	case *PointDataRecord1:
+		return &v.PointDataRecord0, nil
+	case *PointDataRecord2:
+		return &v.PointDataRecord0, nil
+	case *PointDataRecord3:
+		return &v.PointDataRecord0, nil
+	default:
+		return nil, fmt.Errorf("Unexpected type of v: %T", v)
+	}
+
 }

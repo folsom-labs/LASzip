@@ -208,6 +208,17 @@ func readLasFile2(path string) {
 
 	fmt.Fprint(w, "\nGeoTags:\n")
 	dumpGeoTags(w, r.GeoTags)
+
+	nPoints := int(r.Header.NumberOfPointRecords)
+	if nPoints > 10 {
+		nPoints = 10
+	}
+	for i := 0; i < nPoints; i++ {
+		p, err := r.ReadPoint0(i)
+		fatalIfErr(err)
+		x, y, z := r.TransformPoints(p.X, p.Y, p.Z)
+		fmt.Fprintf(w, "%.2f,%.2f,%.2f\n", x, y, z)
+	}
 }
 
 func dumpHexLine(s string) {
