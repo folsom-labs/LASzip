@@ -61,6 +61,20 @@ func dumpVariableLengthHeader(hdr *VariableLengthRecord, w io.Writer) {
 	fmt.Fprintf(w, "Description: %s\n", hdr.Description)
 }
 
+func dumpGeoKeyDirectory(d *GeoKeyDirectory, w io.Writer) {
+	fmt.Fprintf(w, "Number of keys: %d\n", d.NumberOfKeys)
+	for _, k := range d.KeysRaw {
+		fmt.Fprintf(w, "id: %d, tiff loc: %d, count: %d offset: %d\n", k.KeyID, k.TIFFTagLocation, k.Count, k.ValueOffset)
+	}
+}
+
+func dumpASCIIParams(params *GeoASCIIParams, w io.Writer) {
+	strings := bytes.Split(params.Data, []byte{0})
+	for _, s := range strings {
+		fmt.Fprintf(w, "%s\n", string(s))
+	}
+}
+
 func formatPointsByReturn(d [5]uint32) string {
 	s := ""
 	for i := 0; i < 5; i++ {
@@ -160,10 +174,21 @@ func readLasFile2(path string) {
 	r := NewLasReader(f)
 	err = r.ReadHeaders()
 	fatalIfErr(err)
-	dumpHeader(r.Header, os.Stdout)
+
+	w := os.Stdout
+	dumpHeader(r.Header, w)
 	for _, record := range r.VariableLengthRecords {
-		fmt.Println("")
-		dumpVariableLengthHeader(record, os.Stdout)
+		fmt.Fprint(w, "\n")
+		dumpVariableLengthHeader(record, w)
+	}
+	if r.GeoASCIIParams != nil {
+		fmt.Fprint(w, "\nGeoASCIIParams:\n")
+		dumpASCIIParams(r.GeoASCIIParams, w)
+	}
+
+	if r.GeoKeyDirectory != nil {
+		fmt.Fprint(w, "\nGeoKeyDirectory:\n")
+		dumpGeoKeyDirectory(r.GeoKeyDirectory, w)
 	}
 }
 
