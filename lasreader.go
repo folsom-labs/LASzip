@@ -241,6 +241,9 @@ func ReadLasPublicHeader(r *BinaryReader) (*LasPublicHeader, error) {
 	hdr.OffsetToPointData = r.ReadUint32()
 	hdr.NumberOfVariableLengthRecords = r.ReadUint32()
 	hdr.PointDataFormatID = r.ReadUint8()
+	if hdr.PointDataFormatID > 3 {
+		return nil, fmt.Errorf("Unsupported point format id: %d (we understand 0-3)", hdr.PointDataFormatID)
+	}
 	hdr.PointDataRecordLength = r.ReadUint16()
 	hdr.NumberOfPointRecords = r.ReadUint32()
 	for i := 0; i < 5; i++ {

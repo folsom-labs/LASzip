@@ -59,6 +59,18 @@ func (r *BinaryReader) ReadFixedString(nChars int) string {
 
 // Skip skips n bytes
 func (r *BinaryReader) Skip(nBytes int) {
+
+	// TODO: why this breaks if enabled?
+	if false {
+		if seeker, ok := r.r.(io.Seeker); ok {
+			_, err := seeker.Seek(int64(nBytes), 1)
+			if err != nil {
+				r.Error = err
+			}
+			return
+		}
+	}
+
 	for nBytes > 0 {
 		// don't read more than 16k at a time, to prevent using too much memory
 		// at a time

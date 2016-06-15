@@ -297,6 +297,7 @@ func DecodeGeoKeyInfo(geoInfo *GeoKeyInfo) (*GeoTags, error) {
 			v.TagID = int(key.KeyID)
 			v.Name = TagIDToName(v.TagID)
 			s := string(geoInfo.ASCIIParams[idx : idx+n])
+			// geotiff replaces terminating 0 with |
 			v.Value = strings.TrimRight(s, "|")
 			res.TagsString = append(res.TagsString, v)
 		}
