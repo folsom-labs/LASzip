@@ -8,6 +8,7 @@ import (
 	"math"
 	"os"
 	"os/exec"
+	"sort"
 	"strings"
 )
 
@@ -286,6 +287,25 @@ func boolToInt(b bool) int {
 }
 
 /*
+{ 1 : 9079, 2 : 1244, 3 : 288, 4 : 42 }
+=>
+(1) 9079	(2) 1244	(3) 288	(4) 42
+*/
+func fmtIntHistogram(h map[int]int) string {
+	var keys []int
+	for k := range h {
+		keys = append(keys, k)
+	}
+	sort.Ints(keys)
+	var a []string
+	for _, k := range keys {
+		s := fmt.Sprintf("(%d) %d", k, h[k])
+		a = append(a, s)
+	}
+	return strings.Join(a, "\t")
+}
+
+/*
 ---------------------------------------------------------
   Point Inspection Summary
 ---------------------------------------------------------
@@ -332,6 +352,8 @@ func dumpLasPointInfo(r *LasReader, w io.Writer) {
 	hdr := r.Header
 	headerPointCount := int(hdr.NumberOfPointRecords)
 	classificationHistogram := make([]int, 12, 12)
+	byReturnHistogram := make(map[int]int)
+	byPulseHistogram := make(map[int]int)
 	actualPointCount := 0
 	nWithheld := 0
 	nKeyPoint := 0
@@ -435,6 +457,8 @@ func dumpLasPointInfo(r *LasReader, w io.Writer) {
 		if n < minReturnNumber {
 			minReturnNumber = n
 		}
+		byReturnHistogram[n]++
+
 		n = int(p0.NumberOfReturns)
 		if n > maxReturnCount {
 			maxReturnCount = n
@@ -442,6 +466,8 @@ func dumpLasPointInfo(r *LasReader, w io.Writer) {
 		if n < minReturnCount {
 			minReturnCount = n
 		}
+		byPulseHistogram[n]++
+
 		n = int(p0.UserData)
 		if n > maxUserData {
 			maxUserData = n
@@ -532,6 +558,17 @@ func dumpLasPointInfo(r *LasReader, w io.Writer) {
 		minClassification, maxClassification, // Classification
 		minPointSourceID, maxPointSourceID, // Point Source Id
 		minUserData, maxUserData) // User Data
+
+	fmt.Fprintf(w, `
+  Number of Points by Return
+---------------------------------------------------------
+	%s
+
+  Number of Returns by Pulse
+---------------------------------------------------------
+	%s
+
+	`, fmtIntHistogram(byReturnHistogram), fmtIntHistogram(byPulseHistogram))
 
 	fmt.Fprint(w, `
   Point Classifications
