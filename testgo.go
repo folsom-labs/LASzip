@@ -328,6 +328,13 @@ func compareLassInfoOutput(path string) {
 	compareLasInfo(lasInfoOut, meOut)
 }
 
+func boolToNumStr(b bool) string {
+	if b {
+		return "1"
+	}
+	return "0"
+}
+
 func getPointsMe(path string) []string {
 	f, err := os.Open(path)
 	fatalIfErr(err)
@@ -342,7 +349,15 @@ func getPointsMe(path string) []string {
 		p, err := r.ReadPoint0(i)
 		fatalIfErr(err)
 		x, y, z := r.TransformPoints(p.X, p.Y, p.Z)
-		s := fmt.Sprintf("%.2f,%.2f,%.2f,%d", x, y, z, p.ScanAngleRank)
+		a := p.ScanAngleRank
+		i := p.Intensity
+		n := p.NumberOfReturns
+		r := p.ReturnNumber
+		ps := p.PointSourceID
+		e := boolToNumStr(p.EdgeOfFlightLine)
+		d := boolToNumStr(p.ScanDirectionFlag)
+		c := p.Classification
+		s := fmt.Sprintf("%.2f,%.2f,%.2f,%d,%d,%d,%d,%d,%s,%s,%d", x, y, z, a, i, n, r, ps, e, d, c)
 		res = append(res, s)
 	}
 	return res
@@ -361,12 +376,13 @@ func getPointsMe(path string) []string {
 	i - intensity
 	n - number of returns for given pulse
 	r - number of this return
-	c - classification number
-	C - classification name
-	u - user data
 	p - point source ID
 	e - edge of flight line
 	d - direction of scan flag
+	c - classification number
+
+	C - classification name
+	u - user data
 	R - red channel of RGB color
 	G - green channel of RGB color
 	B - blue channel of RGB color
@@ -375,7 +391,7 @@ func getPointsMe(path string) []string {
 
 func compareWithLas2Txt(path string) {
 	// docs: http://www.liblas.org/utilities/las2txt.html
-	cmd := exec.Command("las2txt", "-i", path, "--stdout", "--parse", "xyza")
+	cmd := exec.Command("las2txt", "-i", path, "--stdout", "--parse", "xyzainrpedc")
 	d, err := cmd.CombinedOutput()
 	fatalIfErr(err)
 	lasLines := splitStringIntoLines(string(d))
