@@ -166,7 +166,8 @@ func formatPointsByReturn(d [5]uint32) string {
   Min X Y Z:                   635589.01 848886.45 406.59
   Max X Y Z:                   638994.75 853535.43 593.73
 */
-func dumpHeaderLikeLasInfo(hdr *LasPublicHeader, w io.Writer) {
+func dumpLikeLasInfo(r *LasReader, w io.Writer) {
+	hdr := r.Header
 	fmt.Fprintf(w, `---------------------------------------------------------
   Header Summary
 ---------------------------------------------------------
@@ -195,6 +196,27 @@ func dumpHeaderLikeLasInfo(hdr *LasPublicHeader, w io.Writer) {
 	fmt.Fprintf(w, "  %-28s %.2f %.2f %.2f\n", "Offset X Y Z:", hdr.XOffset, hdr.YOffset, hdr.ZOffset)
 	fmt.Fprintf(w, "  %-28s %.2f %.2f %.2f\n", "Min X Y Z:", hdr.MinX, hdr.MinY, hdr.MinZ)
 	fmt.Fprintf(w, "  %-28s %.2f %.2f %.2f\n", "Max X Y Z:", hdr.MaxX, hdr.MaxY, hdr.MaxZ)
+
+	if hdr.PointDataFormatID == 1 {
+		fmt.Fprint(w, `
+  Dimensions
+---------------------------------------------------------
+  'X'                            --  size: 32 offset: 0
+  'Y'                            --  size: 32 offset: 4
+  'Z'                            --  size: 32 offset: 8
+  'Intensity'                    --  size: 16 offset: 12
+  'Return Number'                --  size: 3 offset: 14
+  'Number of Returns'            --  size: 3 offset: 14
+  'Scan Direction'               --  size: 1 offset: 14
+  'Flightline Edge'              --  size: 1 offset: 14
+  'Classification'               --  size: 8 offset: 15
+  'Scan Angle Rank'              --  size: 8 offset: 16
+  'User Data'                    --  size: 8 offset: 17
+  'Point Source ID'              --  size: 16 offset: 18
+  'Time'                         --  size: 64 offset: 20
+
+`)
+	}
 }
 
 func runLas2Txt(path string) []string {
@@ -221,7 +243,7 @@ func readLasFile(path string) {
 	r := NewLasReader(f)
 	err = r.ReadHeaders()
 	fatalIfErr(err)
-	dumpHeaderLikeLasInfo(r.Header, os.Stdout)
+	dumpLikeLasInfo(r, os.Stdout)
 }
 
 func showLasInfo(path string, showHeader, showPoints bool) {
@@ -298,7 +320,7 @@ func getLasInfoCompatibleOutput(path string) string {
 	err = r.ReadHeaders()
 	fatalIfErr(err)
 	var buf bytes.Buffer
-	dumpHeaderLikeLasInfo(r.Header, &buf)
+	dumpLikeLasInfo(r, &buf)
 	return string(buf.Bytes())
 }
 
