@@ -140,33 +140,32 @@ func formatPointsByReturn(d [5]uint32) string {
 	return s[:len(s)-1]
 }
 
-// for easy testing, dump header like lassinfo tool (http://www.liblas.org/utilities/lasinfo.html
-/* It looks like:
+/*
 ---------------------------------------------------------
-  Header Summary
+	Header Summary
 ---------------------------------------------------------
 
-  Version:                     1.2
-  Source ID:                   0
-  Reserved:                    0
-  Project ID/GUID:             '00000000-0000-0000-0000-000000000000'
-  System ID:                   ''
-  Generating Software:         'TerraScan'
-  File Creation Day/Year:      0/0
-  Header Byte Size             227
-  Data Offset:                 1220
-  Header Padding:              0
-  Number Var. Length Records:  3
-  Point Data Format:           1
-  Number of Point Records:     10653
-  Compressed:                  False
-  Number of Points by Return:  9079 1244 288 42 0
-  Scale Factor X Y Z:          0.01000000000000 0.01000000000000 0.01000000000000
-  Offset X Y Z:                -0.00 -0.00 -0.00
-  Min X Y Z:                   635589.01 848886.45 406.59
-  Max X Y Z:                   638994.75 853535.43 593.73
+	Version:                     1.2
+	Source ID:                   0
+	Reserved:                    0
+	Project ID/GUID:             '00000000-0000-0000-0000-000000000000'
+	System ID:                   ''
+	Generating Software:         'TerraScan'
+	File Creation Day/Year:      0/0
+	Header Byte Size             227
+	Data Offset:                 1220
+	Header Padding:              0
+	Number Var. Length Records:  3
+	Point Data Format:           1
+	Number of Point Records:     10653
+	Compressed:                  False
+	Number of Points by Return:  9079 1244 288 42 0
+	Scale Factor X Y Z:          0.01000000000000 0.01000000000000 0.01000000000000
+	Offset X Y Z:                -0.00 -0.00 -0.00
+	Min X Y Z:                   635589.01 848886.45 406.59
+	Max X Y Z:                   638994.75 853535.43 593.73
 */
-func dumpLikeLasInfo(r *LasReader, w io.Writer) {
+func dumpLasHeaderSummary(r *LasReader, w io.Writer) {
 	hdr := r.Header
 	fmt.Fprintf(w, `---------------------------------------------------------
   Header Summary
@@ -189,6 +188,7 @@ func dumpLikeLasInfo(r *LasReader, w io.Writer) {
 	fmt.Fprintf(w, "  %-28s %d\n", "Point Data Format:", hdr.PointDataFormatID)
 
 	fmt.Fprintf(w, "  %-28s %d\n", "Number of Point Records:", hdr.NumberOfPointRecords)
+	// TODO: what is it? true for .laz files?
 	fmt.Fprintf(w, "  %-28s %s\n", "Compressed:", "False")
 	fmt.Fprintf(w, "  %-28s %s\n", "Number of Points by Return:", formatPointsByReturn(hdr.NumberOfPointsByReturn))
 
@@ -196,7 +196,33 @@ func dumpLikeLasInfo(r *LasReader, w io.Writer) {
 	fmt.Fprintf(w, "  %-28s %.2f %.2f %.2f\n", "Offset X Y Z:", hdr.XOffset, hdr.YOffset, hdr.ZOffset)
 	fmt.Fprintf(w, "  %-28s %.2f %.2f %.2f\n", "Min X Y Z:", hdr.MinX, hdr.MinY, hdr.MinZ)
 	fmt.Fprintf(w, "  %-28s %.2f %.2f %.2f\n", "Max X Y Z:", hdr.MaxX, hdr.MaxY, hdr.MaxZ)
+}
 
+/*
+---------------------------------------------------------
+	VLR Summary
+---------------------------------------------------------
+		User: 'LASF_Projection' - Description: 'GeoTIFF GeoKeyDirectoryTag'
+		ID: 34735 Length: 64 Total Size: 118
+		User: 'LASF_Projection' - Description: 'GeoTIFF GeoAsciiParamsTag'
+		ID: 34737 Length: 47 Total Size: 101
+		User: 'liblas' - Description: 'OGR variant of OpenGIS WKT SRS'
+		ID: 2112 Length: 720 Total Size: 774
+*/
+func dumpLasVLRSummary(r *LasReader, w io.Writer) {
+	fmt.Fprintf(w, `
+---------------------------------------------------------
+  VLR Summary
+---------------------------------------------------------
+`)
+	for _, vlr := range r.VariableLengthRecords {
+		fmt.Fprintf(w, "    User: '%s' - Description: '%s'\n", vlr.UserID, vlr.Description)
+		fmt.Fprintf(w, "    ID: %d Length: %d Total Size: %d\n", vlr.RecordID, vlr.RecordLengthAfterHeader, vlr.RecordLengthAfterHeader+54)
+	}
+}
+
+func dumpLasDimensions(r *LasReader, w io.Writer) {
+	hdr := r.Header
 	if hdr.PointDataFormatID == 1 {
 		fmt.Fprint(w, `
   Dimensions
@@ -217,6 +243,13 @@ func dumpLikeLasInfo(r *LasReader, w io.Writer) {
 
 `)
 	}
+}
+
+// for easy testing, dump header like lassinfo tool (http://www.liblas.org/utilities/lasinfo.html
+func dumpLikeLasInfo(r *LasReader, w io.Writer) {
+	dumpLasHeaderSummary(r, w)
+	dumpLasVLRSummary(r, w)
+	dumpLasDimensions(r, w)
 }
 
 func runLas2Txt(path string) []string {
