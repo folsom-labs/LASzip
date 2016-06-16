@@ -278,6 +278,13 @@ func dumpLasDimensions(r *LasReader, w io.Writer) {
 	}
 }
 
+func boolToInt(b bool) int {
+	if b {
+		return 1
+	}
+	return 0
+}
+
 /*
 ---------------------------------------------------------
   Point Inspection Summary
@@ -352,6 +359,22 @@ func dumpLasPointInfo(r *LasReader, w io.Writer) {
 	minUserData := int(math.MaxInt32)
 	maxUserData := int(math.MinInt32)
 
+	minIntensity := int(math.MaxInt32)
+	maxIntensity := int(math.MinInt32)
+
+	minScanDirFlag := int(math.MaxInt32)
+	maxScanDirFlag := int(math.MinInt32)
+
+	minScanAngle := int(math.MaxInt32)
+	maxScanAngle := int(math.MinInt32)
+
+	minClassification := int(math.MaxInt32)
+	maxClassification := int(math.MinInt32)
+
+	minPointSourceID := int(math.MaxInt32)
+	maxPointSourceID := int(math.MinInt32)
+
+	var n int
 	for i := 0; i < headerPointCount; i++ {
 		p, err := r.ReadPoint(i)
 		if err != nil {
@@ -363,10 +386,17 @@ func dumpLasPointInfo(r *LasReader, w io.Writer) {
 		}
 		actualPointCount++
 		class := p0.GetClassification()
-		classInt := int(class)
-		if classInt >= 0 && classInt < len(classificationHistogram) {
-			classificationHistogram[classInt]++
+		n = int(class)
+		if n >= 0 && n < len(classificationHistogram) {
+			classificationHistogram[n]++
 		}
+		if n > maxClassification {
+			maxClassification = n
+		}
+		if n < minClassification {
+			minClassification = n
+		}
+
 		if p0.IsWithheld() {
 			nWithheld++
 		}
@@ -397,6 +427,68 @@ func dumpLasPointInfo(r *LasReader, w io.Writer) {
 		if z > maxZ {
 			maxZ = z
 		}
+
+		n = int(p0.ReturnNumber)
+		if n > maxReturnNumber {
+			maxReturnNumber = n
+		}
+		if n < minReturnNumber {
+			minReturnNumber = n
+		}
+		n = int(p0.NumberOfReturns)
+		if n > maxReturnCount {
+			maxReturnCount = n
+		}
+		if n < minReturnCount {
+			minReturnCount = n
+		}
+		n = int(p0.UserData)
+		if n > maxUserData {
+			maxUserData = n
+		}
+		if n < minUserData {
+			minUserData = n
+		}
+
+		n = boolToInt(p0.EdgeOfFlightLine)
+		if n > maxFlightEdge {
+			maxFlightEdge = n
+		}
+		if n < minFlightEdge {
+			minFlightEdge = n
+		}
+
+		n = int(p0.Intensity)
+		if n > maxIntensity {
+			maxIntensity = n
+		}
+		if n < minIntensity {
+			minIntensity = n
+		}
+
+		n = boolToInt(p0.ScanDirectionFlag)
+		if n > maxScanDirFlag {
+			maxScanDirFlag = n
+		}
+		if n < minScanDirFlag {
+			minScanDirFlag = n
+		}
+
+		n = int(p0.ScanAngleRank)
+		if n > maxScanAngle {
+			maxScanAngle = n
+		}
+		if n < minScanAngle {
+			minScanAngle = n
+		}
+
+		n = int(p0.PointSourceID)
+		if n > maxPointSourceID {
+			maxPointSourceID = n
+		}
+		if n < minPointSourceID {
+			minPointSourceID = n
+		}
 	}
 
 	fmt.Fprintf(w, `
@@ -418,11 +510,11 @@ func dumpLasPointInfo(r *LasReader, w io.Writer) {
   Return Number:	%d, %d
   Return Count:		%d, %d
   Flightline Edge:	%d, %d
-  Intensity:		0, 254
-  Scan Direction Flag:	0, 1
-  Scan Angle Rank:	-20, 19
-  Classification:	1, 2
-  Point Source Id:	7326, 7334
+  Intensity:		%d, %d
+  Scan Direction Flag:	%d, %d
+  Scan Angle Rank:	%d, %d
+  Classification:	%d, %d
+  Point Source Id:	%d, %d
   User Data:		%d, %d
   Minimum Color (RGB):	0 0 0
   Maximum Color (RGB):	0 0 0
@@ -434,6 +526,11 @@ func dumpLasPointInfo(r *LasReader, w io.Writer) {
 		minReturnNumber, maxReturnNumber, // Return Number
 		minReturnCount, maxReturnCount, // Return Count
 		minFlightEdge, maxFlightEdge, // Flightline Edge
+		minIntensity, maxIntensity, // Intensity
+		minScanDirFlag, maxScanDirFlag, // Scan Direction flag
+		minScanAngle, maxScanAngle, // Scan Angle Rank
+		minClassification, maxClassification, // Classification
+		minPointSourceID, maxPointSourceID, // Point Source Id
 		minUserData, maxUserData) // User Data
 
 	fmt.Fprint(w, `
