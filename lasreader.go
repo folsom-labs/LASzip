@@ -85,7 +85,7 @@ type PointDataRecord0 struct {
 	Classification uint8
 	// -90 .. +90, 0 is nadir, -90 is to the left side of the aircraft in the
 	// direction of flight
-	ScanAngleRank uint8
+	ScanAngleRank int8
 	UserData      uint8
 	// Where did point come from, 0 means this file, otherwise should be
 	// FileSourceID
@@ -387,7 +387,7 @@ func ReadPointDataRecord0(r *BinaryReader) (*PointDataRecord0, error) {
 	p.Intensity = r.ReadUint16()
 	p.flags = r.ReadUint8()
 	p.Classification = r.ReadUint8()
-	p.ScanAngleRank = r.ReadUint8()
+	p.ScanAngleRank = r.ReadInt8()
 	p.UserData = r.ReadUint8()
 	p.PointSourceID = r.ReadUint16()
 

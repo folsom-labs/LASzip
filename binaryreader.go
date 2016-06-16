@@ -83,9 +83,20 @@ func (r *BinaryReader) Skip(nBytes int) {
 	}
 }
 
-// ReadUint8 reads a byte
+// ReadUint8 reads unsigned byte
 func (r *BinaryReader) ReadUint8() byte {
-	var res byte
+	var res uint8
+	if r.Error != nil {
+		return res
+	}
+	r.Error = binary.Read(r.r, binary.LittleEndian, &res)
+	r.BytesConsumed++
+	return res
+}
+
+// ReadInt8 reads signed byte
+func (r *BinaryReader) ReadInt8() int8 {
+	var res int8
 	if r.Error != nil {
 		return res
 	}

@@ -342,7 +342,7 @@ func getPointsMe(path string) []string {
 		p, err := r.ReadPoint0(i)
 		fatalIfErr(err)
 		x, y, z := r.TransformPoints(p.X, p.Y, p.Z)
-		s := fmt.Sprintf("%.2f,%.2f,%.2f", x, y, z)
+		s := fmt.Sprintf("%.2f,%.2f,%.2f,%d", x, y, z, p.ScanAngleRank)
 		res = append(res, s)
 	}
 	return res
@@ -375,7 +375,7 @@ func getPointsMe(path string) []string {
 
 func compareWithLas2Txt(path string) {
 	// docs: http://www.liblas.org/utilities/las2txt.html
-	cmd := exec.Command("las2txt", "-i", path, "--stdout", "--parse", "xyz")
+	cmd := exec.Command("las2txt", "-i", path, "--stdout", "--parse", "xyza")
 	d, err := cmd.CombinedOutput()
 	fatalIfErr(err)
 	lasLines := splitStringIntoLines(string(d))
