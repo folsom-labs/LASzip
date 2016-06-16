@@ -188,12 +188,12 @@ type LasReader struct {
 
 func uint16IsBitSet(v uint16, bitNo int) bool {
 	var mask uint16 = 1 << uint16(bitNo)
-	return v&mask == 0
+	return v&mask != 0
 }
 
 func uint8IsBitSet(v uint8, bitNo int) bool {
 	var mask uint8 = 1 << uint8(bitNo)
-	return v&mask == 0
+	return v&mask != 0
 }
 
 // return first nBits from b as int and the remaining bits shifted
@@ -547,6 +547,22 @@ func (r *LasReader) TransformPoints(x, y, z int32) (float64, float64, float64) {
 	return resX, resY, resZ
 }
 
+// GetPoint0 extracts PointDataRecord0 from any PointDataRecord*
+func GetPoint0(p interface{}) *PointDataRecord0 {
+	switch v := p.(type) {
+	case *PointDataRecord0:
+		return v
+	case *PointDataRecord1:
+		return &v.PointDataRecord0
+	case *PointDataRecord2:
+		return &v.PointDataRecord0
+	case *PointDataRecord3:
+		return &v.PointDataRecord0
+	default:
+		return nil
+	}
+}
+
 // ReadPoint0 reads a point and returns common data in PointDataRecord0
 // Helper function for cases that don't care about additional data in other
 // types of point records
@@ -555,18 +571,11 @@ func (r *LasReader) ReadPoint0(n int) (*PointDataRecord0, error) {
 	if err != nil {
 		return nil, err
 	}
-	switch v := p.(type) {
-	case *PointDataRecord0:
-		return v, nil
-	case *PointDataRecord1:
-		return &v.PointDataRecord0, nil
-	case *PointDataRecord2:
-		return &v.PointDataRecord0, nil
-	case *PointDataRecord3:
-		return &v.PointDataRecord0, nil
-	default:
-		return nil, fmt.Errorf("Unexpected type of v: %T", v)
+	p0 := GetPoint0(p)
+	if p0 == nil {
+		return nil, fmt.Errorf("Unexpected type of p: %T", p)
 	}
+	return p0, nil
 }
 
 // GetModelType returns value of GTModelTypeGeoKey GeoTiff key and

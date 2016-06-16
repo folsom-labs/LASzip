@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"math"
 	"os"
 	"os/exec"
 	"strings"
@@ -241,6 +242,7 @@ func dumpLasSchemaSummary(r *LasReader, w io.Writer) {
 		nDimensions = 12 + 3
 	case 3:
 		nDimensions = 12 + 4
+		// TODO: handle more cases
 	}
 	fmt.Fprintf(w, `
   Schema Summary
@@ -276,12 +278,191 @@ func dumpLasDimensions(r *LasReader, w io.Writer) {
 	}
 }
 
+/*
+---------------------------------------------------------
+  Point Inspection Summary
+---------------------------------------------------------
+  Header Point Count: 10653
+  Actual Point Count: 10653
+
+  Minimum and Maximum Attributes (min,max)
+---------------------------------------------------------
+  Min X, Y, Z: 		635589.01, 848886.45, 406.59
+  Max X, Y, Z: 		638994.75, 853535.43, 593.73
+  Bounding Box:		635589.01, 848886.45, 638994.75, 853535.43
+  Time:			245369.975754, 249783.588102
+  Return Number:	1, 4
+  Return Count:		1, 4
+  Flightline Edge:	0, 0
+  Intensity:		0, 254
+  Scan Direction Flag:	0, 1
+  Scan Angle Rank:	-20, 19
+  Classification:	1, 2
+  Point Source Id:	7326, 7334
+  User Data:		117, 156
+  Minimum Color (RGB):	0 0 0
+  Maximum Color (RGB):	0 0 0
+
+  Number of Points by Return
+---------------------------------------------------------
+	(1) 9079	(2) 1244	(3) 288	(4) 42
+
+  Number of Returns by Pulse
+---------------------------------------------------------
+	(1) 7810	(2) 1899	(3) 801	(4) 143
+
+  Point Classifications
+---------------------------------------------------------
+	7934 Unclassified (1)
+	2719 Ground (2)
+  -------------------------------------------------------
+  	0 withheld
+  	0 keypoint
+  	0 synthetic
+  -------------------------------------------------------
+*/
+func dumpLasPointInfo(r *LasReader, w io.Writer) {
+	hdr := r.Header
+	headerPointCount := int(hdr.NumberOfPointRecords)
+	classificationHistogram := make([]int, 12, 12)
+	actualPointCount := 0
+	nWithheld := 0
+	nKeyPoint := 0
+	nSynthetic := 0
+	minX := math.MaxFloat64
+	minY := math.MaxFloat64
+	minZ := math.MaxFloat64
+	// why there is no math.MinFloat64?
+	maxX := float64(math.MinInt64)
+	maxY := float64(math.MinInt64)
+	maxZ := float64(math.MinInt64)
+
+	minTime := math.MaxFloat32
+	maxTime := float64(math.MinInt64)
+
+	minReturnNumber := int(math.MaxInt32)
+	maxReturnNumber := int(math.MinInt32)
+
+	minReturnCount := int(math.MaxInt32)
+	maxReturnCount := int(math.MinInt32)
+
+	minFlightEdge := int(math.MaxInt32)
+	maxFlightEdge := int(math.MinInt32)
+
+	minUserData := int(math.MaxInt32)
+	maxUserData := int(math.MinInt32)
+
+	for i := 0; i < headerPointCount; i++ {
+		p, err := r.ReadPoint(i)
+		if err != nil {
+			break
+		}
+		p0 := GetPoint0(p)
+		if p0 == nil {
+			break
+		}
+		actualPointCount++
+		class := p0.GetClassification()
+		classInt := int(class)
+		if classInt >= 0 && classInt < len(classificationHistogram) {
+			classificationHistogram[classInt]++
+		}
+		if p0.IsWithheld() {
+			nWithheld++
+		}
+		if p0.IsKeyPoint() {
+			nKeyPoint++
+		}
+		if p0.IsSynthetic() {
+			nSynthetic++
+		}
+		x, y, z := r.TransformPoints(p0.X, p0.Y, p0.Z)
+		if x < minX {
+			minX = x
+		}
+		if x > maxX {
+			maxX = x
+		}
+
+		if y < minY {
+			minY = y
+		}
+		if y > maxY {
+			maxY = y
+		}
+
+		if z < minZ {
+			minZ = z
+		}
+		if z > maxZ {
+			maxZ = z
+		}
+	}
+
+	fmt.Fprintf(w, `
+---------------------------------------------------------
+  Point Inspection Summary
+---------------------------------------------------------
+  Header Point Count: %d
+  Actual Point Count: %d
+
+`, headerPointCount, actualPointCount)
+
+	fmt.Fprintf(w, `
+  Minimum and Maximum Attributes (min,max)
+---------------------------------------------------------
+  Min X, Y, Z: 		%.2f, %.2f, %.2f
+  Max X, Y, Z: 		%.2f, %.2f, %.2f
+  Bounding Box:		%.2f, %.2f, %.2f, %.2f
+  Time:			%.6f, %.6f
+  Return Number:	%d, %d
+  Return Count:		%d, %d
+  Flightline Edge:	%d, %d
+  Intensity:		0, 254
+  Scan Direction Flag:	0, 1
+  Scan Angle Rank:	-20, 19
+  Classification:	1, 2
+  Point Source Id:	7326, 7334
+  User Data:		%d, %d
+  Minimum Color (RGB):	0 0 0
+  Maximum Color (RGB):	0 0 0
+
+`, minX, minY, minZ, // Min X, Y, Z
+		maxX, maxY, maxZ, // Max X, Y, Z
+		minX, minY, maxX, maxY, // bounding box
+		minTime, maxTime, // Time
+		minReturnNumber, maxReturnNumber, // Return Number
+		minReturnCount, maxReturnCount, // Return Count
+		minFlightEdge, maxFlightEdge, // Flightline Edge
+		minUserData, maxUserData) // User Data
+
+	fmt.Fprint(w, `
+  Point Classifications
+---------------------------------------------------------
+`)
+	for i, count := range classificationHistogram {
+		if count > 0 {
+			name := GetClassificationName(ClassificationType(i))
+			fmt.Fprintf(w, "	%d %s (%d)\n", count, name, i)
+		}
+	}
+
+	fmt.Fprintf(w, `
+  -------------------------------------------------------
+  	%d withheld
+  	%d keypoint
+  	%d synthetic
+  -------------------------------------------------------
+`, nWithheld, nKeyPoint, nSynthetic)
+}
+
 // for easy testing, dump header like lassinfo tool (http://www.liblas.org/utilities/lasinfo.html
 func dumpLikeLasInfo(r *LasReader, w io.Writer) {
 	dumpLasHeaderSummary(r, w)
 	dumpLasVLRSummary(r, w)
 	dumpLasSchemaSummary(r, w)
 	dumpLasDimensions(r, w)
+	dumpLasPointInfo(r, w)
 }
 
 func runLas2Txt(path string) []string {
