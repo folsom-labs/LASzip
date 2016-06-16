@@ -221,6 +221,37 @@ func dumpLasVLRSummary(r *LasReader, w io.Writer) {
 	}
 }
 
+/*
+  Schema Summary
+---------------------------------------------------------
+  Point Format ID:             1
+  Number of dimensions:        13
+  Custom schema?:              false
+  Size in bytes:               28
+*/
+func dumpLasSchemaSummary(r *LasReader, w io.Writer) {
+	hdr := r.Header
+	nDimensions := -1
+	switch hdr.PointDataFormatID {
+	case 0:
+		nDimensions = 12
+	case 1:
+		nDimensions = 12 + 1
+	case 2:
+		nDimensions = 12 + 3
+	case 3:
+		nDimensions = 12 + 4
+	}
+	fmt.Fprintf(w, `
+  Schema Summary
+---------------------------------------------------------
+  Point Format ID:             %d
+  Number of dimensions:        %d
+  Custom schema?:              false
+  Size in bytes:               %d
+`, hdr.PointDataFormatID, nDimensions, hdr.PointDataRecordLength)
+}
+
 func dumpLasDimensions(r *LasReader, w io.Writer) {
 	hdr := r.Header
 	if hdr.PointDataFormatID == 1 {
@@ -249,6 +280,7 @@ func dumpLasDimensions(r *LasReader, w io.Writer) {
 func dumpLikeLasInfo(r *LasReader, w io.Writer) {
 	dumpLasHeaderSummary(r, w)
 	dumpLasVLRSummary(r, w)
+	dumpLasSchemaSummary(r, w)
 	dumpLasDimensions(r, w)
 }
 
