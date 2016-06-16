@@ -245,6 +245,51 @@ func TagIDToName(tagID int) string {
 	}
 }
 
+// 6.3.1.1 Model Type Codes for GTModelTypeGeoKey
+// https://github.com/smanders/libgeotiff/blob/4660cdfa5b29dcaa164ee2a12eb3519596dfa44c/geovalues.h#L54
+type ModelType int
+
+const (
+	ModelTypeProjected  ModelType = 1
+	ModelTypeGeographic ModelType = 2
+	ModelTypeGeocentric ModelType = 3
+)
+
+// ModelTypeName returns a name for a given ModelType constant
+func ModelTypeName(t ModelType) string {
+	switch t {
+	case ModelTypeProjected:
+		return "ModelTypeProjected"
+	case ModelTypeGeographic:
+		return "ModelTypeGeographic"
+	case ModelTypeGeocentric:
+		return "ModelTypeGeocentric"
+	default:
+		return fmt.Sprintf("Unknown ModelType value (%d)", int(t))
+	}
+}
+
+// 6.3.1.2 Raster Type Codes for GTRasterTypeGeoKey
+// https://github.com/smanders/libgeotiff/blob/4660cdfa5b29dcaa164ee2a12eb3519596dfa44c/geovalues.h#L64
+type RasterType int
+
+const (
+	RasterPixelIsArea  RasterType = 1
+	RasterPixelIsPoint RasterType = 2
+)
+
+// RasterTypeName returns a name for a given RasterType constant
+func RasterTypeName(t RasterType) string {
+	switch t {
+	case RasterPixelIsArea:
+		return "RasterPixelIsArea"
+	case RasterPixelIsPoint:
+		return "RasterPixelIsPoint"
+	default:
+		return fmt.Sprintf("Unkown RasterType value (%d)", int(t))
+	}
+}
+
 // DecodeGeoKeyInfo decodes geo information
 func DecodeGeoKeyInfo(geoInfo *GeoKeyInfo) (*GeoTags, error) {
 	geoDir := geoInfo.Directory
@@ -304,4 +349,14 @@ func DecodeGeoKeyInfo(geoInfo *GeoKeyInfo) (*GeoTags, error) {
 	}
 
 	return &res, nil
+}
+
+// FindGeoTagShort returns GeoTagShort with a given tagID
+func (tags *GeoTags) FindGeoTagShort(tagID int) *GeoTagShort {
+	for _, t := range tags.TagsShort {
+		if t.TagID == tagID {
+			return &t
+		}
+	}
+	return nil
 }

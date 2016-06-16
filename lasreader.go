@@ -567,5 +567,29 @@ func (r *LasReader) ReadPoint0(n int) (*PointDataRecord0, error) {
 	default:
 		return nil, fmt.Errorf("Unexpected type of v: %T", v)
 	}
+}
 
+// GetModelType returns value of GTModelTypeGeoKey GeoTiff key and
+// a bool that indicates if value is present and valid
+func (r *LasReader) GetModelType() (ModelType, bool) {
+	tagShort := r.GeoTags.FindGeoTagShort(GTModelTypeGeoKey)
+	if tagShort != nil {
+		v := tagShort.Value
+		if v >= 1 && v <= 3 {
+			return ModelType(v), true
+		}
+	}
+	return ModelType(0), false
+}
+
+// GetRasterType returns value GTRasterTypeGeoKey
+func (r *LasReader) GetRasterType() (RasterType, bool) {
+	tagShort := r.GeoTags.FindGeoTagShort(GTRasterTypeGeoKey)
+	if tagShort != nil {
+		v := tagShort.Value
+		if v >= 1 && v <= 2 {
+			return RasterType(v), true
+		}
+	}
+	return RasterType(0), false
 }
