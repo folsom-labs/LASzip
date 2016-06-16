@@ -131,7 +131,7 @@ type PointDataRecord3 struct {
 type ClassificationType int
 
 const (
-	Created ClassificationType = 0
+	Created ClassificationType = iota
 	Unclassified
 	Ground
 	LowVegetation
@@ -144,6 +144,32 @@ const (
 	Reserved2
 	OverlapPoints
 )
+
+// GetClassificationName returns name of a given ClassificationType
+func GetClassificationName(c ClassificationType) string {
+	switch c {
+	case Unclassified:
+		return "Unclassified"
+	case Ground:
+		return "Ground"
+	case LowVegetation:
+		return "LowVegetation"
+	case MediumVegetation:
+		return "MediumVegetation"
+	case HighVegetation:
+		return "HighVegetation"
+	case BuildingLowPoint:
+		return "BuildingLowPoint"
+	case ModelKeyPoint:
+		return "ModelKeyPoint"
+	case Water:
+		return "Water"
+	case OverlapPoints:
+		return "OverlapPoints"
+	default:
+		return fmt.Sprintf("Unknown classification (%d)", int(c))
+	}
+}
 
 // LasReader is a reader for .las files
 type LasReader struct {

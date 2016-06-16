@@ -356,8 +356,10 @@ func getPointsMe(path string) []string {
 		ps := p.PointSourceID
 		e := boolToNumStr(p.EdgeOfFlightLine)
 		d := boolToNumStr(p.ScanDirectionFlag)
-		c := p.Classification
-		s := fmt.Sprintf("%.2f,%.2f,%.2f,%d,%d,%d,%d,%d,%s,%s,%d", x, y, z, a, i, n, r, ps, e, d, c)
+		c := p.GetClassification()
+		C := GetClassificationName(c)
+		u := p.UserData
+		s := fmt.Sprintf("%.2f,%.2f,%.2f,%d,%d,%d,%d,%d,%s,%s,%d,%s,%d", x, y, z, a, i, n, r, ps, e, d, c, C, u)
 		res = append(res, s)
 	}
 	return res
@@ -380,8 +382,8 @@ func getPointsMe(path string) []string {
 	e - edge of flight line
 	d - direction of scan flag
 	c - classification number
-
 	C - classification name
+
 	u - user data
 	R - red channel of RGB color
 	G - green channel of RGB color
@@ -391,7 +393,7 @@ func getPointsMe(path string) []string {
 
 func compareWithLas2Txt(path string) {
 	// docs: http://www.liblas.org/utilities/las2txt.html
-	cmd := exec.Command("las2txt", "-i", path, "--stdout", "--parse", "xyzainrpedc")
+	cmd := exec.Command("las2txt", "-i", path, "--stdout", "--parse", "xyzainrpedcCu")
 	d, err := cmd.CombinedOutput()
 	fatalIfErr(err)
 	lasLines := splitStringIntoLines(string(d))
