@@ -2,12 +2,32 @@ package main
 
 import (
 	"bytes"
+	"flag"
 	"fmt"
 	"io"
 	"os"
 	"os/exec"
-	"path/filepath"
 	"strings"
+)
+
+/*
+usage: testgo [-show-header] [-show-points] [-compare-points] <file.las>
+
+-show-header 		: will print header information to stdout
+-show-points 		: will print x,y,z points to stdout
+-compare-points : compare output of points with result of running
+                  las2txt --stdout --parse xyz
+
+If no flag given, defaults to -show-header.
+
+To install last2txt on mac: brew install liblas
+More info on liblas: http://www.liblas.org/
+*/
+
+var (
+	flgShowHeader         bool
+	flgShowPoints         bool
+	flgCompareWithLas2Txt bool
 )
 
 func fatalIfErr(err error) {
@@ -21,6 +41,20 @@ func fatalIf(cond bool) {
 	if cond {
 		panic("condition failed")
 	}
+}
+
+func trimEmptyStringsRight(a []string) []string {
+	for {
+		n := len(a) - 1
+		if n < 0 || len(a[n]) > 0 {
+			return a
+		}
+		a = a[:n]
+	}
+}
+
+func splitStringIntoLines(s string) []string {
+	return trimEmptyStringsRight(strings.Split(s, "\n"))
 }
 
 func verifyFileExists(path string) {
@@ -155,13 +189,13 @@ func dumpHeaderLikeLasInfo(hdr *LasPublicHeader, w io.Writer) {
 	fmt.Fprintf(w, "  %-28s %.2f %.2f %.2f\n", "Max X Y Z:", hdr.MaxX, hdr.MaxY, hdr.MaxZ)
 }
 
-func runLas2Txt(path string) string {
+func runLas2Txt(path string) []string {
 	// it seems by default las2txt does: --parse xyz
 	// docs: http://www.liblas.org/utilities/las2txt.html
 	cmd := exec.Command("las2txt", "-i", path, "--stdout")
 	d, err := cmd.CombinedOutput()
 	fatalIfErr(err)
-	return string(d)
+	return splitStringIntoLines(string(d))
 }
 
 func runLasInfo(path string) string {
@@ -182,7 +216,7 @@ func readLasFile(path string) {
 	dumpHeaderLikeLasInfo(r.Header, os.Stdout)
 }
 
-func readLasFile2(path string) {
+func showLasInfo(path string, showHeader, showPoints bool) {
 	f, err := os.Open(path)
 	fatalIfErr(err)
 	defer f.Close()
@@ -191,33 +225,37 @@ func readLasFile2(path string) {
 	fatalIfErr(err)
 
 	w := os.Stdout
-	dumpHeader(w, r.Header)
-	for _, record := range r.VariableLengthRecords {
-		fmt.Fprint(w, "\n")
-		dumpVariableLengthHeader(w, record)
-	}
-	if r.GeoKeyInfo.ASCIIParams != nil {
-		fmt.Fprint(w, "\nGeoASCIIParams:\n")
-		dumpASCIIParams(w, r.GeoKeyInfo.ASCIIParams)
+	if showHeader {
+		dumpHeader(w, r.Header)
+		for _, record := range r.VariableLengthRecords {
+			fmt.Fprint(w, "\n")
+			dumpVariableLengthHeader(w, record)
+		}
+		if r.GeoKeyInfo.ASCIIParams != nil {
+			fmt.Fprint(w, "\nGeoASCIIParams:\n")
+			dumpASCIIParams(w, r.GeoKeyInfo.ASCIIParams)
+		}
+
+		if r.GeoKeyInfo.Directory != nil {
+			fmt.Fprint(w, "\nGeoKeyDirectory:\n")
+			dumpGeoKeyDirectory(w, r.GeoKeyInfo.Directory)
+		}
+
+		fmt.Fprint(w, "\nGeoTags:\n")
+		dumpGeoTags(w, r.GeoTags)
 	}
 
-	if r.GeoKeyInfo.Directory != nil {
-		fmt.Fprint(w, "\nGeoKeyDirectory:\n")
-		dumpGeoKeyDirectory(w, r.GeoKeyInfo.Directory)
-	}
-
-	fmt.Fprint(w, "\nGeoTags:\n")
-	dumpGeoTags(w, r.GeoTags)
-
-	nPoints := int(r.Header.NumberOfPointRecords)
-	if nPoints > 10 {
-		nPoints = 10
-	}
-	for i := 0; i < nPoints; i++ {
-		p, err := r.ReadPoint0(i)
-		fatalIfErr(err)
-		x, y, z := r.TransformPoints(p.X, p.Y, p.Z)
-		fmt.Fprintf(w, "%.2f,%.2f,%.2f\n", x, y, z)
+	if showPoints {
+		nPoints := int(r.Header.NumberOfPointRecords)
+		if false && nPoints > 10 {
+			nPoints = 10
+		}
+		for i := 0; i < nPoints; i++ {
+			p, err := r.ReadPoint0(i)
+			fatalIfErr(err)
+			x, y, z := r.TransformPoints(p.X, p.Y, p.Z)
+			fmt.Fprintf(w, "%.2f,%.2f,%.2f\n", x, y, z)
+		}
 	}
 }
 
@@ -241,16 +279,6 @@ func dumpHex(s string, nPerLine int) {
 		}
 		dumpHexLine(s[:n])
 		s = s[n:]
-	}
-}
-
-func trimEmptyStringsRight(a []string) []string {
-	for {
-		n := len(a) - 1
-		if n < 0 || len(a[n]) > 0 {
-			return a
-		}
-		a = a[:n]
 	}
 }
 
@@ -300,23 +328,104 @@ func compareLassInfoOutput(path string) {
 	compareLasInfo(lasInfoOut, meOut)
 }
 
-// Testing decoding of .las files
-// We run las2txt on .las file and compare the results with our rendering
-// To install last2txt on mac: brew install liblas
-// more info on liblas: http://www.liblas.org/
+func getPointsMe(path string) []string {
+	f, err := os.Open(path)
+	fatalIfErr(err)
+	defer f.Close()
+	r := NewLasReader(f)
+	err = r.ReadHeaders()
+	fatalIfErr(err)
+
+	var res []string
+	nPoints := int(r.Header.NumberOfPointRecords)
+	for i := 0; i < nPoints; i++ {
+		p, err := r.ReadPoint0(i)
+		fatalIfErr(err)
+		x, y, z := r.TransformPoints(p.X, p.Y, p.Z)
+		s := fmt.Sprintf("%.2f,%.2f,%.2f", x, y, z)
+		res = append(res, s)
+	}
+	return res
+}
+
+/*
+--parse arg format:
+
+	x - x coordinate as a double
+	y - y coordinate as a double
+	z - z coordinate as a double
+	X - x coordinate as unscaled integer
+	Y - y coordinate as unscaled integer
+	Z - z coordinate as unscaled integer
+	a - scan angle
+	i - intensity
+	n - number of returns for given pulse
+	r - number of this return
+	c - classification number
+	C - classification name
+	u - user data
+	p - point source ID
+	e - edge of flight line
+	d - direction of scan flag
+	R - red channel of RGB color
+	G - green channel of RGB color
+	B - blue channel of RGB color
+	M - vertex index number
+*/
+
+func compareWithLas2Txt(path string) {
+	// docs: http://www.liblas.org/utilities/las2txt.html
+	cmd := exec.Command("las2txt", "-i", path, "--stdout", "--parse", "xyz")
+	d, err := cmd.CombinedOutput()
+	fatalIfErr(err)
+	lasLines := splitStringIntoLines(string(d))
+	meLines := getPointsMe(path)
+
+	n := len(lasLines)
+	if n != len(meLines) {
+		fmt.Print("error: mismatched number of points\n")
+		fmt.Printf("me     : %d\n", len(meLines))
+		fmt.Printf("las2txt: %d\n", len(lasLines))
+		os.Exit(1)
+	}
+	for i := 0; i < n; i++ {
+		if meLines[i] != lasLines[i] {
+			fmt.Printf("error: different result for point %d\n", i)
+			fmt.Printf("me     : '%s'\n", meLines[i])
+			fmt.Printf("las2txt: '%s'\n", lasLines[i])
+			os.Exit(1)
+		}
+	}
+	fmt.Printf("All %d points seem to be ok!\n", n)
+}
+
+func parseFlags() {
+	flag.BoolVar(&flgShowHeader, "show-header", false, "print header information to stdout")
+	flag.BoolVar(&flgShowPoints, "show-points", false, "print x, y, z points to stdout")
+	flag.BoolVar(&flgCompareWithLas2Txt, "compare-with-las2txt", false, "compare our output with las2txt")
+	flag.Parse()
+
+	// default to -show-header if nothing else given
+	if !flgCompareWithLas2Txt && !flgShowPoints {
+		flgShowHeader = true
+	}
+}
+
 func main() {
-	args := os.Args[1:]
+	parseFlags()
+	args := flag.Args()
 	if len(args) != 1 {
-		exePath := os.Args[0]
-		name := filepath.Base(exePath)
-		fmt.Printf("usage: %s <file.las>\n", name)
+		flag.Usage()
 		os.Exit(1)
 	}
 	path := args[0]
 	verifyFileExists(path)
-	//compareLassInfoOutput(path)
-	readLasFile2(path)
 
-	//las2txtOut := runLas2Txt(path)
-	//fmt.Printf("%s", las2txtOut)
+	if flgCompareWithLas2Txt {
+		compareWithLas2Txt(path)
+		// we ignore other flags in this case
+		return
+	}
+
+	showLasInfo(path, flgShowHeader, flgShowPoints)
 }
