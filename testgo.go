@@ -13,10 +13,16 @@ import (
 /*
 usage: testgo [-show-header] [-show-points] [-compare-points] <file.las>
 
--show-header 		: will print header information to stdout
--show-points 		: will print x,y,z points to stdout
--compare-points : compare output of points with result of running
-                  las2txt --stdout --parse xyz
+-show-header
+		print header information to stdout
+show-lasinfo-header
+		print header information to stdout in the same format as lasinfo
+-show-points
+		print x,y,z points to stdout
+-compare-with-las2txt
+		compare output of points with result of running las2txt --stdout
+-compare-with-lasinfo
+		compare output with result of running lasinfo
 
 If no flag given, defaults to -show-header.
 
@@ -26,8 +32,10 @@ More info on liblas: http://www.liblas.org/
 
 var (
 	flgShowHeader         bool
+	flgShowLasInfoHeader  bool
 	flgShowPoints         bool
 	flgCompareWithLas2Txt bool
+	flgCompareWithLasInfo bool
 )
 
 func fatalIfErr(err error) {
@@ -282,34 +290,6 @@ func dumpHex(s string, nPerLine int) {
 	}
 }
 
-func compareLasInfo(sLasInfo, sMe string) {
-	linesLasInfo := trimEmptyStringsRight(strings.Split(sLasInfo, "\n"))
-	linesMe := trimEmptyStringsRight(strings.Split(sMe, "\n"))
-
-	n := len(linesLasInfo)
-	if len(linesMe) < n {
-		n = len(linesMe)
-	}
-	for i := 0; i < n; i++ {
-		lineLasInfo := linesLasInfo[i]
-		lineMe := linesMe[i]
-		lineLasInfoStripped := strings.TrimSpace(lineLasInfo)
-		lineMeStripped := strings.TrimSpace(lineMe)
-
-		if lineLasInfoStripped != lineMeStripped {
-			fmt.Printf("lines %d are different\n", i+1)
-			//fmt.Printf("%s: lassinfo\n", lineLasInfo)
-			//fmt.Printf("%s: me\n", lineMe)
-			//dumpHex(lineLasInfo, 8)
-			//dumpHex(lineMe, 8)
-			fmt.Printf("%s: lassinfo stripped\n", lineLasInfoStripped)
-			fmt.Printf("%s: me stripped\n", lineMeStripped)
-		} else {
-			fmt.Printf("lines %d are same: '%s'\n", i+1, lineMe)
-		}
-	}
-}
-
 func getLasInfoCompatibleOutput(path string) string {
 	f, err := os.Open(path)
 	fatalIfErr(err)
@@ -322,10 +302,60 @@ func getLasInfoCompatibleOutput(path string) string {
 	return string(buf.Bytes())
 }
 
-func compareLassInfoOutput(path string) {
+func strTrimmedArrayRemove(a []string, s string) ([]string, bool) {
+	for i, s2 := range a {
+		s2 = strings.TrimSpace(s2)
+		if s == s2 {
+			// remove element at index i
+			a = append(a[:i], a[i+1:]...)
+			return a, true
+		}
+	}
+	return a, false
+}
+
+func compareWithLasInfo(path string) {
 	lasInfoOut := runLasInfo(path)
 	meOut := getLasInfoCompatibleOutput(path)
-	compareLasInfo(lasInfoOut, meOut)
+
+	linesLasInfo := strings.Split(lasInfoOut, "\n")
+	linesMe := strings.Split(meOut, "\n")
+
+	var commonLines, myUniqueLines []string
+
+	var removed bool
+	for _, s := range linesMe {
+		sTrimmed := strings.TrimSpace(s)
+		if len(sTrimmed) == 0 {
+			continue
+		}
+		linesLasInfo, removed = strTrimmedArrayRemove(linesLasInfo, sTrimmed)
+
+		if removed {
+			commonLines = append(commonLines, s)
+		} else {
+			myUniqueLines = append(myUniqueLines, s)
+		}
+	}
+
+	fmt.Printf("%d lines are the same\n", len(commonLines))
+
+	// what's left in linesLasInfo are lines unique to it
+	n := len(linesLasInfo)
+	if n > 0 {
+		fmt.Printf("\n%d lines unique to lasinfo:\n", n)
+		for _, s := range linesLasInfo {
+			fmt.Printf("%s\n", s)
+		}
+	}
+
+	n = len(myUniqueLines)
+	if n > 0 {
+		fmt.Printf("\n%d lines unique to me:\n", n)
+		for _, s := range myUniqueLines {
+			fmt.Printf("%s\n", s)
+		}
+	}
 }
 
 func boolToNumStr(b bool) string {
@@ -367,7 +397,6 @@ func getPointsMe(path string) []string {
 
 /*
 --parse arg format:
-
 	x - x coordinate as a double
 	y - y coordinate as a double
 	z - z coordinate as a double
@@ -383,14 +412,12 @@ func getPointsMe(path string) []string {
 	d - direction of scan flag
 	c - classification number
 	C - classification name
-
 	u - user data
 	R - red channel of RGB color
 	G - green channel of RGB color
 	B - blue channel of RGB color
 	M - vertex index number
 */
-
 func compareWithLas2Txt(path string) {
 	// docs: http://www.liblas.org/utilities/las2txt.html
 	cmd := exec.Command("las2txt", "-i", path, "--stdout", "--parse", "xyzainrpedcCu")
@@ -419,12 +446,14 @@ func compareWithLas2Txt(path string) {
 
 func parseFlags() {
 	flag.BoolVar(&flgShowHeader, "show-header", false, "print header information to stdout")
+	flag.BoolVar(&flgShowLasInfoHeader, "show-lasinfo-header", false, "print header information in the same format as lasinfo")
 	flag.BoolVar(&flgShowPoints, "show-points", false, "print x, y, z points to stdout")
 	flag.BoolVar(&flgCompareWithLas2Txt, "compare-with-las2txt", false, "compare our output with las2txt")
+	flag.BoolVar(&flgCompareWithLasInfo, "compare-with-lasinfo", false, "compare our output with lasinfo")
 	flag.Parse()
 
 	// default to -show-header if nothing else given
-	if !flgCompareWithLas2Txt && !flgShowPoints {
+	if !flgShowPoints && !flgCompareWithLas2Txt && !flgCompareWithLasInfo {
 		flgShowHeader = true
 	}
 }
@@ -441,7 +470,13 @@ func main() {
 
 	if flgCompareWithLas2Txt {
 		compareWithLas2Txt(path)
-		// we ignore other flags in this case
+		// ignore other flags in this case
+		return
+	}
+
+	if flgCompareWithLasInfo {
+		compareWithLasInfo(path)
+		// ignore other flags in this case
 		return
 	}
 
