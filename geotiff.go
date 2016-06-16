@@ -41,9 +41,10 @@ type GeoTagString struct {
 
 // GeoTags represents decoded GeoKey data
 type GeoTags struct {
-	TagsShort  []GeoTagShort
-	TagsDouble []GeoTagDouble
-	TagsString []GeoTagString
+	TagsShort  []*GeoTagShort
+	TagsDouble []*GeoTagDouble
+	TagsString []*GeoTagString
+	Tags       []interface{}
 }
 
 // GeoKeyRaw describes a key
@@ -290,6 +291,18 @@ func RasterTypeName(t RasterType) string {
 	}
 }
 
+// GeoKeyKnownValueName returns name of the value for known
+// key / vallue pairs
+func GeoKeyKnownValueName(geoKeyID int, val uint16) string {
+	switch geoKeyID {
+	case GTModelTypeGeoKey:
+		return ModelTypeName(ModelType(val))
+	case GTRasterTypeGeoKey:
+		return RasterTypeName(RasterType(val))
+	}
+	return fmt.Sprintf("Unknown-%d", val)
+}
+
 // DecodeGeoKeyInfo decodes geo information
 func DecodeGeoKeyInfo(geoInfo *GeoKeyInfo) (*GeoTags, error) {
 	geoDir := geoInfo.Directory
@@ -315,7 +328,8 @@ func DecodeGeoKeyInfo(geoInfo *GeoKeyInfo) (*GeoTags, error) {
 			v.TagID = int(key.KeyID)
 			v.Name = TagIDToName(v.TagID)
 			v.Value = key.ValueOrOffset
-			res.TagsShort = append(res.TagsShort, v)
+			res.TagsShort = append(res.TagsShort, &v)
+			res.Tags = append(res.Tags, &v)
 		case GeoDoubleParamsTag:
 			if geoInfo.DoubleParams == nil {
 				return nil, fmt.Errorf("key location in double params but GeoDoubleParamsTag record not present")
@@ -328,7 +342,8 @@ func DecodeGeoKeyInfo(geoInfo *GeoKeyInfo) (*GeoTags, error) {
 			v.TagID = int(key.KeyID)
 			v.Name = TagIDToName(v.TagID)
 			v.Value = geoInfo.DoubleParams[idx]
-			res.TagsDouble = append(res.TagsDouble, v)
+			res.TagsDouble = append(res.TagsDouble, &v)
+			res.Tags = append(res.Tags, &v)
 		case GeoASCIIParamsTag:
 			if geoInfo.ASCIIParams == nil {
 				return nil, fmt.Errorf("key location in ASCII params but GeoASCIIParamsTag record not present")
@@ -344,7 +359,8 @@ func DecodeGeoKeyInfo(geoInfo *GeoKeyInfo) (*GeoTags, error) {
 			s := string(geoInfo.ASCIIParams[idx : idx+n])
 			// geotiff replaces terminating 0 with |
 			v.Value = strings.TrimRight(s, "|")
-			res.TagsString = append(res.TagsString, v)
+			res.TagsString = append(res.TagsString, &v)
+			res.Tags = append(res.Tags, &v)
 		}
 	}
 
@@ -355,7 +371,7 @@ func DecodeGeoKeyInfo(geoInfo *GeoKeyInfo) (*GeoTags, error) {
 func (tags *GeoTags) FindGeoTagShort(tagID int) *GeoTagShort {
 	for _, t := range tags.TagsShort {
 		if t.TagID == tagID {
-			return &t
+			return t
 		}
 	}
 	return nil

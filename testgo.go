@@ -201,6 +201,95 @@ func dumpLasHeaderSummary(r *LasReader, w io.Writer) {
 }
 
 /*
+  Spatial Reference:
+PROJCS["NAD83(HARN) / Oregon GIC Lambert (ft)",
+    GEOGCS["NAD83(HARN)",
+        DATUM["NAD83_High_Accuracy_Reference_Network",
+            SPHEROID["GRS 1980",6378137,298.2572221010002,
+                AUTHORITY["EPSG","7019"]],
+            AUTHORITY["EPSG","6152"]],
+        PRIMEM["Greenwich",0],
+        UNIT["degree",0.0174532925199433],
+        AUTHORITY["EPSG","4152"]],
+    PROJECTION["Lambert_Conformal_Conic_2SP"],
+    PARAMETER["standard_parallel_1",43],
+    PARAMETER["standard_parallel_2",45.5],
+    PARAMETER["latitude_of_origin",41.75],
+    PARAMETER["central_meridian",-120.5],
+    PARAMETER["false_easting",1312335.958],
+    PARAMETER["false_northing",0],
+    UNIT["foot",0.3048,
+        AUTHORITY["EPSG","9002"]],
+    AUTHORITY["EPSG","2994"]]
+*/
+func dumpLasSpatialReference(r *LasReader, w io.Writer) {
+	// hdr := r.Header
+	// TODO: write me
+}
+
+/*
+Geotiff_Information:
+   Version: 1
+   Key_Revision: 1.0
+   Tagged_Information:
+      End_Of_Tags.
+   Keyed_Information:
+      GTModelTypeGeoKey (Short,1): ModelTypeProjected
+      GTRasterTypeGeoKey (Short,1): RasterPixelIsArea
+      GTCitationGeoKey (Ascii,34): "NAD83(HARN) / Oregon Lambert (ft)"
+      GeogCitationGeoKey (Ascii,12): "NAD83(HARN)"
+      GeogAngularUnitsGeoKey (Short,1): Angular_Degree
+      ProjectedCSTypeGeoKey (Short,1): Unknown-2994
+      ProjLinearUnitsGeoKey (Short,1): Linear_Foot
+      End_Of_Keys.
+   End_Of_Geotiff.
+*/
+func dumpLasGeotiffInformation(r *LasReader, w io.Writer) {
+	geoDir := r.GeoKeyInfo.Directory
+
+	fmt.Fprintf(w, `
+Geotiff_Information:
+   Version: %d
+   Key_Revision: %d.%d
+   Tagged_Information:
+      End_Of_Tags.
+   Keyed_Information:
+`, geoDir.KeyDirectoryVersion, geoDir.KeyRevision, geoDir.MinorRevision)
+
+	for _, tag := range r.GeoTags.Tags {
+		var name string
+		var typ string
+		valLen := 1 // default for short and double
+		var val string
+		switch v := tag.(type) {
+		case *GeoTagShort:
+			name = TagIDToName(v.TagID)
+			typ = "Short"
+			val = GeoKeyKnownValueName(v.TagID, v.Value)
+		case *GeoTagDouble:
+			name = TagIDToName(v.TagID)
+			typ = "Double"
+			val = fmt.Sprintf("%.2f", v.Value)
+		case *GeoTagString:
+			name = TagIDToName(v.TagID)
+			typ = "Ascii"
+			valLen = len(v.Value) + 1
+			val = fmt.Sprintf(`"%s"`, v.Value)
+		default:
+			fmt.Printf("Unknown type: %T\n", tag)
+			os.Exit(1)
+		}
+		//       GTModelTypeGeoKey (Short,1): ModelTypeProjected
+		fmt.Fprintf(w, "      %s (%s,%d): %s\n", name, typ, valLen, val)
+	}
+	fmt.Fprintf(w, `
+      End_Of_Keys.
+   End_Of_Geotiff.
+
+`)
+}
+
+/*
 ---------------------------------------------------------
 	VLR Summary
 ---------------------------------------------------------
@@ -593,6 +682,8 @@ func dumpLasPointInfo(r *LasReader, w io.Writer) {
 // for easy testing, dump header like lassinfo tool (http://www.liblas.org/utilities/lasinfo.html
 func dumpLikeLasInfo(r *LasReader, w io.Writer) {
 	dumpLasHeaderSummary(r, w)
+	dumpLasSpatialReference(r, w)
+	dumpLasGeotiffInformation(r, w)
 	dumpLasVLRSummary(r, w)
 	dumpLasSchemaSummary(r, w)
 	dumpLasDimensions(r, w)
