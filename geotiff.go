@@ -101,6 +101,8 @@ func GeoKeyKnownValueName(geoKeyID int, val uint16) string {
 		return EllipseName(int(val))
 	case ProjectedCSTypeGeoKey:
 		return PcsName(int(val))
+	case ProjCoordTransGeoKey:
+		return CoordTransName(int(val))
 	}
 	return fmt.Sprintf("Unknown-%d", val)
 }
