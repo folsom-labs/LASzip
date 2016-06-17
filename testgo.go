@@ -240,6 +240,18 @@ func dumpLasSpatialReference(w io.Writer, r *LasReader) {
 	// TODO: write me
 }
 
+// try to format a number the way lasinfo does
+func fmtFloat64(f float64) string {
+	// their default formatting is 13 digits of precision, ours is 11,
+	// so we need to up our precision
+	s := fmt.Sprintf("%.13f", f)
+	s = strings.TrimRight(s, "0.")
+	if len(s) == 0 {
+		s = "0"
+	}
+	return s
+}
+
 /*
 Geotiff_Information:
    Version: 1
@@ -282,7 +294,7 @@ Geotiff_Information:
 		case *GeoTagDouble:
 			name = TagIDToName(v.TagID)
 			typ = "Double"
-			val = fmt.Sprintf("%.2f", v.Value)
+			val = fmtFloat64(v.Value)
 		case *GeoTagString:
 			name = TagIDToName(v.TagID)
 			typ = "Ascii"
@@ -359,6 +371,26 @@ func dumpLasSchemaSummary(w io.Writer, r *LasReader) {
 
 func dumpLasDimensions(w io.Writer, r *LasReader) {
 	hdr := r.Header
+	if hdr.PointDataFormatID == 0 {
+		fmt.Fprint(w, `
+  Dimensions
+  'X'                            --  size: 32 offset: 0
+  'Y'                            --  size: 32 offset: 4
+  'Z'                            --  size: 32 offset: 8
+  'Intensity'                    --  size: 16 offset: 12
+  'Return Number'                --  size: 3 offset: 14
+  'Number of Returns'            --  size: 3 offset: 14
+  'Scan Direction'               --  size: 1 offset: 14
+  'Flightline Edge'              --  size: 1 offset: 14
+  'Classification'               --  size: 8 offset: 15
+  'Scan Angle Rank'              --  size: 8 offset: 16
+  'User Data'                    --  size: 8 offset: 17
+  'Point Source ID'              --  size: 16 offset: 18
+
+`)
+		return
+	}
+
 	if hdr.PointDataFormatID == 1 {
 		fmt.Fprint(w, `
   Dimensions
@@ -378,6 +410,7 @@ func dumpLasDimensions(w io.Writer, r *LasReader) {
   'Time'                         --  size: 64 offset: 20
 
 `)
+		return
 	}
 }
 

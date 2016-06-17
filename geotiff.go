@@ -446,8 +446,8 @@ func DecodeGeoKeyInfo(geoInfo *GeoKeyInfo) (*GeoTags, error) {
 			}
 			idx := int(key.ValueOrOffset)
 			n := int(key.Count)
-			if idx+n >= len(geoInfo.ASCIIParams) {
-				return nil, fmt.Errorf("idx+len %d outside of len(geInfo.ASCIIParams) (%d)", idx+n, len(geoInfo.DoubleParams))
+			if idx+n > len(geoInfo.ASCIIParams) {
+				return nil, fmt.Errorf("idx+len (%d+%d=%d) outside of len(geInfo.ASCIIParams) (%d)", idx, n, idx+n, len(geoInfo.ASCIIParams))
 			}
 			var v GeoTagString
 			v.TagID = int(key.KeyID)
