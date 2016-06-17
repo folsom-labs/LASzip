@@ -1366,3 +1366,118 @@ func PrimeMeridianName(v int) string {
 	}
 	return fmt.Sprintf("Unkown PrimeMeridion (%d)", v)
 }
+
+// https://github.com/smanders/libgeotiff/blob/master/epsg_ellipse.inc
+const (
+	Ellipse_Airy_1830 = 7001
+	Ellipse_Airy_Modified_1849 = 7002
+	Ellipse_Australian_National_Spheroid = 7003
+	Ellipse_Bessel_1841 = 7004
+	Ellipse_Bessel_Modified = 7005
+	Ellipse_Bessel_Namibia = 7006
+	Ellipse_Clarke_1858 = 7007
+	Ellipse_Clarke_1866 = 7008
+	Ellipse_Clarke_1866_Michigan = 7009
+	Ellipse_Clarke_1880_Benoit = 7010
+	Ellipse_Clarke_1880_IGN = 7011
+	Ellipse_Clarke_1880_RGS = 7012
+	Ellipse_Clarke_1880_Arc = 7013
+	Ellipse_Clarke_1880_SGA_1922 = 7014
+	Ellipse_Everest_1830_1937_Adjustment = 7015
+	Ellipse_Everest_1830_1967_Definition = 7016
+	Ellipse_Everest_1830_1975_Definition = 7017
+	Ellipse_Everest_1830_Modified = 7018
+	Ellipse_GRS_1980 = 7019
+	Ellipse_Helmert_1906 = 7020
+	Ellipse_Indonesian_National_Spheroid = 7021
+	Ellipse_International_1924 = 7022
+	Ellipse_International_1967 = 7023
+	Ellipse_Krassowsky_1940 = 7024
+	Ellipse_NWL_9D = 7025
+	Ellipse_NWL_10D = 7026
+	Ellipse_Plessis_1817 = 7027
+	Ellipse_Struve_1860 = 7028
+	Ellipse_War_Office = 7029
+	Ellipse_WGS_84 = 7030
+	Ellipse_GEM_10C = 7031
+	Ellipse_OSU86F = 7032
+	Ellipse_OSU91A = 7033
+	Ellipse_Clarke_1880 = 7034
+	Ellipse_Sphere = 7035
+)
+
+func EllipseName(v int) string {
+     switch v {
+	case Ellipse_Airy_1830:
+		return "Ellipse_Airy_1830"
+	case Ellipse_Airy_Modified_1849:
+		return "Ellipse_Airy_Modified_1849"
+	case Ellipse_Australian_National_Spheroid:
+		return "Ellipse_Australian_National_Spheroid"
+	case Ellipse_Bessel_1841:
+		return "Ellipse_Bessel_1841"
+	case Ellipse_Bessel_Modified:
+		return "Ellipse_Bessel_Modified"
+	case Ellipse_Bessel_Namibia:
+		return "Ellipse_Bessel_Namibia"
+	case Ellipse_Clarke_1858:
+		return "Ellipse_Clarke_1858"
+	case Ellipse_Clarke_1866:
+		return "Ellipse_Clarke_1866"
+	case Ellipse_Clarke_1866_Michigan:
+		return "Ellipse_Clarke_1866_Michigan"
+	case Ellipse_Clarke_1880_Benoit:
+		return "Ellipse_Clarke_1880_Benoit"
+	case Ellipse_Clarke_1880_IGN:
+		return "Ellipse_Clarke_1880_IGN"
+	case Ellipse_Clarke_1880_RGS:
+		return "Ellipse_Clarke_1880_RGS"
+	case Ellipse_Clarke_1880_Arc:
+		return "Ellipse_Clarke_1880_Arc"
+	case Ellipse_Clarke_1880_SGA_1922:
+		return "Ellipse_Clarke_1880_SGA_1922"
+	case Ellipse_Everest_1830_1937_Adjustment:
+		return "Ellipse_Everest_1830_1937_Adjustment"
+	case Ellipse_Everest_1830_1967_Definition:
+		return "Ellipse_Everest_1830_1967_Definition"
+	case Ellipse_Everest_1830_1975_Definition:
+		return "Ellipse_Everest_1830_1975_Definition"
+	case Ellipse_Everest_1830_Modified:
+		return "Ellipse_Everest_1830_Modified"
+	case Ellipse_GRS_1980:
+		return "Ellipse_GRS_1980"
+	case Ellipse_Helmert_1906:
+		return "Ellipse_Helmert_1906"
+	case Ellipse_Indonesian_National_Spheroid:
+		return "Ellipse_Indonesian_National_Spheroid"
+	case Ellipse_International_1924:
+		return "Ellipse_International_1924"
+	case Ellipse_International_1967:
+		return "Ellipse_International_1967"
+	case Ellipse_Krassowsky_1940:
+		return "Ellipse_Krassowsky_1940"
+	case Ellipse_NWL_9D:
+		return "Ellipse_NWL_9D"
+	case Ellipse_NWL_10D:
+		return "Ellipse_NWL_10D"
+	case Ellipse_Plessis_1817:
+		return "Ellipse_Plessis_1817"
+	case Ellipse_Struve_1860:
+		return "Ellipse_Struve_1860"
+	case Ellipse_War_Office:
+		return "Ellipse_War_Office"
+	case Ellipse_WGS_84:
+		return "Ellipse_WGS_84"
+	case Ellipse_GEM_10C:
+		return "Ellipse_GEM_10C"
+	case Ellipse_OSU86F:
+		return "Ellipse_OSU86F"
+	case Ellipse_OSU91A:
+		return "Ellipse_OSU91A"
+	case Ellipse_Clarke_1880:
+		return "Ellipse_Clarke_1880"
+	case Ellipse_Sphere:
+		return "Ellipse_Sphere"
+  }
+  return fmt.Sprintf("Unkown ellipse (%d)", v)
+}
