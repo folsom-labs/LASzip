@@ -1321,7 +1321,48 @@ func GcsName(v int) string {
 		return "GCS_ATF_Paris"
 	case GCS_NDG_Paris:
 		return "GCS_NDG_Paris"
-
 	}
 	return fmt.Sprintf("Unkown GCS (%d)", v)
+}
+
+const (
+	PM_Greenwich = 8901
+	PM_Lisbon    = 8902
+	PM_Paris     = 8903
+	PM_Bogota    = 8904
+	PM_Madrid    = 8905
+	PM_Rome      = 8906
+	PM_Bern      = 8907
+	PM_Jakarta   = 8908
+	PM_Ferro     = 8909
+	PM_Brussels  = 8910
+	PM_Stockholm = 8911
+)
+
+func PrimeMeridianName(v int) string {
+	switch v {
+	case PM_Greenwich:
+		return "PM_Greenwich"
+	case PM_Lisbon:
+		return "PM_Lisbon"
+	case PM_Paris:
+		return "PM_Paris"
+	case PM_Bogota:
+		return "PM_Bogota"
+	case PM_Madrid:
+		return "PM_Madrid"
+	case PM_Rome:
+		return "PM_Rome"
+	case PM_Bern:
+		return "PM_Bern"
+	case PM_Jakarta:
+		return "PM_Jakarta"
+	case PM_Ferro:
+		return "PM_Ferro"
+	case PM_Brussels:
+		return "PM_Brussels"
+	case PM_Stockholm:
+		return "PM_Stockholm"
+	}
+	return fmt.Sprintf("Unkown PrimeMeridion (%d)", v)
 }
