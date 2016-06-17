@@ -117,51 +117,58 @@ type PointDataRecord struct {
 // ClassificationType defines ASPRS LIDAR point classification
 type ClassificationType int
 
+// https://github.com/libLAS/libLAS/blob/master/include/liblas/point.hpp#L83
 const (
-	Created ClassificationType = iota
-	Unclassified
-	Ground
-	LowVegetation
-	MediumVegetation
-	HighVegetation
-	BuildingLowPoint
-	ModelKeyPoint
-	Water
-	Reserved1
-	Reserved2
-	OverlapPoints
+	Created          ClassificationType = iota // 0
+	Unclassified                               // 1
+	Ground                                     // 2
+	LowVegetation                              // 3
+	MediumVegetation                           // 4
+	HighVegetation                             // 5
+	Building                                   // 6
+	LowPoint                                   // 7
+	ModelKeyPoint                              // 8
+	Water                                      // 9
+	Reserved1                                  // 10
+	Reserved2                                  // 11
+	OverlapPoints                              // 12
 )
+
+// https://github.com/libLAS/libLAS/blob/master/apps/lascommon.c#L17
+var classificationNames = []string{
+	"Created, never classified",
+	"Unclassified",
+	"Ground",
+	"Low Vegetation",
+	"Medium Vegetation",
+	"High Vegetation",
+	"Building",
+	"Low Point (noise)",
+	"Model Key-point (mass point)",
+	"Water",
+	"Reserved for ASPRS Definition",
+	"Reserved for ASPRS Definition",
+	"Overlap Points",
+}
 
 // GetClassificationName returns name of a given ClassificationType
 func GetClassificationName(c ClassificationType) string {
-	switch c {
-	case Unclassified:
-		return "Unclassified"
-	case Ground:
-		return "Ground"
-	case LowVegetation:
-		return "LowVegetation"
-	case MediumVegetation:
-		return "MediumVegetation"
-	case HighVegetation:
-		return "HighVegetation"
-	case BuildingLowPoint:
-		return "BuildingLowPoint"
-	case ModelKeyPoint:
-		return "ModelKeyPoint"
-	case Water:
-		return "Water"
-	case OverlapPoints:
-		return "OverlapPoints"
-	default:
-		return fmt.Sprintf("Unknown classification (%d)", int(c))
+	n := int(c)
+	if n < 0 || n >= len(classificationNames) {
+		if n > 0 && n < 32 {
+			return "Reserved for ASPRS Definition"
+		}
+		return fmt.Sprintf("Unknown classification (%d)", n)
 	}
+	return classificationNames[n]
 }
 
 // LasReader is a reader for .las files
 type LasReader struct {
-	r                     io.ReadSeeker
-	Header                *LasPublicHeader
+	r      io.ReadSeeker
+	Header *LasPublicHeader
+	// difference between OffsetToPointData and size of header and VLR records
+	HeaderPadding         int
 	VariableLengthRecords []*VariableLengthRecord
 	GeoKeyInfo            GeoKeyInfo
 	GeoTags               *GeoTags // decoded version of GeoKeyInfo
@@ -169,7 +176,8 @@ type LasReader struct {
 	Error                 error
 
 	// for optimizing sequential point reading, we remember what
-	// point was read last time
+	// point was read last time in ReadPoint() so that we don't have to
+	// Seek() for each point
 	lastPointRead int
 }
 
@@ -251,7 +259,7 @@ func (p *PointDataRecord) GetGPSTime() (float64, bool) {
 func NewLasReader(r io.ReadSeeker) *LasReader {
 	return &LasReader{
 		r:             r,
-		lastPointRead: -1,
+		lastPointRead: -2, // not -1 because we start reading from 0, which is -1+1
 	}
 }
 
@@ -282,6 +290,9 @@ func ReadLasPublicHeader(r *BinaryReader) (*LasPublicHeader, error) {
 	hdr.OffsetToPointData = r.ReadUint32()
 	hdr.NumberOfVariableLengthRecords = r.ReadUint32()
 	hdr.PointDataFormatID = r.ReadUint8()
+	// TODO: laz compression status is set in bit 6 and 7
+	// if bit 6 is set, it's invalid (obsolete) compression
+	// so really it's bit 7 that sets compression
 	if hdr.PointDataFormatID > 3 {
 		return nil, fmt.Errorf("Unsupported point format id: %d (we understand 0-3)", hdr.PointDataFormatID)
 	}
@@ -461,11 +472,13 @@ func ReadPointDataRecord(r *BinaryReader, formatID int) (*PointDataRecord, error
 // ReadHeaders reads public headers and Variable Length Records
 func (r *LasReader) ReadHeaders() error {
 	var err error
-	r.Header, err = r.ReadHeader()
+
+	br := NewBinaryReader(r.r)
+	r.Header, err = ReadLasPublicHeader(br)
 	if err != nil {
 		return err
 	}
-	br := NewBinaryReader(r.r)
+
 	n := int(r.Header.NumberOfVariableLengthRecords)
 	for i := 0; i < n; i++ {
 		err := r.ReadVariableLengthRecord(br)
@@ -474,15 +487,14 @@ func (r *LasReader) ReadHeaders() error {
 		}
 	}
 	r.GeoTags, err = DecodeGeoKeyInfo(&r.GeoKeyInfo)
-	return err
-}
 
-// ReadHeader reads public header
-func (r *LasReader) ReadHeader() (*LasPublicHeader, error) {
-	br := NewBinaryReader(r.r)
-	r.Header, r.Error = ReadLasPublicHeader(br)
-	//fmt.Printf("bytes consumed: %d\n", br.BytesConsumed)
-	return r.Header, r.Error
+	pad := int(r.Header.OffsetToPointData) - int(r.Header.HeaderSize)
+	for _, vlr := range r.VariableLengthRecords {
+		pad -= int(vlr.RecordLengthAfterHeader) + 54
+	}
+	fatalIf(pad < 0)
+	r.HeaderPadding = pad
+	return err
 }
 
 // ReadPoint reads a point 0..r.Header.NumberOfPointRecords-1
@@ -504,8 +516,9 @@ func (r *LasReader) ReadPoint(n int) (*PointDataRecord, error) {
 		return nil, err
 	}
 	toSkip := int(r.Header.PointDataRecordLength) - br.BytesConsumed
-	fatalIf(toSkip < 0)
-	br.Skip(toSkip)
+	fatalIf(toSkip < 0 || toSkip > 0)
+	//fatalIf(toSkip > 0)
+	//br.Skip(toSkip)
 	r.lastPointRead = n
 	return res, br.Error
 }

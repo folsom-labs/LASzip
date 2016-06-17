@@ -197,8 +197,7 @@ func dumpLasHeaderSummary(w io.Writer, r *LasReader) {
 	fmt.Fprintf(w, "  %-28s %d/%d\n", "File Creation Day/Year:", hdr.FileCreationDayOfYear, hdr.FileCreationYear)
 	fmt.Fprintf(w, "  %-28s %d\n", "Header Byte Size", hdr.HeaderSize)
 	fmt.Fprintf(w, "  %-28s %d\n", "Data Offset:", hdr.OffsetToPointData)
-	// TODO: what is this?
-	fmt.Fprintf(w, "  %-28s %d\n", "Header Padding:", 0)
+	fmt.Fprintf(w, "  %-28s %d\n", "Header Padding:", r.HeaderPadding)
 	fmt.Fprintf(w, "  %-28s %d\n", "Number Var. Length Records:", hdr.NumberOfVariableLengthRecords)
 	fmt.Fprintf(w, "  %-28s %d\n", "Point Data Format:", hdr.PointDataFormatID)
 
@@ -936,7 +935,7 @@ func getPointsMe(path string) []string {
 		c := p.GetClassification()
 		C := GetClassificationName(c)
 		u := p.UserData
-		s := fmt.Sprintf("%.2f,%.2f,%.2f,%d,%d,%d,%d,%d,%s,%s,%d,%s,%d", x, y, z, a, i, n, r, ps, e, d, c, C, u)
+		s := fmt.Sprintf("%d,%d,%d,%.2f,%.2f,%.2f,%d,%d,%d,%d,%d,%s,%s,%d,%s,%d", p.X, p.Y, p.Z, x, y, z, a, i, n, r, ps, e, d, c, C, u)
 		res = append(res, s)
 	}
 	return res
@@ -967,7 +966,7 @@ func getPointsMe(path string) []string {
 */
 func compareWithLas2Txt(path string) {
 	// docs: http://www.liblas.org/utilities/las2txt.html
-	cmd := exec.Command("las2txt", "-i", path, "--stdout", "--parse", "xyzainrpedcCu")
+	cmd := exec.Command("las2txt", "-i", path, "--stdout", "--parse", "XYZxyzainrpedcCu")
 	d, err := cmd.CombinedOutput()
 	fatalIfErr(err)
 	lasLines := splitStringIntoLines(string(d))
