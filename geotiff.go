@@ -291,6 +291,44 @@ func RasterTypeName(t RasterType) string {
 	}
 }
 
+// https://github.com/smanders/libgeotiff/blob/4660cdfa5b29dcaa164ee2a12eb3519596dfa44c/epsg_units.inc#L27
+type AngularUnit int
+
+const (
+	Angular_Radian         AngularUnit = 9101
+	Angular_Degree         AngularUnit = 9102
+	Angular_Arc_Minute     AngularUnit = 9103
+	Angular_Arc_Second     AngularUnit = 9104
+	Angular_Grad           AngularUnit = 9105
+	Angular_Gon            AngularUnit = 9106
+	Angular_DMS            AngularUnit = 9107
+	Angular_DMS_Hemisphere AngularUnit = 9108
+)
+
+// AngularUnitName retuns a name for a given AngularUnit constant
+func AngularUnitName(t AngularUnit) string {
+	switch t {
+	case Angular_Radian:
+		return "Angular_Radian"
+	case Angular_Degree:
+		return "Angular_Degree"
+	case Angular_Arc_Minute:
+		return "Angular_Arc_Minute"
+	case Angular_Arc_Second:
+		return "Angular_Arc_Second"
+	case Angular_Grad:
+		return "Angular_Grad"
+	case Angular_Gon:
+		return "Angular_Gon"
+	case Angular_DMS:
+		return "Angular_DMS"
+	case Angular_DMS_Hemisphere:
+		return "Angular_DMS_Hemisphere"
+	default:
+		return fmt.Sprintf("Unkown AngularUnit value (%d)", int(t))
+	}
+}
+
 // GeoKeyKnownValueName returns name of the value for known
 // key / vallue pairs
 func GeoKeyKnownValueName(geoKeyID int, val uint16) string {
@@ -299,6 +337,8 @@ func GeoKeyKnownValueName(geoKeyID int, val uint16) string {
 		return ModelTypeName(ModelType(val))
 	case GTRasterTypeGeoKey:
 		return RasterTypeName(RasterType(val))
+	case GeogAngularUnitsGeoKey:
+		return AngularUnitName(AngularUnit(val))
 	}
 	return fmt.Sprintf("Unknown-%d", val)
 }
