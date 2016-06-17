@@ -97,8 +97,10 @@ func GeoKeyKnownValueName(geoKeyID int, val uint16) string {
 		return GcsName(int(val))
 	case GeogPrimeMeridianGeoKey:
 		return PrimeMeridianName(int(val))
-		case GeogEllipsoidGeoKey:
+	case GeogEllipsoidGeoKey:
 		return EllipseName(int(val))
+	case ProjectedCSTypeGeoKey:
+		return PcsName(int(val))
 	}
 	return fmt.Sprintf("Unknown-%d", val)
 }
