@@ -535,6 +535,7 @@ func dumpLasPointInfo(w io.Writer, r *LasReader) {
 	for i := 0; i < headerPointCount; i++ {
 		p, err := r.ReadPoint(i)
 		if err != nil {
+			fmt.Fprintf(os.Stderr, "r.ReadPoint() failed with %s\n", err)
 			break
 		}
 		actualPointCount++

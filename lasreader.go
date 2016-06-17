@@ -419,6 +419,7 @@ func ReadPointDataRecord(r *BinaryReader, formatID int) (*PointDataRecord, error
 	// read common data (basically format 0)
 	var p PointDataRecord
 	p.FormatID = formatID
+
 	p.X = r.ReadInt32()
 	p.Y = r.ReadInt32()
 	p.Z = r.ReadInt32()
@@ -437,7 +438,9 @@ func ReadPointDataRecord(r *BinaryReader, formatID int) (*PointDataRecord, error
 	n, b = eatBits(b, 1)
 	p.EdgeOfFlightLine = (n == 1)
 
-	if formatID == 1 {
+	if formatID == 0 {
+		// no additional processing needed
+	} else if formatID == 1 {
 		p.GPSTime = r.ReadFloat64()
 	} else if formatID == 2 {
 		p.Red = r.ReadUint16()
