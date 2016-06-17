@@ -1455,15 +1455,15 @@ func %sName(v int) string {
 `, nm.Name, nm.Name)
 	}
 	fmt.Printf(`  }
-  return fmt.Sprintf("Unkown %s (%%d)", v)
+  return fmt.Sprintf("Unkown-%%d", v)
 }
-`, name)
+`)
 }
 
 func main() {
-	// genGo(gcs_codes)
-	// genGo(pm_codes)
-	// genGo(ellipse_codes)
+	// genGo(gcs_codes, "Gcs", "https://github.com/smanders/libgeotiff/blob/master/epsg_ellipse.inc")
+	// genGo(pm_codes, "PrimeMeridian", "")
+	// genGo(ellipse_codes, "Ellipse", "https://github.com/smanders/libgeotiff/blob/master/epsg_ellipse.inc")
 	// genGo(pcs_codes, "Pcs", "https://github.com/smanders/libgeotiff/blob/master/epsg_pcs.inc")
 	genGo(ctrans_codes, "CoordTrans", "https://github.com/smanders/libgeotiff/blob/master/geo_ctrans.inc")
 }

@@ -485,7 +485,7 @@ func fmtIntHistogram(h map[int]int) string {
 func dumpLasPointInfo(w io.Writer, r *LasReader) {
 	hdr := r.Header
 	headerPointCount := int(hdr.NumberOfPointRecords)
-	classificationHistogram := make([]int, 12, 12)
+	classificationHistogram := make([]int, 16, 16)
 	byReturnHistogram := make(map[int]int)
 	byPulseHistogram := make(map[int]int)
 	actualPointCount := 0

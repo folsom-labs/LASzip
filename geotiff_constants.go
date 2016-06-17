@@ -305,8 +305,6 @@ func LinearUnitName(v LinearUnit) string {
 	return fmt.Sprintf("Unknown-%d", v)
 }
 
-// https://github.com/smanders/libgeotiff/blob/master/epsg_gcs.inc#L13
-
 // https://github.com/smanders/libgeotiff/blob/master/epsg_datum.inc#L13
 
 const (
@@ -790,6 +788,8 @@ func DatumName(v int) string {
 	}
 	return fmt.Sprintf("Unknown dataum (%d)", v)
 }
+
+// https://github.com/smanders/libgeotiff/blob/master/epsg_gcs.inc#L13
 
 const (
 	GCSE_Airy1830                   = 4001

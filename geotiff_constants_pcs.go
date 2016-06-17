@@ -2974,5 +2974,5 @@ func PcsName(v int) string {
 	case PCS_WGS84_UTM_zone_60S:
 		return "PCS_WGS84_UTM_zone_60S"
 	}
-	return fmt.Sprintf("Unkown pcs (%d)", v)
+	return fmt.Sprintf("Unknown-%d", v)
 }
