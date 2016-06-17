@@ -790,3 +790,538 @@ func DatumName(v int) string {
 	}
 	return fmt.Sprintf("Unknown dataum (%d)", v)
 }
+
+const (
+	GCSE_Airy1830                   = 4001
+	GCSE_AiryModified1849           = 4002
+	GCSE_AustralianNationalSpheroid = 4003
+	GCSE_Bessel1841                 = 4004
+	GCSE_BesselModified             = 4005
+	GCSE_BesselNamibia              = 4006
+	GCSE_Clarke1858                 = 4007
+	GCSE_Clarke1866                 = 4008
+	GCSE_Clarke1866Michigan         = 4009
+	GCSE_Clarke1880_Benoit          = 4010
+	GCSE_Clarke1880_IGN             = 4011
+	GCSE_Clarke1880_RGS             = 4012
+	GCSE_Clarke1880_Arc             = 4013
+	GCSE_Clarke1880_SGA1922         = 4014
+	GCSE_Everest1830_1937Adjustment = 4015
+	GCSE_Everest1830_1967Definition = 4016
+	GCSE_Everest1830_1975Definition = 4017
+	GCSE_Everest1830Modified        = 4018
+	GCSE_GRS1980                    = 4019
+	GCSE_Helmert1906                = 4020
+	GCSE_IndonesianNationalSpheroid = 4021
+	GCSE_International1924          = 4022
+	GCSE_International1967          = 4023
+	GCSE_Krassowsky1940             = 4024
+	GCSE_NWL9D                      = 4025
+	GCSE_NWL10D                     = 4026
+	GCSE_Plessis1817                = 4027
+	GCSE_Struve1860                 = 4028
+	GCSE_WarOffice                  = 4029
+	GCSE_WGS84                      = 4030
+	GCSE_GEM10C                     = 4031
+	GCSE_OSU86F                     = 4032
+	GCSE_OSU91A                     = 4033
+	GCSE_Clarke1880                 = 4034
+	GCSE_Sphere                     = 4035
+	GCS_Greek                       = 4120
+	GCS_GGRS87                      = 4121
+	GCS_KKJ                         = 4123
+	GCS_RT90                        = 4124
+	GCS_EST92                       = 4133
+	GCS_Dealul_Piscului_1970        = 4317
+	GCS_Greek_Athens                = 4815
+	GCS_Adindan                     = 4201
+	GCS_AGD66                       = 4202
+	GCS_AGD84                       = 4203
+	GCS_Ain_el_Abd                  = 4204
+	GCS_Afgooye                     = 4205
+	GCS_Agadez                      = 4206
+	GCS_Lisbon                      = 4207
+	GCS_Aratu                       = 4208
+	GCS_Arc_1950                    = 4209
+	GCS_Arc_1960                    = 4210
+	GCS_Batavia                     = 4211
+	GCS_Barbados                    = 4212
+	GCS_Beduaram                    = 4213
+	GCS_Beijing_1954                = 4214
+	GCS_Belge_1950                  = 4215
+	GCS_Bermuda_1957                = 4216
+	GCS_Bern_1898                   = 4217
+	GCS_Bogota                      = 4218
+	GCS_Bukit_Rimpah                = 4219
+	GCS_Camacupa                    = 4220
+	GCS_Campo_Inchauspe             = 4221
+	GCS_Cape                        = 4222
+	GCS_Carthage                    = 4223
+	GCS_Chua                        = 4224
+	GCS_Corrego_Alegre              = 4225
+	GCS_Cote_d_Ivoire               = 4226
+	GCS_Deir_ez_Zor                 = 4227
+	GCS_Douala                      = 4228
+	GCS_Egypt_1907                  = 4229
+	GCS_ED50                        = 4230
+	GCS_ED87                        = 4231
+	GCS_Fahud                       = 4232
+	GCS_Gandajika_1970              = 4233
+	GCS_Garoua                      = 4234
+	GCS_Guyane_Francaise            = 4235
+	GCS_Hu_Tzu_Shan                 = 4236
+	GCS_HD72                        = 4237
+	GCS_ID74                        = 4238
+	GCS_Indian_1954                 = 4239
+	GCS_Indian_1975                 = 4240
+	GCS_Jamaica_1875                = 4241
+	GCS_JAD69                       = 4242
+	GCS_Kalianpur                   = 4243
+	GCS_Kandawala                   = 4244
+	GCS_Kertau                      = 4245
+	GCS_KOC                         = 4246
+	GCS_La_Canoa                    = 4247
+	GCS_PSAD56                      = 4248
+	GCS_Lake                        = 4249
+	GCS_Leigon                      = 4250
+	GCS_Liberia_1964                = 4251
+	GCS_Lome                        = 4252
+	GCS_Luzon_1911                  = 4253
+	GCS_Hito_XVIII_1963             = 4254
+	GCS_Herat_North                 = 4255
+	GCS_Mahe_1971                   = 4256
+	GCS_Makassar                    = 4257
+	GCS_EUREF89                     = 4258
+	GCS_Malongo_1987                = 4259
+	GCS_Manoca                      = 4260
+	GCS_Merchich                    = 4261
+	GCS_Massawa                     = 4262
+	GCS_Minna                       = 4263
+	GCS_Mhast                       = 4264
+	GCS_Monte_Mario                 = 4265
+	GCS_M_poraloko                  = 4266
+	GCS_NAD27                       = 4267
+	GCS_NAD_Michigan                = 4268
+	GCS_NAD83                       = 4269
+	GCS_Nahrwan_1967                = 4270
+	GCS_Naparima_1972               = 4271
+	GCS_GD49                        = 4272
+	GCS_NGO_1948                    = 4273
+	GCS_Datum_73                    = 4274
+	GCS_NTF                         = 4275
+	GCS_NSWC_9Z_2                   = 4276
+	GCS_OSGB_1936                   = 4277
+	GCS_OSGB70                      = 4278
+	GCS_OS_SN80                     = 4279
+	GCS_Padang                      = 4280
+	GCS_Palestine_1923              = 4281
+	GCS_Pointe_Noire                = 4282
+	GCS_GDA94                       = 4283
+	GCS_Pulkovo_1942                = 4284
+	GCS_Qatar                       = 4285
+	GCS_Qatar_1948                  = 4286
+	GCS_Qornoq                      = 4287
+	GCS_Loma_Quintana               = 4288
+	GCS_Amersfoort                  = 4289
+	GCS_RT38                        = 4290
+	GCS_SAD69                       = 4291
+	GCS_Sapper_Hill_1943            = 4292
+	GCS_Schwarzeck                  = 4293
+	GCS_Segora                      = 4294
+	GCS_Serindung                   = 4295
+	GCS_Sudan                       = 4296
+	GCS_Tananarive                  = 4297
+	GCS_Timbalai_1948               = 4298
+	GCS_TM65                        = 4299
+	GCS_TM75                        = 4300
+	GCS_Tokyo                       = 4301
+	GCS_Trinidad_1903               = 4302
+	GCS_TC_1948                     = 4303
+	GCS_Voirol_1875                 = 4304
+	GCS_Voirol_Unifie               = 4305
+	GCS_Bern_1938                   = 4306
+	GCS_Nord_Sahara_1959            = 4307
+	GCS_Stockholm_1938              = 4308
+	GCS_Yacare                      = 4309
+	GCS_Yoff                        = 4310
+	GCS_Zanderij                    = 4311
+	GCS_MGI                         = 4312
+	GCS_Belge_1972                  = 4313
+	GCS_DHDN                        = 4314
+	GCS_Conakry_1905                = 4315
+	GCS_WGS_72                      = 4322
+	GCS_WGS_72BE                    = 4324
+	GCS_WGS_84                      = 4326
+	GCS_Bern_1898_Bern              = 4801
+	GCS_Bogota_Bogota               = 4802
+	GCS_Lisbon_Lisbon               = 4803
+	GCS_Makassar_Jakarta            = 4804
+	GCS_MGI_Ferro                   = 4805
+	GCS_Monte_Mario_Rome            = 4806
+	GCS_NTF_Paris                   = 4807
+	GCS_Padang_Jakarta              = 4808
+	GCS_Belge_1950_Brussels         = 4809
+	GCS_Tananarive_Paris            = 4810
+	GCS_Voirol_1875_Paris           = 4811
+	GCS_Voirol_Unifie_Paris         = 4812
+	GCS_Batavia_Jakarta             = 4813
+	GCS_ATF_Paris                   = 4901
+	GCS_NDG_Paris                   = 4902
+)
+
+func GcsName(v int) string {
+	switch v {
+	case GCSE_Airy1830:
+		return "GCSE_Airy1830"
+	case GCSE_AiryModified1849:
+		return "GCSE_AiryModified1849"
+	case GCSE_AustralianNationalSpheroid:
+		return "GCSE_AustralianNationalSpheroid"
+	case GCSE_Bessel1841:
+		return "GCSE_Bessel1841"
+	case GCSE_BesselModified:
+		return "GCSE_BesselModified"
+	case GCSE_BesselNamibia:
+		return "GCSE_BesselNamibia"
+	case GCSE_Clarke1858:
+		return "GCSE_Clarke1858"
+	case GCSE_Clarke1866:
+		return "GCSE_Clarke1866"
+	case GCSE_Clarke1866Michigan:
+		return "GCSE_Clarke1866Michigan"
+	case GCSE_Clarke1880_Benoit:
+		return "GCSE_Clarke1880_Benoit"
+	case GCSE_Clarke1880_IGN:
+		return "GCSE_Clarke1880_IGN"
+	case GCSE_Clarke1880_RGS:
+		return "GCSE_Clarke1880_RGS"
+	case GCSE_Clarke1880_Arc:
+		return "GCSE_Clarke1880_Arc"
+	case GCSE_Clarke1880_SGA1922:
+		return "GCSE_Clarke1880_SGA1922"
+	case GCSE_Everest1830_1937Adjustment:
+		return "GCSE_Everest1830_1937Adjustment"
+	case GCSE_Everest1830_1967Definition:
+		return "GCSE_Everest1830_1967Definition"
+	case GCSE_Everest1830_1975Definition:
+		return "GCSE_Everest1830_1975Definition"
+	case GCSE_Everest1830Modified:
+		return "GCSE_Everest1830Modified"
+	case GCSE_GRS1980:
+		return "GCSE_GRS1980"
+	case GCSE_Helmert1906:
+		return "GCSE_Helmert1906"
+	case GCSE_IndonesianNationalSpheroid:
+		return "GCSE_IndonesianNationalSpheroid"
+	case GCSE_International1924:
+		return "GCSE_International1924"
+	case GCSE_International1967:
+		return "GCSE_International1967"
+	case GCSE_Krassowsky1940:
+		return "GCSE_Krassowsky1940"
+	case GCSE_NWL9D:
+		return "GCSE_NWL9D"
+	case GCSE_NWL10D:
+		return "GCSE_NWL10D"
+	case GCSE_Plessis1817:
+		return "GCSE_Plessis1817"
+	case GCSE_Struve1860:
+		return "GCSE_Struve1860"
+	case GCSE_WarOffice:
+		return "GCSE_WarOffice"
+	case GCSE_WGS84:
+		return "GCSE_WGS84"
+	case GCSE_GEM10C:
+		return "GCSE_GEM10C"
+	case GCSE_OSU86F:
+		return "GCSE_OSU86F"
+	case GCSE_OSU91A:
+		return "GCSE_OSU91A"
+	case GCSE_Clarke1880:
+		return "GCSE_Clarke1880"
+	case GCSE_Sphere:
+		return "GCSE_Sphere"
+	case GCS_Greek:
+		return "GCS_Greek"
+	case GCS_GGRS87:
+		return "GCS_GGRS87"
+	case GCS_KKJ:
+		return "GCS_KKJ"
+	case GCS_RT90:
+		return "GCS_RT90"
+	case GCS_EST92:
+		return "GCS_EST92"
+	case GCS_Dealul_Piscului_1970:
+		return "GCS_Dealul_Piscului_1970"
+	case GCS_Greek_Athens:
+		return "GCS_Greek_Athens"
+	case GCS_Adindan:
+		return "GCS_Adindan"
+	case GCS_AGD66:
+		return "GCS_AGD66"
+	case GCS_AGD84:
+		return "GCS_AGD84"
+	case GCS_Ain_el_Abd:
+		return "GCS_Ain_el_Abd"
+	case GCS_Afgooye:
+		return "GCS_Afgooye"
+	case GCS_Agadez:
+		return "GCS_Agadez"
+	case GCS_Lisbon:
+		return "GCS_Lisbon"
+	case GCS_Aratu:
+		return "GCS_Aratu"
+	case GCS_Arc_1950:
+		return "GCS_Arc_1950"
+	case GCS_Arc_1960:
+		return "GCS_Arc_1960"
+	case GCS_Batavia:
+		return "GCS_Batavia"
+	case GCS_Barbados:
+		return "GCS_Barbados"
+	case GCS_Beduaram:
+		return "GCS_Beduaram"
+	case GCS_Beijing_1954:
+		return "GCS_Beijing_1954"
+	case GCS_Belge_1950:
+		return "GCS_Belge_1950"
+	case GCS_Bermuda_1957:
+		return "GCS_Bermuda_1957"
+	case GCS_Bern_1898:
+		return "GCS_Bern_1898"
+	case GCS_Bogota:
+		return "GCS_Bogota"
+	case GCS_Bukit_Rimpah:
+		return "GCS_Bukit_Rimpah"
+	case GCS_Camacupa:
+		return "GCS_Camacupa"
+	case GCS_Campo_Inchauspe:
+		return "GCS_Campo_Inchauspe"
+	case GCS_Cape:
+		return "GCS_Cape"
+	case GCS_Carthage:
+		return "GCS_Carthage"
+	case GCS_Chua:
+		return "GCS_Chua"
+	case GCS_Corrego_Alegre:
+		return "GCS_Corrego_Alegre"
+	case GCS_Cote_d_Ivoire:
+		return "GCS_Cote_d_Ivoire"
+	case GCS_Deir_ez_Zor:
+		return "GCS_Deir_ez_Zor"
+	case GCS_Douala:
+		return "GCS_Douala"
+	case GCS_Egypt_1907:
+		return "GCS_Egypt_1907"
+	case GCS_ED50:
+		return "GCS_ED50"
+	case GCS_ED87:
+		return "GCS_ED87"
+	case GCS_Fahud:
+		return "GCS_Fahud"
+	case GCS_Gandajika_1970:
+		return "GCS_Gandajika_1970"
+	case GCS_Garoua:
+		return "GCS_Garoua"
+	case GCS_Guyane_Francaise:
+		return "GCS_Guyane_Francaise"
+	case GCS_Hu_Tzu_Shan:
+		return "GCS_Hu_Tzu_Shan"
+	case GCS_HD72:
+		return "GCS_HD72"
+	case GCS_ID74:
+		return "GCS_ID74"
+	case GCS_Indian_1954:
+		return "GCS_Indian_1954"
+	case GCS_Indian_1975:
+		return "GCS_Indian_1975"
+	case GCS_Jamaica_1875:
+		return "GCS_Jamaica_1875"
+	case GCS_JAD69:
+		return "GCS_JAD69"
+	case GCS_Kalianpur:
+		return "GCS_Kalianpur"
+	case GCS_Kandawala:
+		return "GCS_Kandawala"
+	case GCS_Kertau:
+		return "GCS_Kertau"
+	case GCS_KOC:
+		return "GCS_KOC"
+	case GCS_La_Canoa:
+		return "GCS_La_Canoa"
+	case GCS_PSAD56:
+		return "GCS_PSAD56"
+	case GCS_Lake:
+		return "GCS_Lake"
+	case GCS_Leigon:
+		return "GCS_Leigon"
+	case GCS_Liberia_1964:
+		return "GCS_Liberia_1964"
+	case GCS_Lome:
+		return "GCS_Lome"
+	case GCS_Luzon_1911:
+		return "GCS_Luzon_1911"
+	case GCS_Hito_XVIII_1963:
+		return "GCS_Hito_XVIII_1963"
+	case GCS_Herat_North:
+		return "GCS_Herat_North"
+	case GCS_Mahe_1971:
+		return "GCS_Mahe_1971"
+	case GCS_Makassar:
+		return "GCS_Makassar"
+	case GCS_EUREF89:
+		return "GCS_EUREF89"
+	case GCS_Malongo_1987:
+		return "GCS_Malongo_1987"
+	case GCS_Manoca:
+		return "GCS_Manoca"
+	case GCS_Merchich:
+		return "GCS_Merchich"
+	case GCS_Massawa:
+		return "GCS_Massawa"
+	case GCS_Minna:
+		return "GCS_Minna"
+	case GCS_Mhast:
+		return "GCS_Mhast"
+	case GCS_Monte_Mario:
+		return "GCS_Monte_Mario"
+	case GCS_M_poraloko:
+		return "GCS_M_poraloko"
+	case GCS_NAD27:
+		return "GCS_NAD27"
+	case GCS_NAD_Michigan:
+		return "GCS_NAD_Michigan"
+	case GCS_NAD83:
+		return "GCS_NAD83"
+	case GCS_Nahrwan_1967:
+		return "GCS_Nahrwan_1967"
+	case GCS_Naparima_1972:
+		return "GCS_Naparima_1972"
+	case GCS_GD49:
+		return "GCS_GD49"
+	case GCS_NGO_1948:
+		return "GCS_NGO_1948"
+	case GCS_Datum_73:
+		return "GCS_Datum_73"
+	case GCS_NTF:
+		return "GCS_NTF"
+	case GCS_NSWC_9Z_2:
+		return "GCS_NSWC_9Z_2"
+	case GCS_OSGB_1936:
+		return "GCS_OSGB_1936"
+	case GCS_OSGB70:
+		return "GCS_OSGB70"
+	case GCS_OS_SN80:
+		return "GCS_OS_SN80"
+	case GCS_Padang:
+		return "GCS_Padang"
+	case GCS_Palestine_1923:
+		return "GCS_Palestine_1923"
+	case GCS_Pointe_Noire:
+		return "GCS_Pointe_Noire"
+	case GCS_GDA94:
+		return "GCS_GDA94"
+	case GCS_Pulkovo_1942:
+		return "GCS_Pulkovo_1942"
+	case GCS_Qatar:
+		return "GCS_Qatar"
+	case GCS_Qatar_1948:
+		return "GCS_Qatar_1948"
+	case GCS_Qornoq:
+		return "GCS_Qornoq"
+	case GCS_Loma_Quintana:
+		return "GCS_Loma_Quintana"
+	case GCS_Amersfoort:
+		return "GCS_Amersfoort"
+	case GCS_RT38:
+		return "GCS_RT38"
+	case GCS_SAD69:
+		return "GCS_SAD69"
+	case GCS_Sapper_Hill_1943:
+		return "GCS_Sapper_Hill_1943"
+	case GCS_Schwarzeck:
+		return "GCS_Schwarzeck"
+	case GCS_Segora:
+		return "GCS_Segora"
+	case GCS_Serindung:
+		return "GCS_Serindung"
+	case GCS_Sudan:
+		return "GCS_Sudan"
+	case GCS_Tananarive:
+		return "GCS_Tananarive"
+	case GCS_Timbalai_1948:
+		return "GCS_Timbalai_1948"
+	case GCS_TM65:
+		return "GCS_TM65"
+	case GCS_TM75:
+		return "GCS_TM75"
+	case GCS_Tokyo:
+		return "GCS_Tokyo"
+	case GCS_Trinidad_1903:
+		return "GCS_Trinidad_1903"
+	case GCS_TC_1948:
+		return "GCS_TC_1948"
+	case GCS_Voirol_1875:
+		return "GCS_Voirol_1875"
+	case GCS_Voirol_Unifie:
+		return "GCS_Voirol_Unifie"
+	case GCS_Bern_1938:
+		return "GCS_Bern_1938"
+	case GCS_Nord_Sahara_1959:
+		return "GCS_Nord_Sahara_1959"
+	case GCS_Stockholm_1938:
+		return "GCS_Stockholm_1938"
+	case GCS_Yacare:
+		return "GCS_Yacare"
+	case GCS_Yoff:
+		return "GCS_Yoff"
+	case GCS_Zanderij:
+		return "GCS_Zanderij"
+	case GCS_MGI:
+		return "GCS_MGI"
+	case GCS_Belge_1972:
+		return "GCS_Belge_1972"
+	case GCS_DHDN:
+		return "GCS_DHDN"
+	case GCS_Conakry_1905:
+		return "GCS_Conakry_1905"
+	case GCS_WGS_72:
+		return "GCS_WGS_72"
+	case GCS_WGS_72BE:
+		return "GCS_WGS_72BE"
+	case GCS_WGS_84:
+		return "GCS_WGS_84"
+	case GCS_Bern_1898_Bern:
+		return "GCS_Bern_1898_Bern"
+	case GCS_Bogota_Bogota:
+		return "GCS_Bogota_Bogota"
+	case GCS_Lisbon_Lisbon:
+		return "GCS_Lisbon_Lisbon"
+	case GCS_Makassar_Jakarta:
+		return "GCS_Makassar_Jakarta"
+	case GCS_MGI_Ferro:
+		return "GCS_MGI_Ferro"
+	case GCS_Monte_Mario_Rome:
+		return "GCS_Monte_Mario_Rome"
+	case GCS_NTF_Paris:
+		return "GCS_NTF_Paris"
+	case GCS_Padang_Jakarta:
+		return "GCS_Padang_Jakarta"
+	case GCS_Belge_1950_Brussels:
+		return "GCS_Belge_1950_Brussels"
+	case GCS_Tananarive_Paris:
+		return "GCS_Tananarive_Paris"
+	case GCS_Voirol_1875_Paris:
+		return "GCS_Voirol_1875_Paris"
+	case GCS_Voirol_Unifie_Paris:
+		return "GCS_Voirol_Unifie_Paris"
+	case GCS_Batavia_Jakarta:
+		return "GCS_Batavia_Jakarta"
+	case GCS_ATF_Paris:
+		return "GCS_ATF_Paris"
+	case GCS_NDG_Paris:
+		return "GCS_NDG_Paris"
+
+	}
+	return fmt.Sprintf("Unkown GCS (%d)", v)
+}

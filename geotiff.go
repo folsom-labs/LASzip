@@ -93,6 +93,8 @@ func GeoKeyKnownValueName(geoKeyID int, val uint16) string {
 		return LinearUnitName(LinearUnit(val))
 	case GeogGeodeticDatumGeoKey:
 		return DatumName(int(val))
+	case GeographicTypeGeoKey:
+		return GcsName(int(val))
 	}
 	return fmt.Sprintf("Unknown-%d", val)
 }
