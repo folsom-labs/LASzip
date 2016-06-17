@@ -17,7 +17,7 @@ usage: testgo [-show-header] [-show-points] [-compare-points] <file.las>
 
 -show-header
 		print header information to stdout
-show-lasinfo-header
+-show-lasinfo-header
 		print header information to stdout in the same format as lasinfo
 -show-points
 		print x,y,z points to stdout
@@ -30,6 +30,14 @@ If no flag given, defaults to -show-header.
 
 To install last2txt on mac: brew install liblas
 More info on liblas: http://www.liblas.org/
+
+TODO:
+* read and interpret record 2112 with projection info, it looks like:
+
+PROJCS["NAD83(HARN) / Oregon Lambert (ft)",GEOGCS["NAD83(HARN)",DATUM["NAD83_High_Accuracy_Regional_Network",SPHEROID["GRS 1980",6378137,298.257222101,AUTHORITY["EPSG","7019"]],TOWGS84[0,0,0,0,0,0,0],AUTHORITY["EPSG","6152"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4152"]],UNIT["foot",0.3048,AUTHORITY["EPSG","9002"]],PROJECTION["Lambert_Conformal_Conic_2SP"],PARAMETER["standard_parallel_1",43],PARAMETER["standard_parallel_2",45.5],PARAMETER["latitude_of_origin",41.75],PARAMETER["central_meridian",-120.5],PARAMETER["false_easting",1312335.958],PARAMETER["false_northing",0],AUTHORITY["EPSG","2994"],AXIS["X",EAST],AXIS["Y",NORTH]]
+
+
+
 */
 
 var (
@@ -53,18 +61,18 @@ func fatalIf(cond bool) {
 	}
 }
 
-func trimEmptyStringsRight(a []string) []string {
-	for {
-		n := len(a) - 1
-		if n < 0 || len(a[n]) > 0 {
-			return a
+func filterEmptyStrings(a []string) []string {
+	var res []string
+	for _, s := range a {
+		if len(s) > 0 {
+			res = append(res, s)
 		}
-		a = a[:n]
 	}
+	return res
 }
 
 func splitStringIntoLines(s string) []string {
-	return trimEmptyStringsRight(strings.Split(s, "\n"))
+	return filterEmptyStrings(strings.Split(s, "\n"))
 }
 
 func verifyFileExists(path string) {
@@ -103,6 +111,10 @@ func dumpVariableLengthHeader(w io.Writer, hdr *VariableLengthRecord) {
 	fmt.Fprintf(w, "RecordID: %d\n", hdr.RecordID)
 	fmt.Fprintf(w, "RecordLengthAfterHeader: %d\n", hdr.RecordLengthAfterHeader)
 	fmt.Fprintf(w, "Description: %s\n", hdr.Description)
+
+	if false && hdr.RecordID == 2112 {
+		fmt.Fprintf(w, "Data for record 2112:\n%s\n", string(hdr.Data))
+	}
 }
 
 func dumpGeoKeyDirectory(w io.Writer, d *GeoKeyDirectory) {
@@ -167,7 +179,7 @@ func formatPointsByReturn(d [5]uint32) string {
 	Min X Y Z:                   635589.01 848886.45 406.59
 	Max X Y Z:                   638994.75 853535.43 593.73
 */
-func dumpLasHeaderSummary(r *LasReader, w io.Writer) {
+func dumpLasHeaderSummary(w io.Writer, r *LasReader) {
 	hdr := r.Header
 	fmt.Fprintf(w, `---------------------------------------------------------
   Header Summary
@@ -222,7 +234,7 @@ PROJCS["NAD83(HARN) / Oregon GIC Lambert (ft)",
         AUTHORITY["EPSG","9002"]],
     AUTHORITY["EPSG","2994"]]
 */
-func dumpLasSpatialReference(r *LasReader, w io.Writer) {
+func dumpLasSpatialReference(w io.Writer, r *LasReader) {
 	// hdr := r.Header
 	// TODO: write me
 }
@@ -244,7 +256,7 @@ Geotiff_Information:
       End_Of_Keys.
    End_Of_Geotiff.
 */
-func dumpLasGeotiffInformation(r *LasReader, w io.Writer) {
+func dumpLasGeotiffInformation(w io.Writer, r *LasReader) {
 	geoDir := r.GeoKeyInfo.Directory
 
 	fmt.Fprintf(w, `
@@ -300,7 +312,7 @@ Geotiff_Information:
 		User: 'liblas' - Description: 'OGR variant of OpenGIS WKT SRS'
 		ID: 2112 Length: 720 Total Size: 774
 */
-func dumpLasVLRSummary(r *LasReader, w io.Writer) {
+func dumpLasVLRSummary(w io.Writer, r *LasReader) {
 	fmt.Fprintf(w, `
 ---------------------------------------------------------
   VLR Summary
@@ -320,7 +332,7 @@ func dumpLasVLRSummary(r *LasReader, w io.Writer) {
   Custom schema?:              false
   Size in bytes:               28
 */
-func dumpLasSchemaSummary(r *LasReader, w io.Writer) {
+func dumpLasSchemaSummary(w io.Writer, r *LasReader) {
 	hdr := r.Header
 	nDimensions := -1
 	switch hdr.PointDataFormatID {
@@ -334,7 +346,7 @@ func dumpLasSchemaSummary(r *LasReader, w io.Writer) {
 		nDimensions = 12 + 4
 		// TODO: handle more cases
 	}
-	fmt.Fprintf(w, `
+	fmt.Fprintf(w, `---------------------------------------------------------
   Schema Summary
 ---------------------------------------------------------
   Point Format ID:             %d
@@ -344,7 +356,7 @@ func dumpLasSchemaSummary(r *LasReader, w io.Writer) {
 `, hdr.PointDataFormatID, nDimensions, hdr.PointDataRecordLength)
 }
 
-func dumpLasDimensions(r *LasReader, w io.Writer) {
+func dumpLasDimensions(w io.Writer, r *LasReader) {
 	hdr := r.Header
 	if hdr.PointDataFormatID == 1 {
 		fmt.Fprint(w, `
@@ -437,7 +449,7 @@ func fmtIntHistogram(h map[int]int) string {
   	0 synthetic
   -------------------------------------------------------
 */
-func dumpLasPointInfo(r *LasReader, w io.Writer) {
+func dumpLasPointInfo(w io.Writer, r *LasReader) {
 	hdr := r.Header
 	headerPointCount := int(hdr.NumberOfPointRecords)
 	classificationHistogram := make([]int, 12, 12)
@@ -454,9 +466,6 @@ func dumpLasPointInfo(r *LasReader, w io.Writer) {
 	maxX := float64(math.MinInt64)
 	maxY := float64(math.MinInt64)
 	maxZ := float64(math.MinInt64)
-
-	minTime := math.MaxFloat32
-	maxTime := float64(math.MinInt64)
 
 	minReturnNumber := int(math.MaxInt32)
 	maxReturnNumber := int(math.MinInt32)
@@ -485,18 +494,17 @@ func dumpLasPointInfo(r *LasReader, w io.Writer) {
 	minPointSourceID := int(math.MaxInt32)
 	maxPointSourceID := int(math.MinInt32)
 
+	minGPSTime := math.MaxFloat64
+	maxGPSTime := float64(math.MinInt64)
+
 	var n int
 	for i := 0; i < headerPointCount; i++ {
 		p, err := r.ReadPoint(i)
 		if err != nil {
 			break
 		}
-		p0 := GetPoint0(p)
-		if p0 == nil {
-			break
-		}
 		actualPointCount++
-		class := p0.GetClassification()
+		class := p.GetClassification()
 		n = int(class)
 		if n >= 0 && n < len(classificationHistogram) {
 			classificationHistogram[n]++
@@ -508,16 +516,16 @@ func dumpLasPointInfo(r *LasReader, w io.Writer) {
 			minClassification = n
 		}
 
-		if p0.IsWithheld() {
+		if p.IsWithheld() {
 			nWithheld++
 		}
-		if p0.IsKeyPoint() {
+		if p.IsKeyPoint() {
 			nKeyPoint++
 		}
-		if p0.IsSynthetic() {
+		if p.IsSynthetic() {
 			nSynthetic++
 		}
-		x, y, z := r.TransformPoints(p0.X, p0.Y, p0.Z)
+		x, y, z := r.TransformPoints(p.X, p.Y, p.Z)
 		if x < minX {
 			minX = x
 		}
@@ -539,7 +547,7 @@ func dumpLasPointInfo(r *LasReader, w io.Writer) {
 			maxZ = z
 		}
 
-		n = int(p0.ReturnNumber)
+		n = int(p.ReturnNumber)
 		if n > maxReturnNumber {
 			maxReturnNumber = n
 		}
@@ -548,7 +556,7 @@ func dumpLasPointInfo(r *LasReader, w io.Writer) {
 		}
 		byReturnHistogram[n]++
 
-		n = int(p0.NumberOfReturns)
+		n = int(p.NumberOfReturns)
 		if n > maxReturnCount {
 			maxReturnCount = n
 		}
@@ -557,7 +565,7 @@ func dumpLasPointInfo(r *LasReader, w io.Writer) {
 		}
 		byPulseHistogram[n]++
 
-		n = int(p0.UserData)
+		n = int(p.UserData)
 		if n > maxUserData {
 			maxUserData = n
 		}
@@ -565,7 +573,7 @@ func dumpLasPointInfo(r *LasReader, w io.Writer) {
 			minUserData = n
 		}
 
-		n = boolToInt(p0.EdgeOfFlightLine)
+		n = boolToInt(p.EdgeOfFlightLine)
 		if n > maxFlightEdge {
 			maxFlightEdge = n
 		}
@@ -573,7 +581,7 @@ func dumpLasPointInfo(r *LasReader, w io.Writer) {
 			minFlightEdge = n
 		}
 
-		n = int(p0.Intensity)
+		n = int(p.Intensity)
 		if n > maxIntensity {
 			maxIntensity = n
 		}
@@ -581,7 +589,7 @@ func dumpLasPointInfo(r *LasReader, w io.Writer) {
 			minIntensity = n
 		}
 
-		n = boolToInt(p0.ScanDirectionFlag)
+		n = boolToInt(p.ScanDirectionFlag)
 		if n > maxScanDirFlag {
 			maxScanDirFlag = n
 		}
@@ -589,7 +597,7 @@ func dumpLasPointInfo(r *LasReader, w io.Writer) {
 			minScanDirFlag = n
 		}
 
-		n = int(p0.ScanAngleRank)
+		n = int(p.ScanAngleRank)
 		if n > maxScanAngle {
 			maxScanAngle = n
 		}
@@ -597,17 +605,24 @@ func dumpLasPointInfo(r *LasReader, w io.Writer) {
 			minScanAngle = n
 		}
 
-		n = int(p0.PointSourceID)
+		n = int(p.PointSourceID)
 		if n > maxPointSourceID {
 			maxPointSourceID = n
 		}
 		if n < minPointSourceID {
 			minPointSourceID = n
 		}
+
+		t, _ := p.GetGPSTime()
+		if t > maxGPSTime {
+			maxGPSTime = t
+		}
+		if t < minGPSTime {
+			minGPSTime = t
+		}
 	}
 
-	fmt.Fprintf(w, `
----------------------------------------------------------
+	fmt.Fprintf(w, `---------------------------------------------------------
   Point Inspection Summary
 ---------------------------------------------------------
   Header Point Count: %d
@@ -637,7 +652,7 @@ func dumpLasPointInfo(r *LasReader, w io.Writer) {
 `, minX, minY, minZ, // Min X, Y, Z
 		maxX, maxY, maxZ, // Max X, Y, Z
 		minX, minY, maxX, maxY, // bounding box
-		minTime, maxTime, // Time
+		minGPSTime, maxGPSTime, // Time
 		minReturnNumber, maxReturnNumber, // Return Number
 		minReturnCount, maxReturnCount, // Return Count
 		minFlightEdge, maxFlightEdge, // Flightline Edge
@@ -656,7 +671,6 @@ func dumpLasPointInfo(r *LasReader, w io.Writer) {
   Number of Returns by Pulse
 ---------------------------------------------------------
 	%s
-
 	`, fmtIntHistogram(byReturnHistogram), fmtIntHistogram(byPulseHistogram))
 
 	fmt.Fprint(w, `
@@ -670,8 +684,7 @@ func dumpLasPointInfo(r *LasReader, w io.Writer) {
 		}
 	}
 
-	fmt.Fprintf(w, `
-  -------------------------------------------------------
+	fmt.Fprintf(w, `  -------------------------------------------------------
   	%d withheld
   	%d keypoint
   	%d synthetic
@@ -680,14 +693,14 @@ func dumpLasPointInfo(r *LasReader, w io.Writer) {
 }
 
 // for easy testing, dump header like lassinfo tool (http://www.liblas.org/utilities/lasinfo.html
-func dumpLikeLasInfo(r *LasReader, w io.Writer) {
-	dumpLasHeaderSummary(r, w)
-	dumpLasSpatialReference(r, w)
-	dumpLasGeotiffInformation(r, w)
-	dumpLasVLRSummary(r, w)
-	dumpLasSchemaSummary(r, w)
-	dumpLasDimensions(r, w)
-	dumpLasPointInfo(r, w)
+func dumpLikeLasInfo(w io.Writer, r *LasReader) {
+	dumpLasHeaderSummary(w, r)
+	dumpLasSpatialReference(w, r)
+	dumpLasGeotiffInformation(w, r)
+	dumpLasVLRSummary(w, r)
+	dumpLasSchemaSummary(w, r)
+	dumpLasDimensions(w, r)
+	dumpLasPointInfo(w, r)
 }
 
 func runLas2Txt(path string) []string {
@@ -714,10 +727,10 @@ func readLasFile(path string) {
 	r := NewLasReader(f)
 	err = r.ReadHeaders()
 	fatalIfErr(err)
-	dumpLikeLasInfo(r, os.Stdout)
+	dumpLikeLasInfo(os.Stdout, r)
 }
 
-func showLasInfo(path string, showHeader, showPoints bool) {
+func showLasInfo(path string) {
 	f, err := os.Open(path)
 	fatalIfErr(err)
 	defer f.Close()
@@ -726,7 +739,7 @@ func showLasInfo(path string, showHeader, showPoints bool) {
 	fatalIfErr(err)
 
 	w := os.Stdout
-	if showHeader {
+	if flgShowHeader {
 		dumpHeader(w, r.Header)
 		for _, record := range r.VariableLengthRecords {
 			fmt.Fprint(w, "\n")
@@ -746,13 +759,17 @@ func showLasInfo(path string, showHeader, showPoints bool) {
 		dumpGeoTags(w, r.GeoTags)
 	}
 
-	if showPoints {
+	if flgShowLasInfoHeader {
+		dumpLikeLasInfo(w, r)
+	}
+
+	if flgShowPoints {
 		nPoints := int(r.Header.NumberOfPointRecords)
 		if false && nPoints > 10 {
 			nPoints = 10
 		}
 		for i := 0; i < nPoints; i++ {
-			p, err := r.ReadPoint0(i)
+			p, err := r.ReadPoint(i)
 			fatalIfErr(err)
 			x, y, z := r.TransformPoints(p.X, p.Y, p.Z)
 			fmt.Fprintf(w, "%.2f,%.2f,%.2f\n", x, y, z)
@@ -791,7 +808,7 @@ func getLasInfoCompatibleOutput(path string) string {
 	err = r.ReadHeaders()
 	fatalIfErr(err)
 	var buf bytes.Buffer
-	dumpLikeLasInfo(r, &buf)
+	dumpLikeLasInfo(&buf, r)
 	return string(buf.Bytes())
 }
 
@@ -833,6 +850,8 @@ func compareWithLasInfo(path string) {
 
 	fmt.Printf("%d lines are the same\n", len(commonLines))
 
+	linesLasInfo = filterEmptyStrings(linesLasInfo)
+
 	// what's left in linesLasInfo are lines unique to it
 	n := len(linesLasInfo)
 	if n > 0 {
@@ -869,7 +888,7 @@ func getPointsMe(path string) []string {
 	var res []string
 	nPoints := int(r.Header.NumberOfPointRecords)
 	for i := 0; i < nPoints; i++ {
-		p, err := r.ReadPoint0(i)
+		p, err := r.ReadPoint(i)
 		fatalIfErr(err)
 		x, y, z := r.TransformPoints(p.X, p.Y, p.Z)
 		a := p.ScanAngleRank
@@ -973,5 +992,5 @@ func main() {
 		return
 	}
 
-	showLasInfo(path, flgShowHeader, flgShowPoints)
+	showLasInfo(path)
 }

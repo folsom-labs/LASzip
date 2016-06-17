@@ -74,8 +74,11 @@ type Classification struct {
 	Description string
 }
 
-// PointDataRecord0 describes Point Data Record format 0
-type PointDataRecord0 struct {
+// PointDataRecord describes Point Data Record, all formats
+type PointDataRecord struct {
+	FormatID int
+
+	// data available in all formats
 	X int32
 	Y int32
 	Z int32
@@ -102,29 +105,13 @@ type PointDataRecord0 struct {
 	// true if point at the end of the scan (last point in a given scan line
 	// before scan changes direction)
 	EdgeOfFlightLine bool
-}
 
-// PointDataRecord1 describes Point Data Record format 1
-type PointDataRecord1 struct {
-	PointDataRecord0
-	GPSTime float64
-}
+	// data available only in some formats
+	GPSTime float64 // 1, 3
 
-// PointDataRecord2 describes Point Data Record format 2
-type PointDataRecord2 struct {
-	PointDataRecord0
-	Red   uint16
-	Green uint16
-	Blue  uint16
-}
-
-// PointDataRecord3 describes Point Data Record format 3
-type PointDataRecord3 struct {
-	PointDataRecord0
-	GPSTime float64
-	Red     uint16
-	Green   uint16
-	Blue    uint16
+	Red   uint16 // 2, 3
+	Green uint16 // 2, 3
+	Blue  uint16 // 2, 3
 }
 
 // ClassificationType defines ASPRS LIDAR point classification
@@ -215,26 +202,49 @@ func isValidVersion(major, minor byte) bool {
 }
 
 // GetClassification returns ASPRS ClassificationType, bits 0..4 of Classification
-func (p *PointDataRecord0) GetClassification() ClassificationType {
+func (p *PointDataRecord) GetClassification() ClassificationType {
 	n, _ := eatBits(p.Classification, 5)
 	return ClassificationType(n)
 }
 
 // IsSynthetic returns true if not from LIDAR
-func (p *PointDataRecord0) IsSynthetic() bool {
+func (p *PointDataRecord) IsSynthetic() bool {
 	return uint8IsBitSet(p.Classification, 5)
 }
 
 // IsKeyPoint returns true if considered a model key-point and thus should not
 // be witheld in a thinning algorithm
-func (p *PointDataRecord0) IsKeyPoint() bool {
+func (p *PointDataRecord) IsKeyPoint() bool {
 	return uint8IsBitSet(p.Classification, 6)
 }
 
 // IsWithheld returns true if point should not be included in processing
 // (synonymous with IsDeleted)
-func (p *PointDataRecord0) IsWithheld() bool {
+func (p *PointDataRecord) IsWithheld() bool {
 	return uint8IsBitSet(p.Classification, 7)
+}
+
+func intIntArray(n int, a []int) bool {
+	for _, v := range a {
+		if n == v {
+			return true
+		}
+	}
+	return false
+}
+
+func hasGPSTime(formatID int) bool {
+	switch formatID {
+	case 1, 3:
+		return true
+	}
+	return false
+}
+
+// GetGPSTime returns GPS time and a bool indicating if GPS time is available
+// for this point
+func (p *PointDataRecord) GetGPSTime() (float64, bool) {
+	return p.GPSTime, hasGPSTime(p.FormatID)
 }
 
 // NewLasReader creates a LasReader
@@ -403,10 +413,12 @@ func (r *LasReader) ReadGeoKeyDirectory(br *BinaryReader) error {
 	return br.Error
 }
 
-// ReadPointDataRecord0 reads Point Data Record Format 0
-func ReadPointDataRecord0(r *BinaryReader) (*PointDataRecord0, error) {
-	var p PointDataRecord0
+// ReadPointDataRecord reads format records
+func ReadPointDataRecord(r *BinaryReader, formatID int) (*PointDataRecord, error) {
 
+	// read common data (basically format 0)
+	var p PointDataRecord
+	p.FormatID = formatID
 	p.X = r.ReadInt32()
 	p.Y = r.ReadInt32()
 	p.Z = r.ReadInt32()
@@ -425,50 +437,21 @@ func ReadPointDataRecord0(r *BinaryReader) (*PointDataRecord0, error) {
 	n, b = eatBits(b, 1)
 	p.EdgeOfFlightLine = (n == 1)
 
-	return &p, r.Error
-}
+	if formatID == 1 {
+		p.GPSTime = r.ReadFloat64()
+	} else if formatID == 2 {
+		p.Red = r.ReadUint16()
+		p.Green = r.ReadUint16()
+		p.Blue = r.ReadUint16()
+	} else if formatID == 3 {
+		p.GPSTime = r.ReadFloat64()
+		p.Red = r.ReadUint16()
+		p.Green = r.ReadUint16()
+		p.Blue = r.ReadUint16()
+	} else {
+		return nil, fmt.Errorf("%d is unsupported PointDataFormatID", formatID)
+	}
 
-// ReadPointDataRecord1 reads Point Data Record Format 1
-func ReadPointDataRecord1(r *BinaryReader) (*PointDataRecord1, error) {
-	p0, err := ReadPointDataRecord0(r)
-	p := PointDataRecord1{
-		PointDataRecord0: *p0,
-		GPSTime:          r.ReadFloat64(),
-	}
-	if err != nil {
-		return &p, err
-	}
-	return &p, r.Error
-}
-
-// ReadPointDataRecord2 reads Point Data Record Format 2
-func ReadPointDataRecord2(r *BinaryReader) (*PointDataRecord2, error) {
-	p0, err := ReadPointDataRecord0(r)
-	p := PointDataRecord2{
-		PointDataRecord0: *p0,
-		Red:              r.ReadUint16(),
-		Green:            r.ReadUint16(),
-		Blue:             r.ReadUint16(),
-	}
-	if err != nil {
-		return &p, err
-	}
-	return &p, r.Error
-}
-
-// ReadPointDataRecord3 reads Point Data Record Format 3
-func ReadPointDataRecord3(r *BinaryReader) (*PointDataRecord3, error) {
-	p0, err := ReadPointDataRecord0(r)
-	p := PointDataRecord3{
-		PointDataRecord0: *p0,
-		GPSTime:          r.ReadFloat64(),
-		Red:              r.ReadUint16(),
-		Green:            r.ReadUint16(),
-		Blue:             r.ReadUint16(),
-	}
-	if err != nil {
-		return &p, err
-	}
 	return &p, r.Error
 }
 
@@ -500,9 +483,7 @@ func (r *LasReader) ReadHeader() (*LasPublicHeader, error) {
 }
 
 // ReadPoint reads a point 0..r.Header.NumberOfPointRecords-1
-// It returns value of PointDataRecord0, PointDataRecord1, PointDataRecord2 etc.
-// so the caller needs to type-assert to interpret the data
-func (r *LasReader) ReadPoint(n int) (interface{}, error) {
+func (r *LasReader) ReadPoint(n int) (*PointDataRecord, error) {
 	if n < 0 || n >= int(r.Header.NumberOfPointRecords) {
 		return nil, fmt.Errorf("%d is invalid point number, must be >= 0 and < %d", n, r.Header.NumberOfPointRecords)
 	}
@@ -515,67 +496,23 @@ func (r *LasReader) ReadPoint(n int) (interface{}, error) {
 		fatalIf(newOffset != offset)
 	}
 	br := NewBinaryReader(r.r)
-	var res interface{}
-	var err error
-	switch r.Header.PointDataFormatID {
-	case 0:
-		res, err = ReadPointDataRecord0(br)
-	case 1:
-		res, err = ReadPointDataRecord1(br)
-	case 2:
-		res, err = ReadPointDataRecord2(br)
-	case 3:
-		res, err = ReadPointDataRecord3(br)
-	default:
-		return nil, fmt.Errorf("%d is unsupported PointDataFormatID", r.Header.PointDataFormatID)
-	}
+	res, err := ReadPointDataRecord(br, int(r.Header.PointDataFormatID))
 	if err != nil {
 		return nil, err
 	}
 	toSkip := int(r.Header.PointDataRecordLength) - br.BytesConsumed
 	fatalIf(toSkip < 0)
 	br.Skip(toSkip)
-	//r.lastPointRead = n
+	r.lastPointRead = n
 	return res, br.Error
 }
 
-// TransformPoints converts points as found in PointDataRecord0 to real value
+// TransformPoints converts points as found in PointDataRecord to real value
 func (r *LasReader) TransformPoints(x, y, z int32) (float64, float64, float64) {
 	resX := r.Header.XOffset + (float64(x) * r.Header.XScaleFactor)
 	resY := r.Header.YOffset + (float64(y) * r.Header.YScaleFactor)
 	resZ := r.Header.ZOffset + (float64(z) * r.Header.ZScaleFactor)
 	return resX, resY, resZ
-}
-
-// GetPoint0 extracts PointDataRecord0 from any PointDataRecord*
-func GetPoint0(p interface{}) *PointDataRecord0 {
-	switch v := p.(type) {
-	case *PointDataRecord0:
-		return v
-	case *PointDataRecord1:
-		return &v.PointDataRecord0
-	case *PointDataRecord2:
-		return &v.PointDataRecord0
-	case *PointDataRecord3:
-		return &v.PointDataRecord0
-	default:
-		return nil
-	}
-}
-
-// ReadPoint0 reads a point and returns common data in PointDataRecord0
-// Helper function for cases that don't care about additional data in other
-// types of point records
-func (r *LasReader) ReadPoint0(n int) (*PointDataRecord0, error) {
-	p, err := r.ReadPoint(n)
-	if err != nil {
-		return nil, err
-	}
-	p0 := GetPoint0(p)
-	if p0 == nil {
-		return nil, fmt.Errorf("Unexpected type of p: %T", p)
-	}
-	return p0, nil
 }
 
 // GetModelType returns value of GTModelTypeGeoKey GeoTiff key and
