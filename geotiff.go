@@ -241,13 +241,12 @@ func TagIDToName(tagID int) string {
 		return "VerticalDatumGeoKey"
 	case VerticalUnitsGeoKey:
 		return "VerticalUnitsGeoKey"
-	default:
-		return fmt.Sprintf("unknown (%d)", tagID)
 	}
+	return fmt.Sprintf("unknown tagID (%d)", tagID)
 }
 
 // 6.3.1.1 Model Type Codes for GTModelTypeGeoKey
-// https://github.com/smanders/libgeotiff/blob/4660cdfa5b29dcaa164ee2a12eb3519596dfa44c/geovalues.h#L54
+// https://github.com/smanders/libgeotiff/blob/master/geovalues.h#L54
 type ModelType int
 
 const (
@@ -257,21 +256,20 @@ const (
 )
 
 // ModelTypeName returns a name for a given ModelType constant
-func ModelTypeName(t ModelType) string {
-	switch t {
+func ModelTypeName(v ModelType) string {
+	switch v {
 	case ModelTypeProjected:
 		return "ModelTypeProjected"
 	case ModelTypeGeographic:
 		return "ModelTypeGeographic"
 	case ModelTypeGeocentric:
 		return "ModelTypeGeocentric"
-	default:
-		return fmt.Sprintf("Unknown ModelType value (%d)", int(t))
 	}
+	return fmt.Sprintf("Unknown ModelType value (%d)", int(v))
 }
 
 // 6.3.1.2 Raster Type Codes for GTRasterTypeGeoKey
-// https://github.com/smanders/libgeotiff/blob/4660cdfa5b29dcaa164ee2a12eb3519596dfa44c/geovalues.h#L64
+// https://github.com/smanders/libgeotiff/blob/master/geovalues.h#L64
 type RasterType int
 
 const (
@@ -280,18 +278,17 @@ const (
 )
 
 // RasterTypeName returns a name for a given RasterType constant
-func RasterTypeName(t RasterType) string {
-	switch t {
+func RasterTypeName(v RasterType) string {
+	switch v {
 	case RasterPixelIsArea:
 		return "RasterPixelIsArea"
 	case RasterPixelIsPoint:
 		return "RasterPixelIsPoint"
-	default:
-		return fmt.Sprintf("Unkown RasterType value (%d)", int(t))
 	}
+	return fmt.Sprintf("Unkown RasterType value (%d)", int(v))
 }
 
-// https://github.com/smanders/libgeotiff/blob/4660cdfa5b29dcaa164ee2a12eb3519596dfa44c/epsg_units.inc#L27
+// https://github.com/smanders/libgeotiff/blob/master/epsg_units.inc#L27
 type AngularUnit int
 
 const (
@@ -306,8 +303,8 @@ const (
 )
 
 // AngularUnitName retuns a name for a given AngularUnit constant
-func AngularUnitName(t AngularUnit) string {
-	switch t {
+func AngularUnitName(v AngularUnit) string {
+	switch v {
 	case Angular_Radian:
 		return "Angular_Radian"
 	case Angular_Degree:
@@ -324,9 +321,66 @@ func AngularUnitName(t AngularUnit) string {
 		return "Angular_DMS"
 	case Angular_DMS_Hemisphere:
 		return "Angular_DMS_Hemisphere"
-	default:
-		return fmt.Sprintf("Unkown AngularUnit value (%d)", int(t))
 	}
+	return fmt.Sprintf("Unkown AngularUnit value (%d)", int(v))
+}
+
+//https://github.com/smanders/libgeotiff/blob/master/epsg_units.inc#L9
+type LinearUnit int
+
+const (
+	Linear_Meter                       LinearUnit = 9001
+	Linear_Foot                        LinearUnit = 9002
+	Linear_Foot_US_Survey              LinearUnit = 9003
+	Linear_Foot_Modified_American      LinearUnit = 9004
+	Linear_Foot_Clarke                 LinearUnit = 9005
+	Linear_Foot_Indian                 LinearUnit = 9006
+	Linear_Link                        LinearUnit = 9007
+	Linear_Link_Benoit                 LinearUnit = 9008
+	Linear_Link_Sears                  LinearUnit = 9009
+	Linear_Chain_Benoit                LinearUnit = 9010
+	Linear_Chain_Sears                 LinearUnit = 9011
+	Linear_Yard_Sears                  LinearUnit = 9012
+	Linear_Yard_Indian                 LinearUnit = 9013
+	Linear_Fathom                      LinearUnit = 9014
+	Linear_Mile_International_Nautical LinearUnit = 9015
+)
+
+// LinearUnitName retuns a name for a given LinearUnit constant
+func LinearUnitName(v LinearUnit) string {
+	switch v {
+	case Linear_Meter:
+		return "Linear_Meter"
+	case Linear_Foot:
+		return "Linear_Foot"
+	case Linear_Foot_US_Survey:
+		return "Linear_Foot_US_Survey"
+	case Linear_Foot_Modified_American:
+		return "Linear_Foot_Modified_American"
+	case Linear_Foot_Clarke:
+		return "Linear_Foot_Clarke"
+	case Linear_Foot_Indian:
+		return "Linear_Foot_Indian"
+	case Linear_Link:
+		return "Linear_Link"
+	case Linear_Link_Benoit:
+		return "Linear_Link_Benoit"
+	case Linear_Link_Sears:
+		return "Linear_Link_Sears"
+	case Linear_Chain_Benoit:
+		return "Linear_Chain_Benoit"
+	case Linear_Chain_Sears:
+		return "Linear_Chain_Sears"
+	case Linear_Yard_Sears:
+		return "Linear_Yard_Sears"
+	case Linear_Yard_Indian:
+		return "Linear_Yard_Indian"
+	case Linear_Fathom:
+		return "Linear_Fathom"
+	case Linear_Mile_International_Nautical:
+		return "Linear_Mile_International_Nautical"
+	}
+	return fmt.Sprintf("Unknown-%d", v)
 }
 
 // GeoKeyKnownValueName returns name of the value for known
@@ -339,6 +393,8 @@ func GeoKeyKnownValueName(geoKeyID int, val uint16) string {
 		return RasterTypeName(RasterType(val))
 	case GeogAngularUnitsGeoKey:
 		return AngularUnitName(AngularUnit(val))
+	case ProjLinearUnitsGeoKey:
+		return LinearUnitName(LinearUnit(val))
 	}
 	return fmt.Sprintf("Unknown-%d", val)
 }
