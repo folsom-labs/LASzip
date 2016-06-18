@@ -10,6 +10,7 @@ const (
 	GeoKeyDirectoryTag = 34735 // required
 	GeoDoubleParamsTag = 34736 // optional or not (depending on GeoKeyDirectoryTag)
 	GeoASCIIParamsTag  = 34737 // optional or not (depending on GeoKeyDirectoryTag)
+	LazVlrTag          = 22204
 
 	// optional
 	ModelTiePointTag       = 33922
@@ -174,6 +175,7 @@ type LasReader struct {
 	GeoKeyInfo            GeoKeyInfo
 	GeoTags               *GeoTags // decoded version of GeoKeyInfo
 	Classifications       []Classification
+	LazVLR                *LazVLR
 	Error                 error
 
 	// for optimizing sequential point reading, we remember what
@@ -371,6 +373,15 @@ func (r *LasReader) ReadVariableLengthRecord(br *BinaryReader) error {
 		if vlr.RecordID == GeoASCIIParamsTag {
 			return r.ReadGeoASCIIParams(br, &vlr)
 		}
+	}
+
+	if vlr.RecordID == LazVlrTag {
+		lazVlr, err := ReadLazVlr(br, &vlr)
+		if err != nil {
+			return err
+		}
+		r.LazVLR = lazVlr
+		return nil
 	}
 
 	vlr.Data = br.ReadBytes(int(vlr.RecordLengthAfterHeader))

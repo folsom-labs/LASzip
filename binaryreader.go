@@ -150,6 +150,17 @@ func (r *BinaryReader) ReadInt32() int32 {
 	return res
 }
 
+// ReadInt64 reads int64
+func (r *BinaryReader) ReadInt64() int64 {
+	var res int64
+	if r.Error != nil {
+		return res
+	}
+	r.Error = binary.Read(r.r, binary.LittleEndian, &res)
+	r.BytesConsumed += 8
+	return res
+}
+
 // ReadFloat64 reads float64
 func (r *BinaryReader) ReadFloat64() float64 {
 	var res float64

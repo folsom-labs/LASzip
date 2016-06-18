@@ -88,7 +88,8 @@ func verifyFileExists(path string) {
 	}
 }
 
-func dumpHeader(w io.Writer, hdr *LasPublicHeader) {
+func dumpHeader(w io.Writer, r *LasReader) {
+	hdr := r.Header
 	fmt.Fprintf(w, "Version: %d.%d\n", hdr.VersionMajor, hdr.VersionMinor)
 	fmt.Fprintf(w, "FileSourceID: %d\n", hdr.FileSourceID)
 	fmt.Fprintf(w, "SystemIdentifier: %s\n", hdr.SystemIdentifier)
@@ -96,15 +97,35 @@ func dumpHeader(w io.Writer, hdr *LasPublicHeader) {
 	fmt.Fprintf(w, "HeaderSize: %d\n", hdr.HeaderSize)
 	fmt.Fprintf(w, "OffsetToPointData: %d\n", hdr.OffsetToPointData)
 	fmt.Fprintf(w, "NumberOfVariableLengthRecords: %d\n", hdr.NumberOfVariableLengthRecords)
-
 	fmt.Fprintf(w, "PointDataFormatID: %d\n", hdr.PointDataFormatID)
-
 	fmt.Fprintf(w, "NumberOfPointRecords: %d\n", hdr.NumberOfPointRecords)
 	fmt.Fprintf(w, "NumerOfPointsByReturn: %s\n", formatPointsByReturn(hdr.NumberOfPointsByReturn))
 	fmt.Fprintf(w, "Scale factor X Y Z: %.14f %.14f %.14f\n", hdr.XScaleFactor, hdr.YScaleFactor, hdr.ZScaleFactor)
 	fmt.Fprintf(w, "Offset X Y Z: %.2f %.2f %.2f\n", hdr.XOffset, hdr.YOffset, hdr.ZOffset)
 	fmt.Fprintf(w, "Min X Y Z: %.2f %.2f %.2f\n", hdr.MinX, hdr.MinY, hdr.MinZ)
 	fmt.Fprintf(w, "Max X Y Z: %.2f %.2f %.2f\n", hdr.MaxX, hdr.MaxY, hdr.MaxZ)
+
+	for _, record := range r.VariableLengthRecords {
+		fmt.Fprint(w, "\n")
+		dumpVariableLengthHeader(w, record)
+	}
+	if r.GeoKeyInfo.ASCIIParams != nil {
+		fmt.Fprint(w, "\nGeoASCIIParams:\n")
+		dumpASCIIParams(w, r.GeoKeyInfo.ASCIIParams)
+	}
+
+	if r.GeoKeyInfo.Directory != nil {
+		fmt.Fprint(w, "\nGeoKeyDirectory:\n")
+		dumpGeoKeyDirectory(w, r.GeoKeyInfo.Directory)
+	}
+
+	fmt.Fprint(w, "\nGeoTags:\n")
+	dumpGeoTags(w, r.GeoTags)
+
+	if r.LazVLR != nil {
+		fmt.Fprint(w, "\nLazVLR:\n")
+		dumpLazVlr(w, r.LazVLR)
+	}
 }
 
 func dumpVariableLengthHeader(w io.Writer, hdr *VariableLengthRecord) {
@@ -144,6 +165,26 @@ func dumpASCIIParams(w io.Writer, params []byte) {
 	strings := bytes.Split(params, []byte{0})
 	for _, s := range strings {
 		fmt.Fprintf(w, "%s\n", string(s))
+	}
+}
+
+func dumpLazVlr(w io.Writer, laz *LazVLR) {
+	fmt.Fprintf(w, `Compressor: %d
+Coder: %d
+Version: %d.%d.%d (major.minor.rev)
+Options: %d
+ChunkSize: %d
+NumPoints: %d
+NumBytes: %d
+NumItems: %d
+`, laz.Compressor, laz.Coder, laz.VersionMajor, laz.VersionMinor, laz.VersionRevision,
+		laz.Options, laz.ChunkSize, laz.NumPoints, laz.NumBytes, laz.NumItems)
+	for _, item := range laz.Items {
+		fmt.Fprintf(w, `
+  Type: %d
+  Size: %d
+  Version: %d
+`, item.Type, item.Size, item.Version)
 	}
 }
 
@@ -805,23 +846,7 @@ func showLasInfo(path string) {
 
 	w := os.Stdout
 	if flgShowHeader {
-		dumpHeader(w, r.Header)
-		for _, record := range r.VariableLengthRecords {
-			fmt.Fprint(w, "\n")
-			dumpVariableLengthHeader(w, record)
-		}
-		if r.GeoKeyInfo.ASCIIParams != nil {
-			fmt.Fprint(w, "\nGeoASCIIParams:\n")
-			dumpASCIIParams(w, r.GeoKeyInfo.ASCIIParams)
-		}
-
-		if r.GeoKeyInfo.Directory != nil {
-			fmt.Fprint(w, "\nGeoKeyDirectory:\n")
-			dumpGeoKeyDirectory(w, r.GeoKeyInfo.Directory)
-		}
-
-		fmt.Fprint(w, "\nGeoTags:\n")
-		dumpGeoTags(w, r.GeoTags)
+		dumpHeader(w, r)
 	}
 
 	if flgShowLasInfoHeader {
