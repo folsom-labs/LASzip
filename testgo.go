@@ -155,6 +155,26 @@ func formatPointsByReturn(d [5]uint32) string {
 	return s[:len(s)-1]
 }
 
+func getStreamPrecision(scale float64) int {
+	_, frac := math.Modf(scale)
+	precision := math.Abs(math.Floor(math.Log10(frac)))
+	return int(precision)
+}
+
+func fmtFlt(f float64, prec int) string {
+	var fmtStr string
+	switch prec {
+	// most common as constant strings for perf
+	case 2:
+		fmtStr = "%.2f"
+	case 3:
+		fmtStr = "%.3f"
+	default:
+		fmtStr = fmt.Sprintf("%%.%df", prec)
+	}
+	return fmt.Sprintf(fmtStr, f)
+}
+
 /*
 ---------------------------------------------------------
 	Header Summary
@@ -202,14 +222,19 @@ func dumpLasHeaderSummary(w io.Writer, r *LasReader) {
 	fmt.Fprintf(w, "  %-28s %d\n", "Point Data Format:", hdr.PointDataFormatID)
 
 	fmt.Fprintf(w, "  %-28s %d\n", "Number of Point Records:", hdr.NumberOfPointRecords)
-	// TODO: what is it? true for .laz files?
+	// TODO: reflect compression info
 	fmt.Fprintf(w, "  %-28s %s\n", "Compressed:", "False")
 	fmt.Fprintf(w, "  %-28s %s\n", "Number of Points by Return:", formatPointsByReturn(hdr.NumberOfPointsByReturn))
 
 	fmt.Fprintf(w, "  %-28s %.14f %.14f %.14f\n", "Scale Factor X Y Z:", hdr.XScaleFactor, hdr.YScaleFactor, hdr.ZScaleFactor)
-	fmt.Fprintf(w, "  %-28s %.2f %.2f %.2f\n", "Offset X Y Z:", hdr.XOffset, hdr.YOffset, hdr.ZOffset)
-	fmt.Fprintf(w, "  %-28s %.2f %.2f %.2f\n", "Min X Y Z:", hdr.MinX, hdr.MinY, hdr.MinZ)
-	fmt.Fprintf(w, "  %-28s %.2f %.2f %.2f\n", "Max X Y Z:", hdr.MaxX, hdr.MaxY, hdr.MaxZ)
+
+	xPrecision := getStreamPrecision(hdr.XScaleFactor)
+	yPrecision := getStreamPrecision(hdr.YScaleFactor)
+	zPrecision := getStreamPrecision(hdr.ZScaleFactor)
+
+	fmt.Fprintf(w, "  %-28s %s %s %s\n", "Offset X Y Z:", fmtFlt(hdr.XOffset, xPrecision), fmtFlt(hdr.YOffset, yPrecision), fmtFlt(hdr.ZOffset, zPrecision))
+	fmt.Fprintf(w, "  %-28s %s %s %s\n", "Min X Y Z:", fmtFlt(hdr.MinX, xPrecision), fmtFlt(hdr.MinY, yPrecision), fmtFlt(hdr.MinZ, zPrecision))
+	fmt.Fprintf(w, "  %-28s %s %s %s\n", "Max X Y Z:", fmtFlt(hdr.MaxX, xPrecision), fmtFlt(hdr.MaxY, yPrecision), fmtFlt(hdr.MaxZ, zPrecision))
 }
 
 /*
@@ -239,16 +264,10 @@ func dumpLasSpatialReference(w io.Writer, r *LasReader) {
 	// TODO: write me
 }
 
-// try to format a number the way lasinfo does
 func fmtFloat64(f float64) string {
-	// their default formatting is 13 digits of precision, ours is 11,
-	// so we need to up our precision
-	s := fmt.Sprintf("%.13f", f)
-	s = strings.TrimRight(s, "0.")
-	if len(s) == 0 {
-		s = "0"
-	}
-	return s
+	s := fmt.Sprintf("%.15f", f)
+	s = strings.TrimRight(s, "0")
+	return strings.TrimRight(s, ".")
 }
 
 /*
@@ -656,6 +675,10 @@ func dumpLasPointInfo(w io.Writer, r *LasReader) {
 		}
 	}
 
+	xPrecision := getStreamPrecision(hdr.XScaleFactor)
+	yPrecision := getStreamPrecision(hdr.YScaleFactor)
+	zPrecision := getStreamPrecision(hdr.ZScaleFactor)
+
 	fmt.Fprintf(w, `---------------------------------------------------------
   Point Inspection Summary
 ---------------------------------------------------------
@@ -667,9 +690,9 @@ func dumpLasPointInfo(w io.Writer, r *LasReader) {
 	fmt.Fprintf(w, `
   Minimum and Maximum Attributes (min,max)
 ---------------------------------------------------------
-  Min X, Y, Z: 		%.2f, %.2f, %.2f
-  Max X, Y, Z: 		%.2f, %.2f, %.2f
-  Bounding Box:		%.2f, %.2f, %.2f, %.2f
+  Min X, Y, Z: 		%s, %s, %s
+  Max X, Y, Z: 		%s, %s, %s
+  Bounding Box:		%s, %s, %s, %s
   Time:			%.6f, %.6f
   Return Number:	%d, %d
   Return Count:		%d, %d
@@ -683,9 +706,9 @@ func dumpLasPointInfo(w io.Writer, r *LasReader) {
   Minimum Color (RGB):	0 0 0
   Maximum Color (RGB):	0 0 0
 
-`, minX, minY, minZ, // Min X, Y, Z
-		maxX, maxY, maxZ, // Max X, Y, Z
-		minX, minY, maxX, maxY, // bounding box
+`, fmtFlt(minX, xPrecision), fmtFlt(minY, yPrecision), fmtFlt(minZ, zPrecision), // Min X, Y, Z
+		fmtFlt(maxX, xPrecision), fmtFlt(maxY, yPrecision), fmtFlt(maxZ, zPrecision), // Max X, Y, Z
+		fmtFlt(minX, xPrecision), fmtFlt(minY, yPrecision), fmtFlt(maxX, xPrecision), fmtFlt(maxY, yPrecision), // bounding box
 		minGPSTime, maxGPSTime, // Time
 		minReturnNumber, maxReturnNumber, // Return Number
 		minReturnCount, maxReturnCount, // Return Count

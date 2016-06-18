@@ -89,7 +89,7 @@ func GeoKeyKnownValueName(geoKeyID int, val uint16) string {
 		return RasterTypeName(RasterType(val))
 	case GeogAngularUnitsGeoKey:
 		return AngularUnitName(AngularUnit(val))
-	case ProjLinearUnitsGeoKey:
+	case ProjLinearUnitsGeoKey, GeogLinearUnitsGeoKey, VerticalUnitsGeoKey:
 		return LinearUnitName(LinearUnit(val))
 	case GeogGeodeticDatumGeoKey:
 		return DatumName(int(val))
@@ -103,6 +103,8 @@ func GeoKeyKnownValueName(geoKeyID int, val uint16) string {
 		return PcsName(int(val))
 	case ProjCoordTransGeoKey:
 		return CoordTransName(int(val))
+	case VerticalCSTypeGeoKey:
+		return VcsName(int(val))
 	}
 	return fmt.Sprintf("Unknown-%d", val)
 }
