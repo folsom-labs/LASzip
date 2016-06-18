@@ -207,6 +207,10 @@ func dumpLasHeaderSummary(w io.Writer, r *LasReader) {
 ---------------------------------------------------------
 
 `)
+	isCompressed := "False"
+	if hdr.IsCompressed {
+		isCompressed = "True"
+	}
 	fmt.Fprintf(w, "  %-28s %d.%d\n", "Version:", hdr.VersionMajor, hdr.VersionMinor)
 	fmt.Fprintf(w, "  %-28s %d\n", "Source ID:", hdr.FileSourceID)
 	fmt.Fprintf(w, "  %-28s %d\n", "Reserved:", hdr.GlobalEncoding)
@@ -222,8 +226,7 @@ func dumpLasHeaderSummary(w io.Writer, r *LasReader) {
 	fmt.Fprintf(w, "  %-28s %d\n", "Point Data Format:", hdr.PointDataFormatID)
 
 	fmt.Fprintf(w, "  %-28s %d\n", "Number of Point Records:", hdr.NumberOfPointRecords)
-	// TODO: reflect compression info
-	fmt.Fprintf(w, "  %-28s %s\n", "Compressed:", "False")
+	fmt.Fprintf(w, "  %-28s %s\n", "Compressed:", isCompressed)
 	fmt.Fprintf(w, "  %-28s %s\n", "Number of Points by Return:", formatPointsByReturn(hdr.NumberOfPointsByReturn))
 
 	fmt.Fprintf(w, "  %-28s %.14f %.14f %.14f\n", "Scale Factor X Y Z:", hdr.XScaleFactor, hdr.YScaleFactor, hdr.ZScaleFactor)
@@ -351,6 +354,11 @@ func dumpLasVLRSummary(w io.Writer, r *LasReader) {
 `)
 	for _, vlr := range r.VariableLengthRecords {
 		fmt.Fprintf(w, "    User: '%s' - Description: '%s'\n", vlr.UserID, vlr.Description)
+		//fmt.Fprintf(w, "user in hex\n")
+		//dumpHex(vlr.UserID, 8)
+		//fmt.Fprintf(w, "description in hex\n")
+		//dumpHex(vlr.Description, 8)
+
 		fmt.Fprintf(w, "    ID: %d Length: %d Total Size: %d\n", vlr.RecordID, vlr.RecordLengthAfterHeader, vlr.RecordLengthAfterHeader+54)
 	}
 }
@@ -1022,7 +1030,7 @@ func parseFlags() {
 	flag.Parse()
 
 	// default to -show-header if nothing else given
-	if !flgShowPoints && !flgCompareWithLas2Txt && !flgCompareWithLasInfo {
+	if !flgShowPoints && !flgShowLasInfoHeader && !flgCompareWithLas2Txt && !flgCompareWithLasInfo {
 		flgShowHeader = true
 	}
 }

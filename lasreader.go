@@ -54,6 +54,7 @@ type LasPublicHeader struct {
 	// corresponds to bit 0 of GlobalEncoding. If true, GPS Time in Point Records
 	// is standard GPS TIME (satellite GPS Time) minus 10e9.
 	IsGPSTimeStandard bool
+	IsCompressed      bool
 }
 
 // VariableLengthRecord describes Variable Length Record Header and its data
@@ -289,10 +290,16 @@ func ReadLasPublicHeader(r *BinaryReader) (*LasPublicHeader, error) {
 	hdr.HeaderSize = r.ReadUint16()
 	hdr.OffsetToPointData = r.ReadUint32()
 	hdr.NumberOfVariableLengthRecords = r.ReadUint32()
-	hdr.PointDataFormatID = r.ReadUint8()
-	// TODO: laz compression status is set in bit 6 and 7
+	pointFmt := r.ReadUint8()
+	// laz compression status is set in bit 6 and 7
 	// if bit 6 is set, it's invalid (obsolete) compression
 	// so really it's bit 7 that sets compression
+	if uint8IsBitSet(pointFmt, 6) {
+		return nil, fmt.Errorf("Unsupported, old version of laz compression")
+	}
+	hdr.IsCompressed = uint8IsBitSet(pointFmt, 7)
+	hdr.PointDataFormatID = pointFmt & 0xf
+
 	if hdr.PointDataFormatID > 3 {
 		return nil, fmt.Errorf("Unsupported point format id: %d (we understand 0-3)", hdr.PointDataFormatID)
 	}
@@ -336,10 +343,10 @@ func ReadLasPublicHeader(r *BinaryReader) (*LasPublicHeader, error) {
 func (r *LasReader) ReadVariableLengthRecord(br *BinaryReader) error {
 	var vlr VariableLengthRecord
 	vlr.reserved = br.ReadUint16()
-	vlr.UserID = br.ReadFixedString(16)
+	vlr.UserID = br.ReadFixStringSanitized(16)
 	vlr.RecordID = br.ReadUint16()
 	vlr.RecordLengthAfterHeader = br.ReadUint16()
-	vlr.Description = br.ReadFixedString(32)
+	vlr.Description = br.ReadFixStringSanitized(32)
 
 	if br.Error != nil {
 		return br.Error

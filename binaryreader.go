@@ -57,6 +57,18 @@ func (r *BinaryReader) ReadFixedString(nChars int) string {
 	return res
 }
 
+// ReadFixStringSanitized reads a fixed string of nChars characters and trims
+// to first 0 in the string (the way C would)
+func (r *BinaryReader) ReadFixStringSanitized(nChars int) string {
+	s := r.ReadFixedString(nChars)
+	for i := 0; i < len(s); i++ {
+		if s[i] == 0 {
+			return s[:i]
+		}
+	}
+	return s
+}
+
 // Skip skips n bytes
 func (r *BinaryReader) Skip(nBytes int) {
 
