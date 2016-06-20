@@ -1,7 +1,7 @@
-SUBDIRS = . 
+SUBDIRS = .
 
 AM_CPPFLAGS = -I. -I../include -I../include/laszip
-noinst_LTLIBRARIES = liblibrary.la 
+noinst_LTLIBRARIES = liblibrary.la
 
 liblibrary_la_SOURCES =				arithmeticmodel.cpp \
                         arithmeticmodel.hpp \
@@ -36,6 +36,4 @@ liblibrary_la_SOURCES =				arithmeticmodel.cpp \
                         mydefs.hpp \
 						laszip.cpp \
                         laswriteitemraw.hpp \
-                        lasreaditem.hpp \
-						laszipper.cpp \
-						lasunzipper.cpp
+                        lasreaditem.hpp

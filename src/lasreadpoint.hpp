@@ -2,9 +2,9 @@
 ===============================================================================
 
   FILE:  lasreadpoint.hpp
-  
+
   CONTENTS:
-  
+
     Common interface for the classes that read points raw or compressed.
 
   PROGRAMMERS:
@@ -21,9 +21,9 @@
 
     This software is distributed WITHOUT ANY WARRANTY and without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-  
+
   CHANGE HISTORY:
-  
+
     6 September 2014 -- removed inheritance of EntropyEncoder and EntropyDecoder
     24 August 2014 -- delay read of chunk table until first read() or seek() is called
     6 October 2011 -- large file support & reading with missing chunk table
@@ -32,9 +32,9 @@
     10 January 2011 -- licensing change for LGPL release and liblas integration
     7 December 2010 -- adapted from LASpointReader for better code modularity
     3 December 2010 -- updated to (somewhat) support LAS format 1.3
-    7 September 2008 -- updated to support LAS format 1.2 
+    7 September 2008 -- updated to support LAS format 1.2
     22 February 2007 -- created about an hour before henna's birthday
-  
+
 ===============================================================================
 */
 #ifndef LAS_READ_POINT_HPP
