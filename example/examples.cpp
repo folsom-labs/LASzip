@@ -11,7 +11,7 @@ static void dll_error(void * laszip)
 {
   if (laszip)
   {
-    laszip_CHAR* error;
+    char* error;
     if (laszip_get_error(laszip, &error))
     {
       fprintf(stderr,"DLL ERROR: getting error messages\n");

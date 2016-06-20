@@ -60,8 +60,6 @@ typedef int8_t             laszip_I8;
 typedef int16_t            laszip_I16;
 typedef int32_t            laszip_I32;
 typedef int64_t            laszip_I64;
-typedef char               laszip_CHAR;
-typedef float              laszip_F32;
 
 typedef struct laszip_geokey
 {
@@ -74,10 +72,10 @@ typedef struct laszip_geokey
 typedef struct laszip_vlr
 {
   laszip_U16 reserved;
-  laszip_CHAR user_id[16];
+  char user_id[16];
   laszip_U16 record_id;
   laszip_U16 record_length_after_header;
-  laszip_CHAR description[32];
+  char description[32];
   laszip_U8* data;
 } laszip_vlr_struct;
 
@@ -88,11 +86,11 @@ typedef struct laszip_header
   laszip_U32 project_ID_GUID_data_1;
   laszip_U16 project_ID_GUID_data_2;
   laszip_U16 project_ID_GUID_data_3;
-  laszip_CHAR project_ID_GUID_data_4[8];
+  char project_ID_GUID_data_4[8];
   laszip_U8 version_major;
   laszip_U8 version_minor;
-  laszip_CHAR system_identifier[32];
-  laszip_CHAR generating_software[32];
+  char system_identifier[32];
+  char generating_software[32];
   laszip_U16 file_creation_day;
   laszip_U16 file_creation_year;
   laszip_U16 header_size;
@@ -203,7 +201,7 @@ LASZIP_API laszip_I32
 laszip_get_error
 (
     void *                     pointer
-    , laszip_CHAR**                    error
+    , char**                    error
 );
 
 /*---------------------------------------------------------------------------*/
@@ -211,7 +209,7 @@ LASZIP_API laszip_I32
 laszip_get_warning
 (
     void *                     pointer
-    , laszip_CHAR**                    warning
+    , char**                    warning
 );
 
 /*---------------------------------------------------------------------------*/
@@ -312,7 +310,7 @@ LASZIP_API laszip_I32
 laszip_set_geoascii_params(
     void *                     pointer
     , laszip_U32                       number
-    , const laszip_CHAR*               geoascii_params
+    , const char*               geoascii_params
 );
 
 /*---------------------------------------------------------------------------*/
@@ -320,8 +318,8 @@ LASZIP_API laszip_I32
 laszip_add_attribute(
     void *                     pointer
     , laszip_U32                       type
-    , const laszip_CHAR*               name
-    , const laszip_CHAR*               description
+    , const char*               name
+    , const char*               description
     , double                       scale
     , double                       offset
 );
@@ -330,10 +328,10 @@ laszip_add_attribute(
 LASZIP_API laszip_I32
 laszip_add_vlr(
     void *                     pointer
-    , const laszip_CHAR*               user_id
+    , const char*               user_id
     , laszip_U16                       record_id
     , laszip_U16                       record_length_after_header
-    , const laszip_CHAR*               description
+    , const char*               description
     , const laszip_U8*                 data
 );
 
@@ -341,7 +339,7 @@ laszip_add_vlr(
 LASZIP_API laszip_I32
 laszip_remove_vlr(
     void *                     pointer
-    , const laszip_CHAR*               user_id
+    , const char*               user_id
     , laszip_U16                       record_id
 );
 
@@ -371,7 +369,7 @@ laszip_request_compatibility_mode(
 LASZIP_API laszip_I32
 laszip_open_writer(
     void *                     pointer
-    , const laszip_CHAR*               file_name
+    , const char*               file_name
     , laszip_BOOL                      compress
 );
 
@@ -410,7 +408,7 @@ laszip_exploit_spatial_index(
 LASZIP_API laszip_I32
 laszip_open_reader(
     void *                     pointer
-    , const laszip_CHAR*               file_name
+    , const char*               file_name
     , laszip_BOOL*                     is_compressed
 );
 

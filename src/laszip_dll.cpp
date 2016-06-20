@@ -162,7 +162,7 @@ laszip_get_version(
 LASZIP_API laszip_I32
 laszip_get_error(
     void *                     pointer
-    , laszip_CHAR**                    error
+    , char**                    error
 )
 {
   if (pointer == 0) return 1;
@@ -185,7 +185,7 @@ laszip_get_error(
 LASZIP_API laszip_I32
 laszip_get_warning(
     void *                     pointer
-    , laszip_CHAR**                    warning
+    , char**                    warning
 )
 {
   if (pointer == 0) return 1;
@@ -1096,7 +1096,7 @@ LASZIP_API laszip_I32
 laszip_set_geoascii_params(
     void *                     pointer
     , laszip_U32                       number
-    , const laszip_CHAR*               geoascii_params
+    , const char*               geoascii_params
 )
 {
   if (pointer == 0) return 1;
@@ -1112,7 +1112,7 @@ laszip_set_geoascii_params(
 
     if (geoascii_params == 0)
     {
-      sprintf(laszip_dll->error, "laszip_CHAR pointer 'geoascii_params' is zero");
+      sprintf(laszip_dll->error, "char pointer 'geoascii_params' is zero");
       return 1;
     }
 
@@ -1151,8 +1151,8 @@ LASZIP_API laszip_I32
 laszip_add_attribute(
     void *                     pointer
     , laszip_U32                       type
-    , const laszip_CHAR*               name
-    , const laszip_CHAR*               description
+    , const char*               name
+    , const char*               description
     , double                       scale
     , double                       offset
 )
@@ -1170,7 +1170,7 @@ laszip_add_attribute(
 
     if (name == 0)
     {
-      sprintf(laszip_dll->error, "laszip_CHAR pointer 'name' is zero");
+      sprintf(laszip_dll->error, "char pointer 'name' is zero");
       return 1;
     }
 
@@ -1226,10 +1226,10 @@ laszip_add_attribute(
 LASZIP_API laszip_I32
 laszip_add_vlr(
     void *                     pointer
-    , const laszip_CHAR*               user_id
+    , const char*               user_id
     , laszip_U16                       record_id
     , laszip_U16                       record_length_after_header
-    , const laszip_CHAR*               description
+    , const char*               description
     , const laszip_U8*                 data
 )
 {
@@ -1240,7 +1240,7 @@ laszip_add_vlr(
   {
     if (user_id == 0)
     {
-      sprintf(laszip_dll->error, "laszip_CHAR pointer 'user_id' is zero");
+      sprintf(laszip_dll->error, "char pointer 'user_id' is zero");
       return 1;
     }
 
@@ -1348,7 +1348,7 @@ laszip_add_vlr(
 LASZIP_API laszip_I32
 laszip_remove_vlr(
     void *                     pointer
-    , const laszip_CHAR*               user_id
+    , const char*               user_id
     , laszip_U16                       record_id
 )
 {
@@ -1359,7 +1359,7 @@ laszip_remove_vlr(
   {
     if (user_id == 0)
     {
-      sprintf(laszip_dll->error, "laszip_CHAR pointer 'user_id' is zero");
+      sprintf(laszip_dll->error, "char pointer 'user_id' is zero");
       return 1;
     }
 
@@ -1558,7 +1558,7 @@ laszip_create_spatial_index(
 LASZIP_API laszip_I32
 laszip_open_writer(
     void *                     pointer
-    , const laszip_CHAR*               file_name
+    , const char*               file_name
     , laszip_BOOL                      compress
 )
 {
@@ -1569,7 +1569,7 @@ laszip_open_writer(
   {
     if (file_name == 0)
     {
-      sprintf(laszip_dll->error, "laszip_CHAR pointer 'file_name' is zero");
+      sprintf(laszip_dll->error, "char pointer 'file_name' is zero");
       return 1;
     }
 
@@ -2906,7 +2906,7 @@ laszip_exploit_spatial_index(
 LASZIP_API laszip_I32
 laszip_open_reader(
     void *                     pointer
-    , const laszip_CHAR*               file_name
+    , const char*               file_name
     , laszip_BOOL*                     is_compressed
 )
 {
@@ -2917,7 +2917,7 @@ laszip_open_reader(
   {
     if (file_name == 0)
     {
-      sprintf(laszip_dll->error, "laszip_CHAR pointer 'file_name' is zero");
+      sprintf(laszip_dll->error, "char pointer 'file_name' is zero");
       return 1;
     }
 
