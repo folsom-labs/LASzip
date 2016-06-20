@@ -2,11 +2,11 @@
 ===============================================================================
 
   FILE:  laswritepoint.cpp
-  
+
   CONTENTS:
-  
+
     see corresponding header file
-  
+
   PROGRAMMERS:
 
     martin.isenburg@rapidlasso.com  -  http://rapidlasso.com
@@ -21,11 +21,11 @@
 
     This software is distributed WITHOUT ANY WARRANTY and without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-  
+
   CHANGE HISTORY:
-  
+
     see corresponding header file
-  
+
 ===============================================================================
 */
 
@@ -99,43 +99,25 @@ BOOL LASwritePoint::setup(const U32 num_items, const LASitem* items, const LASzi
     switch (items[i].type)
     {
     case LASitem::POINT10:
-      if (IS_LITTLE_ENDIAN())
-        writers_raw[i] = new LASwriteItemRaw_POINT10_LE();
-      else
-        writers_raw[i] = new LASwriteItemRaw_POINT10_BE();
+      writers_raw[i] = new LASwriteItemRaw_POINT10_LE();
       break;
     case LASitem::GPSTIME11:
-      if (IS_LITTLE_ENDIAN())
-        writers_raw[i] = new LASwriteItemRaw_GPSTIME11_LE();
-      else
-        writers_raw[i] = new LASwriteItemRaw_GPSTIME11_BE();
+      writers_raw[i] = new LASwriteItemRaw_GPSTIME11_LE();
       break;
     case LASitem::RGB12:
-      if (IS_LITTLE_ENDIAN())
-        writers_raw[i] = new LASwriteItemRaw_RGB12_LE();
-      else
-        writers_raw[i] = new LASwriteItemRaw_RGB12_BE();
+      writers_raw[i] = new LASwriteItemRaw_RGB12_LE();
       break;
     case LASitem::WAVEPACKET13:
-      if (IS_LITTLE_ENDIAN())
-        writers_raw[i] = new LASwriteItemRaw_WAVEPACKET13_LE();
-      else
-        writers_raw[i] = new LASwriteItemRaw_WAVEPACKET13_BE();
+      writers_raw[i] = new LASwriteItemRaw_WAVEPACKET13_LE();
       break;
     case LASitem::BYTE:
       writers_raw[i] = new LASwriteItemRaw_BYTE(items[i].size);
       break;
     case LASitem::POINT14:
-      if (IS_LITTLE_ENDIAN())
-        writers_raw[i] = new LASwriteItemRaw_POINT14_LE();
-      else
-        return FALSE;
+      writers_raw[i] = new LASwriteItemRaw_POINT14_LE();
       break;
     case LASitem::RGBNIR14:
-      if (IS_LITTLE_ENDIAN())
-        writers_raw[i] = new LASwriteItemRaw_RGBNIR14_LE();
-      else
-        writers_raw[i] = new LASwriteItemRaw_RGBNIR14_BE();
+      writers_raw[i] = new LASwriteItemRaw_RGBNIR14_LE();
       break;
     default:
       return FALSE;
@@ -317,14 +299,14 @@ BOOL LASwritePoint::add_chunk_to_table()
     if (chunk_bytes == 0)
     {
       alloced_chunks = 1024;
-      if (chunk_size == U32_MAX) chunk_sizes = (U32*)malloc(sizeof(U32)*alloced_chunks); 
-      chunk_bytes = (U32*)malloc(sizeof(U32)*alloced_chunks); 
+      if (chunk_size == U32_MAX) chunk_sizes = (U32*)malloc(sizeof(U32)*alloced_chunks);
+      chunk_bytes = (U32*)malloc(sizeof(U32)*alloced_chunks);
     }
     else
     {
       alloced_chunks *= 2;
-      if (chunk_size == U32_MAX) chunk_sizes = (U32*)realloc(chunk_sizes, sizeof(U32)*alloced_chunks); 
-      chunk_bytes = (U32*)realloc(chunk_bytes, sizeof(U32)*alloced_chunks); 
+      if (chunk_size == U32_MAX) chunk_sizes = (U32*)realloc(chunk_sizes, sizeof(U32)*alloced_chunks);
+      chunk_bytes = (U32*)realloc(chunk_bytes, sizeof(U32)*alloced_chunks);
     }
     if (chunk_size == U32_MAX && chunk_sizes == 0) return FALSE;
     if (chunk_bytes == 0) return FALSE;
