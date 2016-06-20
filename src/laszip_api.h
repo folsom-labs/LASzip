@@ -283,14 +283,6 @@ laszip_get_coordinates(
 
 /*---------------------------------------------------------------------------*/
 LASZIP_API int32_t
-laszip_set_geokeys(
-    void *                     pointer
-    , uint32_t                       number
-    , const laszip_geokey_struct*      key_entries
-);
-
-/*---------------------------------------------------------------------------*/
-LASZIP_API int32_t
 laszip_set_geodouble_params(
     void *                     pointer
     , uint32_t                       number
