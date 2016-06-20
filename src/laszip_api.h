@@ -283,14 +283,6 @@ laszip_get_coordinates(
 
 /*---------------------------------------------------------------------------*/
 LASZIP_API int32_t
-laszip_set_geoascii_params(
-    void *                     pointer
-    , uint32_t                       number
-    , const char*               geoascii_params
-);
-
-/*---------------------------------------------------------------------------*/
-LASZIP_API int32_t
 laszip_add_attribute(
     void *                     pointer
     , uint32_t                       type

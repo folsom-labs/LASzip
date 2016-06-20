@@ -969,61 +969,6 @@ laszip_get_coordinates(
 
 /*---------------------------------------------------------------------------*/
 LASZIP_API int32_t
-laszip_set_geoascii_params(
-    void *                     pointer
-    , uint32_t                       number
-    , const char*               geoascii_params
-)
-{
-  if (pointer == 0) return 1;
-  laszip_dll_struct* laszip_dll = (laszip_dll_struct*)pointer;
-
-  try
-  {
-    if (number == 0)
-    {
-      sprintf(laszip_dll->error, "number of geoascii_params is zero");
-      return 1;
-    }
-
-    if (geoascii_params == 0)
-    {
-      sprintf(laszip_dll->error, "char pointer 'geoascii_params' is zero");
-      return 1;
-    }
-
-    if (laszip_dll->reader)
-    {
-      sprintf(laszip_dll->error, "cannot set geoascii_params after reader was opened");
-      return 1;
-    }
-
-    if (laszip_dll->writer)
-    {
-      sprintf(laszip_dll->error, "cannot set geoascii_params after writer was opened");
-      return 1;
-    }
-
-    // add the VLR
-
-    if (laszip_add_vlr(pointer, "LASF_Projection", 34737, number, 0, (uint8_t*)geoascii_params))
-    {
-      sprintf(laszip_dll->error, "setting %u geoascii_params", number);
-      return 1;
-    }
-  }
-  catch (...)
-  {
-    sprintf(laszip_dll->error, "internal error in laszip_set_geoascii_params");
-    return 1;
-  }
-
-  laszip_dll->error[0] = '\0';
-  return 0;
-}
-
-/*---------------------------------------------------------------------------*/
-LASZIP_API int32_t
 laszip_add_attribute(
     void *                     pointer
     , uint32_t                       type
