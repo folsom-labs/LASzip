@@ -74,12 +74,6 @@ public:
   BOOL put32bitsLE(const U8* bytes);
 /* write 64 bit low-endian field                             */
   BOOL put64bitsLE(const U8* bytes);
-/* write 16 bit big-endian field                             */
-  BOOL put16bitsBE(const U8* bytes);
-/* write 32 bit big-endian field                             */
-  BOOL put32bitsBE(const U8* bytes);
-/* write 64 bit big-endian field                             */
-  BOOL put64bitsBE(const U8* bytes);
 private:
   U8 swapped[8];
 };
@@ -178,35 +172,6 @@ inline BOOL ByteStreamOutArrayLE::put32bitsLE(const U8* bytes)
 inline BOOL ByteStreamOutArrayLE::put64bitsLE(const U8* bytes)
 {
   return putBytes(bytes, 8);
-}
-
-inline BOOL ByteStreamOutArrayLE::put16bitsBE(const U8* bytes)
-{
-  swapped[0] = bytes[1];
-  swapped[1] = bytes[0];
-  return putBytes(swapped, 2);
-}
-
-inline BOOL ByteStreamOutArrayLE::put32bitsBE(const U8* bytes)
-{
-  swapped[0] = bytes[3];
-  swapped[1] = bytes[2];
-  swapped[2] = bytes[1];
-  swapped[3] = bytes[0];
-  return putBytes(swapped, 4);
-}
-
-inline BOOL ByteStreamOutArrayLE::put64bitsBE(const U8* bytes)
-{
-  swapped[0] = bytes[7];
-  swapped[1] = bytes[6];
-  swapped[2] = bytes[5];
-  swapped[3] = bytes[4];
-  swapped[4] = bytes[3];
-  swapped[5] = bytes[2];
-  swapped[6] = bytes[1];
-  swapped[7] = bytes[0];
-  return putBytes(swapped, 8);
 }
 
 #endif

@@ -2,9 +2,9 @@
 ===============================================================================
 
   FILE:  bytestreamout_.hpilp
-  
+
   CONTENTS:
-      
+
     Class for a black hole that only counts the bytes.
 
   PROGRAMMERS:
@@ -21,13 +21,13 @@
 
     This software is distributed WITHOUT ANY WARRANTY and without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-  
+
   CHANGE HISTORY:
-  
+
      1 October 2011 -- added 64 bit file support in MSVC 6.0 at McCafe at Hbf Linz
     10 January 2011 -- licensing change for LGPL release and liblas integration
     12 December 2010 -- created from ByteStreamOutFile after Howard got pushy (-;
-  
+
 ===============================================================================
 */
 #ifndef BYTE_STREAM_OUT_NIL_H
@@ -51,12 +51,6 @@ public:
   BOOL put32bitsLE(const U8* bytes);
 /* write 64 bit low-endian field                             */
   BOOL put64bitsLE(const U8* bytes);
-/* write 16 bit big-endian field                             */
-  BOOL put16bitsBE(const U8* bytes);
-/* write 32 bit big-endian field                             */
-  BOOL put32bitsBE(const U8* bytes);
-/* write 64 bit big-endian field                             */
-  BOOL put64bitsBE(const U8* bytes);
 /* is the stream seekable (e.g. standard out is not)         */
   BOOL isSeekable() const;
 /* get current position of stream                            */
@@ -99,21 +93,6 @@ inline BOOL ByteStreamOutNil::put32bitsLE(const U8* bytes)
 }
 
 inline BOOL ByteStreamOutNil::put64bitsLE(const U8* bytes)
-{
-  return putBytes(bytes, 8);
-}
-
-inline BOOL ByteStreamOutNil::put16bitsBE(const U8* bytes)
-{
-  return putBytes(bytes, 2);
-}
-
-inline BOOL ByteStreamOutNil::put32bitsBE(const U8* bytes)
-{
-  return putBytes(bytes, 4);
-}
-
-inline BOOL ByteStreamOutNil::put64bitsBE(const U8* bytes)
 {
   return putBytes(bytes, 8);
 }
