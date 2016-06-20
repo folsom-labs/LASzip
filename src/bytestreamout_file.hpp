@@ -2,9 +2,9 @@
 ===============================================================================
 
   FILE:  bytestreamout_file.hpp
-  
+
   CONTENTS:
-      
+
     Class for FILE*-based output streams with endian handling.
 
   PROGRAMMERS:
@@ -21,13 +21,13 @@
 
     This software is distributed WITHOUT ANY WARRANTY and without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-  
+
   CHANGE HISTORY:
-  
+
      1 October 2011 -- added 64 bit file support in MSVC 6.0 at McCafe at Hbf Linz
     10 January 2011 -- licensing change for LGPL release and liblas integration
     12 December 2010 -- created from ByteStreamOutFile after Howard got pushy (-;
-  
+
 ===============================================================================
 */
 #ifndef BYTE_STREAM_OUT_FILE_H
@@ -70,26 +70,6 @@ class ByteStreamOutFileLE : public ByteStreamOutFile
 {
 public:
   ByteStreamOutFileLE(FILE* file);
-/* write 16 bit low-endian field                             */
-  BOOL put16bitsLE(const U8* bytes);
-/* write 32 bit low-endian field                             */
-  BOOL put32bitsLE(const U8* bytes);
-/* write 64 bit low-endian field                             */
-  BOOL put64bitsLE(const U8* bytes);
-/* write 16 bit big-endian field                             */
-  BOOL put16bitsBE(const U8* bytes);
-/* write 32 bit big-endian field                             */
-  BOOL put32bitsBE(const U8* bytes);
-/* write 64 bit big-endian field                             */
-  BOOL put64bitsBE(const U8* bytes);
-private:
-  U8 swapped[8];
-};
-
-class ByteStreamOutFileBE : public ByteStreamOutFile
-{
-public:
-  ByteStreamOutFileBE(FILE* file);
 /* write 16 bit low-endian field                             */
   BOOL put16bitsLE(const U8* bytes);
 /* write 32 bit low-endian field                             */
@@ -212,54 +192,6 @@ inline BOOL ByteStreamOutFileLE::put64bitsBE(const U8* bytes)
   swapped[6] = bytes[1];
   swapped[7] = bytes[0];
   return putBytes(swapped, 8);
-}
-
-inline ByteStreamOutFileBE::ByteStreamOutFileBE(FILE* file) : ByteStreamOutFile(file)
-{
-}
-
-inline BOOL ByteStreamOutFileBE::put16bitsLE(const U8* bytes)
-{
-  swapped[0] = bytes[1];
-  swapped[1] = bytes[0];
-  return putBytes(swapped, 2);
-}
-
-inline BOOL ByteStreamOutFileBE::put32bitsLE(const U8* bytes)
-{
-  swapped[0] = bytes[3];
-  swapped[1] = bytes[2];
-  swapped[2] = bytes[1];
-  swapped[3] = bytes[0];
-  return putBytes(swapped, 4);
-}
-
-inline BOOL ByteStreamOutFileBE::put64bitsLE(const U8* bytes)
-{
-  swapped[0] = bytes[7];
-  swapped[1] = bytes[6];
-  swapped[2] = bytes[5];
-  swapped[3] = bytes[4];
-  swapped[4] = bytes[3];
-  swapped[5] = bytes[2];
-  swapped[6] = bytes[1];
-  swapped[7] = bytes[0];
-  return putBytes(swapped, 8);
-}
-
-inline BOOL ByteStreamOutFileBE::put16bitsBE(const U8* bytes)
-{
-  return putBytes(bytes, 2);
-}
-
-inline BOOL ByteStreamOutFileBE::put32bitsBE(const U8* bytes)
-{
-  return putBytes(bytes, 4);
-}
-
-inline BOOL ByteStreamOutFileBE::put64bitsBE(const U8* bytes)
-{
-  return putBytes(bytes, 8);
 }
 
 #endif

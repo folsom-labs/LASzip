@@ -2,9 +2,9 @@
 ===============================================================================
 
   FILE:  bytestreaminout_file.hpp
-  
+
   CONTENTS:
-      
+
     Class for FILE*-based streams that both input and output with endian handling.
 
   PROGRAMMERS:
@@ -21,11 +21,11 @@
 
     This software is distributed WITHOUT ANY WARRANTY and without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-  
+
   CHANGE HISTORY:
-  
+
     29 December 2013 -- created after helping a client to QA their Optech LiDAR
-  
+
 ===============================================================================
 */
 #ifndef BYTE_STREAM_INOUT_FILE_HPP
@@ -40,17 +40,7 @@ public:
   ByteStreamInOutFileLE(FILE* file);
 };
 
-class ByteStreamInOutFileBE : public ByteStreamInFileBE, public ByteStreamOutFileBE
-{
-public:
-  ByteStreamInOutFileBE(FILE* file);
-};
-
-inline ByteStreamInOutFileLE::ByteStreamInOutFileLE(FILE* file) : ByteStreamInFileLE(file), ByteStreamOutFileLE(file) 
-{
-}
-
-inline ByteStreamInOutFileBE::ByteStreamInOutFileBE(FILE* file) : ByteStreamInFileBE(file), ByteStreamOutFileBE(file)
+inline ByteStreamInOutFileLE::ByteStreamInOutFileLE(FILE* file) : ByteStreamInFileLE(file), ByteStreamOutFileLE(file)
 {
 }
 

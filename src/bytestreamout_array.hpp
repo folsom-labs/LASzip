@@ -2,15 +2,15 @@
 ===============================================================================
 
   FILE:  bytestreamout_array.hpp
-  
+
   CONTENTS:
-      
+
   PROGRAMMERS:
-  
+
     martin.isenburg@rapidlasso.com  -  http://rapidlasso.com
-  
+
   COPYRIGHT:
-  
+
     (c) 2007-2015, martin isenburg, rapidlasso - fast tools to catch reality
 
     This is free software; you can redistribute and/or modify it under the
@@ -19,12 +19,12 @@
 
     This software is distributed WITHOUT ANY WARRANTY and without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-  
+
   CHANGE HISTORY:
-  
+
     19 July 2015 -- moved from LASlib to LASzip for "compatibility mode" in DLL
      9 April 2012 -- created after cooking Zuccini/Onion/Potatoe dinner for Mara
-  
+
 ===============================================================================
 */
 #ifndef BYTE_STREAM_OUT_ARRAY_HPP
@@ -68,26 +68,6 @@ class ByteStreamOutArrayLE : public ByteStreamOutArray
 {
 public:
   ByteStreamOutArrayLE(I64 alloc=1024);
-/* write 16 bit low-endian field                             */
-  BOOL put16bitsLE(const U8* bytes);
-/* write 32 bit low-endian field                             */
-  BOOL put32bitsLE(const U8* bytes);
-/* write 64 bit low-endian field                             */
-  BOOL put64bitsLE(const U8* bytes);
-/* write 16 bit big-endian field                             */
-  BOOL put16bitsBE(const U8* bytes);
-/* write 32 bit big-endian field                             */
-  BOOL put32bitsBE(const U8* bytes);
-/* write 64 bit big-endian field                             */
-  BOOL put64bitsBE(const U8* bytes);
-private:
-  U8 swapped[8];
-};
-
-class ByteStreamOutArrayBE : public ByteStreamOutArray
-{
-public:
-  ByteStreamOutArrayBE(I64 alloc=1024);
 /* write 16 bit low-endian field                             */
   BOOL put16bitsLE(const U8* bytes);
 /* write 32 bit low-endian field                             */
@@ -227,54 +207,6 @@ inline BOOL ByteStreamOutArrayLE::put64bitsBE(const U8* bytes)
   swapped[6] = bytes[1];
   swapped[7] = bytes[0];
   return putBytes(swapped, 8);
-}
-
-inline ByteStreamOutArrayBE::ByteStreamOutArrayBE(I64 alloc) : ByteStreamOutArray(alloc)
-{
-}
-
-inline BOOL ByteStreamOutArrayBE::put16bitsLE(const U8* bytes)
-{
-  swapped[0] = bytes[1];
-  swapped[1] = bytes[0];
-  return putBytes(swapped, 2);
-}
-
-inline BOOL ByteStreamOutArrayBE::put32bitsLE(const U8* bytes)
-{
-  swapped[0] = bytes[3];
-  swapped[1] = bytes[2];
-  swapped[2] = bytes[1];
-  swapped[3] = bytes[0];
-  return putBytes(swapped, 4);
-}
-
-inline BOOL ByteStreamOutArrayBE::put64bitsLE(const U8* bytes)
-{
-  swapped[0] = bytes[7];
-  swapped[1] = bytes[6];
-  swapped[2] = bytes[5];
-  swapped[3] = bytes[4];
-  swapped[4] = bytes[3];
-  swapped[5] = bytes[2];
-  swapped[6] = bytes[1];
-  swapped[7] = bytes[0];
-  return putBytes(swapped, 8);
-}
-
-inline BOOL ByteStreamOutArrayBE::put16bitsBE(const U8* bytes)
-{
-  return putBytes(bytes, 2);
-}
-
-inline BOOL ByteStreamOutArrayBE::put32bitsBE(const U8* bytes)
-{
-  return putBytes(bytes, 4);
-}
-
-inline BOOL ByteStreamOutArrayBE::put64bitsBE(const U8* bytes)
-{
-  return putBytes(bytes, 8);
 }
 
 #endif

@@ -2,7 +2,7 @@
 ===============================================================================
 
   FILE:  bytestreamout_ostream.hpp
-  
+
     Class for ostream-based output streams with endian handling.
 
   PROGRAMMERS:
@@ -19,13 +19,13 @@
 
     This software is distributed WITHOUT ANY WARRANTY and without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-  
+
   CHANGE HISTORY:
-  
+
      1 October 2011 -- added 64 bit file support in MSVC 6.0 at McCafe at Hbf Linz
     10 January 2011 -- licensing change for LGPL release and liblas integration
     12 December 2010 -- created from ByteStreamOutFile after Howard got pushy (-;
-  
+
 ===============================================================================
 */
 #ifndef BYTE_STREAM_OUT_OSTREAM_H
@@ -67,26 +67,6 @@ class ByteStreamOutOstreamLE : public ByteStreamOutOstream
 {
 public:
   ByteStreamOutOstreamLE(ostream& stream);
-/* write 16 bit low-endian field                             */
-  BOOL put16bitsLE(const U8* bytes);
-/* write 32 bit low-endian field                             */
-  BOOL put32bitsLE(const U8* bytes);
-/* write 64 bit low-endian field                             */
-  BOOL put64bitsLE(const U8* bytes);
-/* write 16 bit big-endian field                             */
-  BOOL put16bitsBE(const U8* bytes);
-/* write 32 bit big-endian field                             */
-  BOOL put32bitsBE(const U8* bytes);
-/* write 64 bit big-endian field                             */
-  BOOL put64bitsBE(const U8* bytes);
-private:
-  U8 swapped[8];
-};
-
-class ByteStreamOutOstreamBE : public ByteStreamOutOstream
-{
-public:
-  ByteStreamOutOstreamBE(ostream& stream);
 /* write 16 bit low-endian field                             */
   BOOL put16bitsLE(const U8* bytes);
 /* write 32 bit low-endian field                             */
@@ -188,54 +168,6 @@ inline BOOL ByteStreamOutOstreamLE::put64bitsBE(const U8* bytes)
   swapped[6] = bytes[1];
   swapped[7] = bytes[0];
   return putBytes(swapped, 8);
-}
-
-inline ByteStreamOutOstreamBE::ByteStreamOutOstreamBE(ostream& stream) : ByteStreamOutOstream(stream)
-{
-}
-
-inline BOOL ByteStreamOutOstreamBE::put16bitsLE(const U8* bytes)
-{
-  swapped[0] = bytes[1];
-  swapped[1] = bytes[0];
-  return putBytes(swapped, 2);
-}
-
-inline BOOL ByteStreamOutOstreamBE::put32bitsLE(const U8* bytes)
-{
-  swapped[0] = bytes[3];
-  swapped[1] = bytes[2];
-  swapped[2] = bytes[1];
-  swapped[3] = bytes[0];
-  return putBytes(swapped, 4);
-}
-
-inline BOOL ByteStreamOutOstreamBE::put64bitsLE(const U8* bytes)
-{
-  swapped[0] = bytes[7];
-  swapped[1] = bytes[6];
-  swapped[2] = bytes[5];
-  swapped[3] = bytes[4];
-  swapped[4] = bytes[3];
-  swapped[5] = bytes[2];
-  swapped[6] = bytes[1];
-  swapped[7] = bytes[0];
-  return putBytes(swapped, 8);
-}
-
-inline BOOL ByteStreamOutOstreamBE::put16bitsBE(const U8* bytes)
-{
-  return putBytes(bytes, 2);
-}
-
-inline BOOL ByteStreamOutOstreamBE::put32bitsBE(const U8* bytes)
-{
-  return putBytes(bytes, 4);
-}
-
-inline BOOL ByteStreamOutOstreamBE::put64bitsBE(const U8* bytes)
-{
-  return putBytes(bytes, 8);
 }
 
 #endif

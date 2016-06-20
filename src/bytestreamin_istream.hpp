@@ -77,20 +77,6 @@ public:
   void get64bitsLE(U8* bytes);
 };
 
-class ByteStreamInIstreamBE : public ByteStreamInIstream
-{
-public:
-  ByteStreamInIstreamBE(istream& stream);
-/* read 16 bit low-endian field                              */
-  void get16bitsLE(U8* bytes);
-/* read 32 bit low-endian field                              */
-  void get32bitsLE(U8* bytes);
-/* read 64 bit low-endian field                              */
-  void get64bitsLE(U8* bytes);
-private:
-  U8 swapped[8];
-};
-
 inline ByteStreamInIstream::ByteStreamInIstream(istream& stream_param) :
   stream(stream_param)
 {
@@ -158,39 +144,6 @@ inline void ByteStreamInIstreamLE::get32bitsLE(U8* bytes)
 inline void ByteStreamInIstreamLE::get64bitsLE(U8* bytes)
 {
   getBytes(bytes, 8);
-}
-
-inline ByteStreamInIstreamBE::ByteStreamInIstreamBE(istream& stream) : ByteStreamInIstream(stream)
-{
-}
-
-inline void ByteStreamInIstreamBE::get16bitsLE(U8* bytes)
-{
-  getBytes(swapped, 2);
-  bytes[0] = swapped[1];
-  bytes[1] = swapped[0];
-}
-
-inline void ByteStreamInIstreamBE::get32bitsLE(U8* bytes)
-{
-  getBytes(swapped, 4);
-  bytes[0] = swapped[3];
-  bytes[1] = swapped[2];
-  bytes[2] = swapped[1];
-  bytes[3] = swapped[0];
-}
-
-inline void ByteStreamInIstreamBE::get64bitsLE(U8* bytes)
-{
-  getBytes(swapped, 8);
-  bytes[0] = swapped[7];
-  bytes[1] = swapped[6];
-  bytes[2] = swapped[5];
-  bytes[3] = swapped[4];
-  bytes[4] = swapped[3];
-  bytes[5] = swapped[2];
-  bytes[6] = swapped[1];
-  bytes[7] = swapped[0];
 }
 
 #endif

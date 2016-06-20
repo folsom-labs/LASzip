@@ -2,11 +2,11 @@
 ===============================================================================
 
   FILE:  laszipper.cpp
-  
+
   CONTENTS:
-  
+
     see corresponding header file
-  
+
   PROGRAMMERS:
 
     martin.isenburg@rapidlasso.com  -  http://rapidlasso.com
@@ -21,11 +21,11 @@
 
     This software is distributed WITHOUT ANY WARRANTY and without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-  
+
   CHANGE HISTORY:
-  
+
     see corresponding header file
-  
+
 ===============================================================================
 */
 #include "laszipper.hpp"
@@ -47,10 +47,7 @@ bool LASzipper::open(FILE* outfile, const LASzip* laszip)
   if (!writer) return return_error("alloc of LASwritePoint failed");
   if (!writer->setup(laszip->num_items, laszip->items, laszip)) return return_error("setup() of LASwritePoint failed");
   if (stream) delete stream;
-  if (IS_LITTLE_ENDIAN())
-    stream = new ByteStreamOutFileLE(outfile);
-  else
-    stream = new ByteStreamOutFileBE(outfile);
+  stream = new ByteStreamOutFileLE(outfile);
   if (!stream) return return_error("alloc of ByteStreamOutFile failed");
   if (!writer->init(stream)) return return_error("init() of LASwritePoint failed");
   return true;
@@ -65,10 +62,7 @@ bool LASzipper::open(ostream& outstream, const LASzip* laszip)
   if (!writer) return return_error("alloc of LASwritePoint failed");
   if (!writer->setup(laszip->num_items, laszip->items, laszip)) return return_error("setup() of LASwritePoint failed");
   if (stream) delete stream;
-  if (IS_LITTLE_ENDIAN())
-    stream = new ByteStreamOutOstreamLE(outstream);
-  else
-    stream = new ByteStreamOutOstreamBE(outstream);
+  stream = new ByteStreamOutOstreamLE(outstream);
   if (!stream) return return_error("alloc of ByteStreamOutStream failed");
   if (!writer->init(stream)) return return_error("init() of LASwritePoint failed");
   return true;

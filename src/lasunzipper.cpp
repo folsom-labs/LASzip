@@ -2,11 +2,11 @@
 ===============================================================================
 
   FILE:  lasunzipper.cpp
-  
+
   CONTENTS:
-  
+
     see corresponding header file
-  
+
   PROGRAMMERS:
 
     martin.isenburg@rapidlasso.com  -  http://rapidlasso.com
@@ -21,11 +21,11 @@
 
     This software is distributed WITHOUT ANY WARRANTY and without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-  
+
   CHANGE HISTORY:
-  
+
     see corresponding header file
-  
+
 ===============================================================================
 */
 #include "lasunzipper.hpp"
@@ -47,10 +47,7 @@ bool LASunzipper::open(FILE* infile, const LASzip* laszip)
   if (!reader) return return_error("alloc of LASreadPoint failed");
   if (!reader->setup(laszip->num_items, laszip->items, laszip)) return return_error("setup() of LASreadPoint failed");
   if (stream) delete stream;
-  if (IS_LITTLE_ENDIAN())
-    stream = new ByteStreamInFileLE(infile);
-  else
-    stream = new ByteStreamInFileBE(infile);
+  stream = new ByteStreamInFileLE(infile);
   if (!stream) return return_error("alloc of ByteStreamInFile failed");
   if (!reader->init(stream)) return return_error("init() of LASreadPoint failed");
   return true;
@@ -65,10 +62,7 @@ bool LASunzipper::open(istream& instream, const LASzip* laszip)
   if (!reader) return return_error("alloc of LASreadPoint failed");
   if (!reader->setup(laszip->num_items, laszip->items, laszip)) return return_error("setup() of LASreadPoint failed");
   if (stream) delete stream;
-  if (IS_LITTLE_ENDIAN())
-    stream = new ByteStreamInIstreamLE(instream);
-  else
-    stream = new ByteStreamInIstreamBE(instream);
+  stream = new ByteStreamInIstreamLE(instream);
   if (!stream) return return_error("alloc of ByteStreamInStream failed");
   if (!reader->init(stream)) return return_error("init() of LASreadPoint failed");
   return true;

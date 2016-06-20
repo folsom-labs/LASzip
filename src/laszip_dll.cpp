@@ -1465,10 +1465,7 @@ laszip_open_writer(
 
         // create 2+2+4+148 bytes payload for compatibility VLR
         ByteStreamOutArray* out;
-        if (IS_LITTLE_ENDIAN())
-          out = new ByteStreamOutArrayLE();
-        else
-          out = new ByteStreamOutArrayBE();
+        out = new ByteStreamOutArrayLE();
         // write control info
         U16 laszip_version = (U16)LASZIP_VERSION_BUILD_DATE;
         out->put16bitsLE((U8*)&laszip_version);
@@ -1778,10 +1775,7 @@ laszip_open_writer(
       sprintf(laszip_dll->warning, "setvbuf() failed with buffer size 262144\n");
     }
 
-    if (IS_LITTLE_ENDIAN())
-      laszip_dll->streamout = new ByteStreamOutFileLE(laszip_dll->file);
-    else
-      laszip_dll->streamout = new ByteStreamOutFileBE(laszip_dll->file);
+    laszip_dll->streamout = new ByteStreamOutFileLE(laszip_dll->file);
 
     if (laszip_dll->streamout == 0)
     {
@@ -2699,10 +2693,7 @@ laszip_open_reader(
       sprintf(laszip_dll->warning, "setvbuf() failed with buffer size 262144\n");
     }
 
-    if (IS_LITTLE_ENDIAN())
-      laszip_dll->streamin = new ByteStreamInFileLE(laszip_dll->file);
-    else
-      laszip_dll->streamin = new ByteStreamInFileBE(laszip_dll->file);
+    laszip_dll->streamin = new ByteStreamInFileLE(laszip_dll->file);
 
     if (laszip_dll->streamin == 0)
     {

@@ -2,17 +2,17 @@
 ===============================================================================
 
   FILE:  lasindex.cpp
-  
+
   CONTENTS:
-  
+
     see corresponding header file
-  
+
   PROGRAMMERS:
-  
+
     martin.isenburg@rapidlasso.com  -  http://rapidlasso.com
-  
+
   COPYRIGHT:
-  
+
     (c) 2011-2015, martin isenburg, rapidlasso - fast tools to catch reality
 
     This is free software; you can redistribute and/or modify it under the
@@ -21,11 +21,11 @@
 
     This software is distributed WITHOUT ANY WARRANTY and without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-  
+
   CHANGE HISTORY:
-  
+
     see corresponding header file
-  
+
 ===============================================================================
 */
 #include "lasindex.hpp"
@@ -298,10 +298,7 @@ BOOL LASindex::read(const char* file_name)
     return FALSE;
   }
   ByteStreamIn* stream;
-  if (IS_LITTLE_ENDIAN())
-    stream = new ByteStreamInFileLE(file);
-  else
-    stream = new ByteStreamInFileBE(file);
+  stream = new ByteStreamInFileLE(file);
   if (!read(stream))
   {
     fprintf(stderr,"ERROR (LASindex): cannot read '%s'\n", name);
@@ -335,10 +332,7 @@ BOOL LASindex::append(const char* file_name) const
 
   FILE* file = fopen(file_name, "rb");
   ByteStreamIn* bytestreamin = 0;
-  if (IS_LITTLE_ENDIAN())
-    bytestreamin = new ByteStreamInFileLE(file);
-  else
-    bytestreamin = new ByteStreamInFileBE(file);
+  bytestreamin = new ByteStreamInFileLE(file);
 
   // maybe write LASindex EVLR start position into LASzip VLR
 
@@ -398,10 +392,7 @@ BOOL LASindex::append(const char* file_name) const
 
   ByteStreamOut* bytestreamout;
   file = fopen(file_name, "rb+");
-  if (IS_LITTLE_ENDIAN())
-    bytestreamout = new ByteStreamOutFileLE(file);
-  else
-    bytestreamout = new ByteStreamOutFileBE(file);
+  bytestreamout = new ByteStreamOutFileLE(file);
   bytestreamout->seek(offset_to_special_evlrs);
 
   LASevlr lax_evlr;
@@ -479,10 +470,7 @@ BOOL LASindex::write(const char* file_name) const
     return FALSE;
   }
   ByteStreamOut* stream;
-  if (IS_LITTLE_ENDIAN())
-    stream = new ByteStreamOutFileLE(file);
-  else
-    stream = new ByteStreamOutFileBE(file);
+  stream = new ByteStreamOutFileLE(file);
   if (!write(stream))
   {
     fprintf(stderr,"ERROR (LASindex): cannot write '%s'\n", name);
