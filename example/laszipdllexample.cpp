@@ -107,19 +107,6 @@ int main(int argc, char *argv[])
   char* file_name_in = 0;
   char* file_name_out = 0;
 
-  uint8_t version_major;
-  uint8_t version_minor;
-  uint16_t version_revision;
-  uint32_t version_build;
-
-  if (laszip_get_version(&version_major, &version_minor, &version_revision, &version_build))
-  {
-    fprintf(stderr,"DLL ERROR: getting LASzip DLL version number\n");
-    byebye(true, argc==1);
-  }
-
-  fprintf(stderr,"LASzip DLL v%d.%d r%d (build %d)\n", (int)version_major, (int)version_minor, (int)version_revision, (int)version_build);
-
   if (argc == 1)
   {
     char file_name[256];

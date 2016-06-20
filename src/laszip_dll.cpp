@@ -136,30 +136,6 @@ typedef struct laszip_dll {
 
 /*---------------------------------------------------------------------------*/
 LASZIP_API int32_t
-laszip_get_version(
-    uint8_t*                         version_major
-    , uint8_t*                       version_minor
-    , uint16_t*                      version_revision
-    , uint32_t*                      version_build
-)
-{
-  try
-  {
-    *version_major = LASZIP_VERSION_MAJOR;
-    *version_minor = LASZIP_VERSION_MINOR;
-    *version_revision = LASZIP_VERSION_REVISION;
-    *version_build = LASZIP_VERSION_BUILD_DATE;
-  }
-  catch (...)
-  {
-    return 1;
-  }
-
-  return 0;
-}
-
-/*---------------------------------------------------------------------------*/
-LASZIP_API int32_t
 laszip_get_error(
     void *                     pointer
     , char**                    error
