@@ -2,15 +2,15 @@
 ===============================================================================
 
   FILE:  bytestreamin_array.hpp
-  
+
   CONTENTS:
-      
+
   PROGRAMMERS:
-  
+
     martin.isenburg@rapidlasso.com  -  http://rapidlasso.com
-  
+
   COPYRIGHT:
-  
+
     (c) 2007-2013, martin isenburg, rapidlasso - fast tools to catch reality
 
     This is free software; you can redistribute and/or modify it under the
@@ -19,12 +19,12 @@
 
     This software is distributed WITHOUT ANY WARRANTY and without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-  
+
   CHANGE HISTORY:
-  
+
     19 July 2015 -- moved from LASlib to LASzip for "compatibility mode" in DLL
      9 April 2012 -- created after cooking Zuccini/Onion/Potatoe dinner for Mara
-  
+
 ===============================================================================
 */
 #ifndef BYTE_STREAM_IN_ARRAY_H
@@ -60,26 +60,6 @@ class ByteStreamInArrayLE : public ByteStreamInArray
 {
 public:
   ByteStreamInArrayLE(U8* data, I64 size);
-/* read 16 bit low-endian field                              */
-  void get16bitsLE(U8* bytes);
-/* read 32 bit low-endian field                              */
-  void get32bitsLE(U8* bytes);
-/* read 64 bit low-endian field                              */
-  void get64bitsLE(U8* bytes);
-/* read 16 bit big-endian field                              */
-  void get16bitsBE(U8* bytes);
-/* read 32 bit big-endian field                              */
-  void get32bitsBE(U8* bytes);
-/* read 64 bit big-endian field                              */
-  void get64bitsBE(U8* bytes);
-private:
-  U8 swapped[8];
-};
-
-class ByteStreamInArrayBE : public ByteStreamInArray
-{
-public:
-  ByteStreamInArrayBE(U8* data, I64 size);
 /* read 16 bit low-endian field                              */
   void get16bitsLE(U8* bytes);
 /* read 32 bit low-endian field                              */
@@ -200,54 +180,6 @@ inline void ByteStreamInArrayLE::get64bitsBE(U8* bytes)
   bytes[5] = swapped[2];
   bytes[6] = swapped[1];
   bytes[7] = swapped[0];
-}
-
-inline ByteStreamInArrayBE::ByteStreamInArrayBE(U8* data, I64 size) : ByteStreamInArray(data, size)
-{
-}
-
-inline void ByteStreamInArrayBE::get16bitsLE(U8* bytes)
-{
-  getBytes(swapped, 2);
-  bytes[0] = swapped[1];
-  bytes[1] = swapped[0];
-}
-
-inline void ByteStreamInArrayBE::get32bitsLE(U8* bytes)
-{
-  getBytes(swapped, 4);
-  bytes[0] = swapped[3];
-  bytes[1] = swapped[2];
-  bytes[2] = swapped[1];
-  bytes[3] = swapped[0];
-}
-
-inline void ByteStreamInArrayBE::get64bitsLE(U8* bytes)
-{
-  getBytes(swapped, 8);
-  bytes[0] = swapped[7];
-  bytes[1] = swapped[6];
-  bytes[2] = swapped[5];
-  bytes[3] = swapped[4];
-  bytes[4] = swapped[3];
-  bytes[5] = swapped[2];
-  bytes[6] = swapped[1];
-  bytes[7] = swapped[0];
-}
-
-inline void ByteStreamInArrayBE::get16bitsBE(U8* bytes)
-{
-  getBytes(bytes, 2);
-}
-
-inline void ByteStreamInArrayBE::get32bitsBE(U8* bytes)
-{
-  getBytes(bytes, 4);
-}
-
-inline void ByteStreamInArrayBE::get64bitsBE(U8* bytes)
-{
-  getBytes(bytes, 8);
 }
 
 #endif

@@ -3339,10 +3339,7 @@ laszip_open_reader(
             // yes ... so let's fix the header (using the content from the compatibility VLR)
 
             ByteStreamInArray* in;
-            if (IS_LITTLE_ENDIAN())
-              in = new ByteStreamInArrayLE(compatibility_VLR->data, compatibility_VLR->record_length_after_header);
-            else
-              in = new ByteStreamInArrayBE(compatibility_VLR->data, compatibility_VLR->record_length_after_header);
+            in = new ByteStreamInArrayLE(compatibility_VLR->data, compatibility_VLR->record_length_after_header);
             // read control info
             U16 laszip_version;
             in->get16bitsLE((U8*)&laszip_version);
