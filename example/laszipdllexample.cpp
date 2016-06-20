@@ -63,33 +63,6 @@ void usage(bool wait=false)
   exit(1);
 }
 
-static void dll_error(void * laszip)
-{
-  if (laszip)
-  {
-    char* error;
-    if (laszip_get_error(laszip, &error))
-    {
-      fprintf(stderr,"DLL ERROR: getting error messages\n");
-    }
-    fprintf(stderr,"DLL ERROR MESSAGE: %s\n", error);
-  }
-}
-
-static void byebye(bool error=false, bool wait=false, void * laszip=0)
-{
-  if (error)
-  {
-    dll_error(laszip);
-  }
-  if (wait)
-  {
-    fprintf(stderr,"<press ENTER>\n");
-    getc(stdin);
-  }
-  exit(error);
-}
-
 extern void example1(int argc, char* file_name_in, char* file_name_out);
 extern void example2(int argc, char* file_name_in, char* file_name_out);
 extern void example3(int argc, char* file_name_in, char* file_name_out);
