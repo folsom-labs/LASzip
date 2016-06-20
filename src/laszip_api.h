@@ -283,17 +283,6 @@ laszip_get_coordinates(
 
 /*---------------------------------------------------------------------------*/
 LASZIP_API int32_t
-laszip_add_attribute(
-    void *                     pointer
-    , uint32_t                       type
-    , const char*               name
-    , const char*               description
-    , double                       scale
-    , double                       offset
-);
-
-/*---------------------------------------------------------------------------*/
-LASZIP_API int32_t
 laszip_add_vlr(
     void *                     pointer
     , const char*               user_id
