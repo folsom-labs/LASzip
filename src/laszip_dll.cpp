@@ -881,7 +881,7 @@ laszip_set_point(
 LASZIP_API laszip_I32
 laszip_set_coordinates(
     void *                     pointer
-    , const laszip_F64*                coordinates
+    , const double*                coordinates
 )
 {
   if (pointer == 0) return 1;
@@ -891,7 +891,7 @@ laszip_set_coordinates(
   {
     if (coordinates == 0)
     {
-      sprintf(laszip_dll->error, "laszip_F64 pointer 'coordinates' is zero");
+      sprintf(laszip_dll->error, "double pointer 'coordinates' is zero");
       return 1;
     }
 
@@ -929,7 +929,7 @@ laszip_set_coordinates(
 LASZIP_API laszip_I32
 laszip_get_coordinates(
     void *                     pointer
-    , laszip_F64*                      coordinates
+    , double*                      coordinates
 )
 {
   if (pointer == 0) return 1;
@@ -939,7 +939,7 @@ laszip_get_coordinates(
   {
     if (coordinates == 0)
     {
-      sprintf(laszip_dll->error, "laszip_F64 pointer 'coordinates' is zero");
+      sprintf(laszip_dll->error, "double pointer 'coordinates' is zero");
       return 1;
     }
 
@@ -1041,7 +1041,7 @@ LASZIP_API laszip_I32
 laszip_set_geodouble_params(
     void *                     pointer
     , laszip_U32                       number
-    , const laszip_F64*                geodouble_params
+    , const double*                geodouble_params
 )
 {
   if (pointer == 0) return 1;
@@ -1057,7 +1057,7 @@ laszip_set_geodouble_params(
 
     if (geodouble_params == 0)
     {
-      sprintf(laszip_dll->error, "laszip_F64 pointer 'geodouble_params' is zero");
+      sprintf(laszip_dll->error, "double pointer 'geodouble_params' is zero");
       return 1;
     }
 
@@ -1153,8 +1153,8 @@ laszip_add_attribute(
     , laszip_U32                       type
     , const laszip_CHAR*               name
     , const laszip_CHAR*               description
-    , laszip_F64                       scale
-    , laszip_F64                       offset
+    , double                       scale
+    , double                       offset
 )
 {
   if (pointer == 0) return 1;
@@ -3887,10 +3887,10 @@ laszip_has_spatial_index(
 LASZIP_API laszip_I32
 laszip_inside_rectangle(
     void *                     pointer
-    , const laszip_F64                 r_min_x
-    , const laszip_F64                 r_min_y
-    , const laszip_F64                 r_max_x
-    , const laszip_F64                 r_max_y
+    , const double                 r_min_x
+    , const double                 r_min_y
+    , const double                 r_max_x
+    , const double                 r_max_y
     , laszip_BOOL*                     is_empty
 )
 {
@@ -4080,7 +4080,7 @@ laszip_read_inside_point(
 
   try
   {
-    laszip_F64 xy;
+    double xy;
 
     *is_done = 1;
 

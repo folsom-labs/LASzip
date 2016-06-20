@@ -569,7 +569,7 @@ void example3(int argc, char* file_name_in, char* file_name_out)
   // write five points
 
   laszip_I64 p_count = 0;
-  laszip_F64 coordinates[3];
+  double coordinates[3];
 
   // populate the first point
 
@@ -808,19 +808,19 @@ void example4(int argc, char* file_name_in, char* file_name_out)
 
   // create a rectangular box enclosing a subset of points at the center of the full bounding box
 
-  const laszip_F64 sub = 0.05;
+  const double sub = 0.05;
 
-  laszip_F64 mid_x = (header->min_x + header->max_x) / 2;
-  laszip_F64 mid_y = (header->min_y + header->max_y) / 2;
+  double mid_x = (header->min_x + header->max_x) / 2;
+  double mid_y = (header->min_y + header->max_y) / 2;
 
-  laszip_F64 range_x = header->max_x - header->min_x;
-  laszip_F64 range_y = header->max_y - header->min_y;
+  double range_x = header->max_x - header->min_x;
+  double range_y = header->max_y - header->min_y;
 
-  laszip_F64 sub_min_x = mid_x - sub * range_x;
-  laszip_F64 sub_min_y = mid_y - sub * range_y;
+  double sub_min_x = mid_x - sub * range_x;
+  double sub_min_y = mid_y - sub * range_y;
 
-  laszip_F64 sub_max_x = mid_x + sub * range_x;
-  laszip_F64 sub_max_y = mid_y + sub * range_y;
+  double sub_max_x = mid_x + sub * range_x;
+  double sub_max_y = mid_y + sub * range_y;
 
   // request the reader to only read this specified rectangular subset of points
   laszip_BOOL is_empty = 0;
@@ -1196,7 +1196,7 @@ void example6(int argc, char* file_name_in, char* file_name_out)
     // write five points
 
     laszip_I64 p_count = 0;
-    laszip_F64 coordinates[3];
+    double coordinates[3];
 
     // populate the first point
 
@@ -1508,7 +1508,7 @@ void example7(int argc, char* file_name_in, char* file_name_out)
     // write five points
 
     laszip_I64 p_count = 0;
-    laszip_F64 coordinates[3];
+    double coordinates[3];
 
     // populate the first point
 
@@ -2000,7 +2000,7 @@ void example9(int argc, char* file_name_in, char* file_name_out)
     // write five points
 
     laszip_I64 p_count = 0;
-    laszip_F64 coordinates[3];
+    double coordinates[3];
 
     // populate the first point
 
@@ -2679,7 +2679,7 @@ void example11(int argc, char* file_name_in, char* file_name_out)
     // write five points
 
     laszip_I64 p_count = 0;
-    laszip_F64 coordinates[3];
+    double coordinates[3];
 
     // populate the first point
 

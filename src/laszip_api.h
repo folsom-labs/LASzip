@@ -62,7 +62,6 @@ typedef int32_t            laszip_I32;
 typedef int64_t            laszip_I64;
 typedef char               laszip_CHAR;
 typedef float              laszip_F32;
-typedef double             laszip_F64;
 
 typedef struct laszip_geokey
 {
@@ -103,18 +102,18 @@ typedef struct laszip_header
   laszip_U16 point_data_record_length;
   laszip_U32 number_of_point_records;
   laszip_U32 number_of_points_by_return[5];
-  laszip_F64 x_scale_factor;
-  laszip_F64 y_scale_factor;
-  laszip_F64 z_scale_factor;
-  laszip_F64 x_offset;
-  laszip_F64 y_offset;
-  laszip_F64 z_offset;
-  laszip_F64 max_x;
-  laszip_F64 min_x;
-  laszip_F64 max_y;
-  laszip_F64 min_y;
-  laszip_F64 max_z;
-  laszip_F64 min_z;
+  double x_scale_factor;
+  double y_scale_factor;
+  double z_scale_factor;
+  double x_offset;
+  double y_offset;
+  double z_offset;
+  double max_x;
+  double min_x;
+  double max_y;
+  double min_y;
+  double max_z;
+  double min_z;
 
   // LAS 1.3 and higher only
   laszip_U64 start_of_waveform_data_packet_record;
@@ -168,7 +167,7 @@ typedef struct laszip_point
   // for 8 byte alignment of the GPS time
   laszip_U8 dummy[7];
 
-  laszip_F64 gps_time;
+  double gps_time;
   laszip_U16 rgb[4];
   laszip_U8 wave_packet[29];
 
@@ -282,14 +281,14 @@ laszip_set_point(
 LASZIP_API laszip_I32
 laszip_set_coordinates(
     void *                     pointer
-    , const laszip_F64*                coordinates
+    , const double*                coordinates
 );
 
 /*---------------------------------------------------------------------------*/
 LASZIP_API laszip_I32
 laszip_get_coordinates(
     void *                     pointer
-    , laszip_F64*                      coordinates
+    , double*                      coordinates
 );
 
 /*---------------------------------------------------------------------------*/
@@ -305,7 +304,7 @@ LASZIP_API laszip_I32
 laszip_set_geodouble_params(
     void *                     pointer
     , laszip_U32                       number
-    , const laszip_F64*                geodouble_params
+    , const double*                geodouble_params
 );
 
 /*---------------------------------------------------------------------------*/
@@ -323,8 +322,8 @@ laszip_add_attribute(
     , laszip_U32                       type
     , const laszip_CHAR*               name
     , const laszip_CHAR*               description
-    , laszip_F64                       scale
-    , laszip_F64                       offset
+    , double                       scale
+    , double                       offset
 );
 
 /*---------------------------------------------------------------------------*/
@@ -427,10 +426,10 @@ laszip_has_spatial_index(
 LASZIP_API laszip_I32
 laszip_inside_rectangle(
     void *                     pointer
-    , laszip_F64                       min_x
-    , laszip_F64                       min_y
-    , laszip_F64                       max_x
-    , laszip_F64                       max_y
+    , double                       min_x
+    , double                       min_y
+    , double                       max_x
+    , double                       max_y
     , laszip_BOOL*                     is_empty
 );
 
