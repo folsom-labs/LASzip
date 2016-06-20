@@ -66,14 +66,6 @@ public:
   void get32bitsLE(U8* bytes);
 /* read 64 bit low-endian field                              */
   void get64bitsLE(U8* bytes);
-/* read 16 bit big-endian field                              */
-  void get16bitsBE(U8* bytes);
-/* read 32 bit big-endian field                              */
-  void get32bitsBE(U8* bytes);
-/* read 64 bit big-endian field                              */
-  void get64bitsBE(U8* bytes);
-private:
-  U8 swapped[8];
 };
 
 inline ByteStreamInArray::ByteStreamInArray(U8* data, I64 size)
@@ -151,35 +143,6 @@ inline void ByteStreamInArrayLE::get32bitsLE(U8* bytes)
 inline void ByteStreamInArrayLE::get64bitsLE(U8* bytes)
 {
   getBytes(bytes, 8);
-}
-
-inline void ByteStreamInArrayLE::get16bitsBE(U8* bytes)
-{
-  getBytes(swapped, 2);
-  bytes[0] = swapped[1];
-  bytes[1] = swapped[0];
-}
-
-inline void ByteStreamInArrayLE::get32bitsBE(U8* bytes)
-{
-  getBytes(swapped, 4);
-  bytes[0] = swapped[3];
-  bytes[1] = swapped[2];
-  bytes[2] = swapped[1];
-  bytes[3] = swapped[0];
-}
-
-inline void ByteStreamInArrayLE::get64bitsBE(U8* bytes)
-{
-  getBytes(swapped, 8);
-  bytes[0] = swapped[7];
-  bytes[1] = swapped[6];
-  bytes[2] = swapped[5];
-  bytes[3] = swapped[4];
-  bytes[4] = swapped[3];
-  bytes[5] = swapped[2];
-  bytes[6] = swapped[1];
-  bytes[7] = swapped[0];
 }
 
 #endif

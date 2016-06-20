@@ -2,9 +2,9 @@
 ===============================================================================
 
   FILE:  bytestreamin_istream.hpp
-  
+
   CONTENTS:
-      
+
     Class for istream-based input streams with endian handling.
 
   PROGRAMMERS:
@@ -21,13 +21,13 @@
 
     This software is distributed WITHOUT ANY WARRANTY and without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-  
+
   CHANGE HISTORY:
-  
+
      1 October 2011 -- added 64 bit file support in MSVC 6.0 at McCafe at Hbf Linz
     10 January 2011 -- licensing change for LGPL release and liblas integration
     12 December 2010 -- created from ByteStreamOutFile after Howard got pushy (-;
-  
+
 ===============================================================================
 */
 #ifndef BYTE_STREAM_IN_ISTREAM_H
@@ -75,14 +75,6 @@ public:
   void get32bitsLE(U8* bytes);
 /* read 64 bit low-endian field                              */
   void get64bitsLE(U8* bytes);
-/* read 16 bit big-endian field                              */
-  void get16bitsBE(U8* bytes);
-/* read 32 bit big-endian field                              */
-  void get32bitsBE(U8* bytes);
-/* read 64 bit big-endian field                              */
-  void get64bitsBE(U8* bytes);
-private:
-  U8 swapped[8];
 };
 
 class ByteStreamInIstreamBE : public ByteStreamInIstream
@@ -95,12 +87,6 @@ public:
   void get32bitsLE(U8* bytes);
 /* read 64 bit low-endian field                              */
   void get64bitsLE(U8* bytes);
-/* read 16 bit big-endian field                              */
-  void get16bitsBE(U8* bytes);
-/* read 32 bit big-endian field                              */
-  void get32bitsBE(U8* bytes);
-/* read 64 bit big-endian field                              */
-  void get64bitsBE(U8* bytes);
 private:
   U8 swapped[8];
 };
@@ -174,35 +160,6 @@ inline void ByteStreamInIstreamLE::get64bitsLE(U8* bytes)
   getBytes(bytes, 8);
 }
 
-inline void ByteStreamInIstreamLE::get16bitsBE(U8* bytes)
-{
-  getBytes(swapped, 2);
-  bytes[0] = swapped[1];
-  bytes[1] = swapped[0];
-}
-
-inline void ByteStreamInIstreamLE::get32bitsBE(U8* bytes)
-{
-  getBytes(swapped, 4);
-  bytes[0] = swapped[3];
-  bytes[1] = swapped[2];
-  bytes[2] = swapped[1];
-  bytes[3] = swapped[0];
-}
-
-inline void ByteStreamInIstreamLE::get64bitsBE(U8* bytes)
-{
-  getBytes(swapped, 8);
-  bytes[0] = swapped[7];
-  bytes[1] = swapped[6];
-  bytes[2] = swapped[5];
-  bytes[3] = swapped[4];
-  bytes[4] = swapped[3];
-  bytes[5] = swapped[2];
-  bytes[6] = swapped[1];
-  bytes[7] = swapped[0];
-}
-
 inline ByteStreamInIstreamBE::ByteStreamInIstreamBE(istream& stream) : ByteStreamInIstream(stream)
 {
 }
@@ -234,21 +191,6 @@ inline void ByteStreamInIstreamBE::get64bitsLE(U8* bytes)
   bytes[5] = swapped[2];
   bytes[6] = swapped[1];
   bytes[7] = swapped[0];
-}
-
-inline void ByteStreamInIstreamBE::get16bitsBE(U8* bytes)
-{
-  getBytes(bytes, 2);
-}
-
-inline void ByteStreamInIstreamBE::get32bitsBE(U8* bytes)
-{
-  getBytes(bytes, 4);
-}
-
-inline void ByteStreamInIstreamBE::get64bitsBE(U8* bytes)
-{
-  getBytes(bytes, 8);
 }
 
 #endif
