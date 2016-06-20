@@ -72,8 +72,6 @@ public:
   BOOL put16bitsLE(const U8* bytes);
 /* write 32 bit low-endian field                             */
   BOOL put32bitsLE(const U8* bytes);
-/* write 64 bit low-endian field                             */
-  BOOL put64bitsLE(const U8* bytes);
 };
 
 inline ByteStreamOutArray::ByteStreamOutArray(I64 alloc)
@@ -165,11 +163,6 @@ inline BOOL ByteStreamOutArrayLE::put16bitsLE(const U8* bytes)
 inline BOOL ByteStreamOutArrayLE::put32bitsLE(const U8* bytes)
 {
   return putBytes(bytes, 4);
-}
-
-inline BOOL ByteStreamOutArrayLE::put64bitsLE(const U8* bytes)
-{
-  return putBytes(bytes, 8);
 }
 
 #endif

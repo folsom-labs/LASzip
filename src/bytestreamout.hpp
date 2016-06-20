@@ -75,8 +75,6 @@ public:
   virtual BOOL put16bitsLE(const U8* bytes) = 0;
 /* write 32 bit low-endian field                             */
   virtual BOOL put32bitsLE(const U8* bytes) = 0;
-/* write 64 bit low-endian field                             */
-  virtual BOOL put64bitsLE(const U8* bytes) = 0;
 /* is the stream seekable (e.g. standard out is not)         */
   virtual BOOL isSeekable() const = 0;
 /* get current position of stream                            */
@@ -94,4 +92,7 @@ private:
   U32 num_buffer;
 };
 
+inline BOOL put64bitsLE(ByteStreamOut *stream, const U8* bytes) {
+  return stream->putBytes(bytes, 8);
+}
 #endif

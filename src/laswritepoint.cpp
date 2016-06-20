@@ -202,7 +202,7 @@ BOOL LASwritePoint::init(ByteStreamOut* outstream)
     {
       chunk_table_start_position = -1;
     }
-    outstream->put64bitsLE((U8*)&chunk_table_start_position);
+    put64bitsLE(outstream, (U8*)&chunk_table_start_position);
     chunk_start_position = outstream->tell();
   }
 
@@ -329,7 +329,7 @@ BOOL LASwritePoint::write_chunk_table()
     {
       return FALSE;
     }
-    if (!outstream->put64bitsLE((U8*)&position))
+    if (!put64bitsLE(outstream, (U8*)&position))
     {
       return FALSE;
     }
@@ -361,7 +361,7 @@ BOOL LASwritePoint::write_chunk_table()
   }
   if (chunk_table_start_position == -1) // stream is not-seekable
   {
-    if (!outstream->put64bitsLE((U8*)&position))
+    if (!put64bitsLE(outstream, (U8*)&position))
     {
       return FALSE;
     }
