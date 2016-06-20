@@ -2,11 +2,11 @@
 ===============================================================================
 
   FILE:  lasreadpoint.cpp
-  
+
   CONTENTS:
-  
+
     see corresponding header file
-  
+
   PROGRAMMERS:
 
     martin.isenburg@rapidlasso.com  -  http://rapidlasso.com
@@ -21,11 +21,11 @@
 
     This software is distributed WITHOUT ANY WARRANTY and without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-  
+
   CHANGE HISTORY:
-  
+
     see corresponding header file
-  
+
 ===============================================================================
 */
 
@@ -94,7 +94,7 @@ BOOL LASreadPoint::setup(U32 num_items, const LASitem* items, const LASzip* lasz
       return FALSE;
     }
   }
- 
+
   // initizalize the readers
   readers = 0;
   num_readers = num_items;
@@ -109,43 +109,25 @@ BOOL LASreadPoint::setup(U32 num_items, const LASitem* items, const LASzip* lasz
     switch (items[i].type)
     {
     case LASitem::POINT10:
-      if (IS_LITTLE_ENDIAN())
-        readers_raw[i] = new LASreadItemRaw_POINT10_LE();
-      else
-        readers_raw[i] = new LASreadItemRaw_POINT10_BE();
+      readers_raw[i] = new LASreadItemRaw_POINT10_LE();
       break;
     case LASitem::GPSTIME11:
-      if (IS_LITTLE_ENDIAN())
-        readers_raw[i] = new LASreadItemRaw_GPSTIME11_LE();
-      else
-        readers_raw[i] = new LASreadItemRaw_GPSTIME11_BE();
-        break;
+      readers_raw[i] = new LASreadItemRaw_GPSTIME11_LE();
+      break;
     case LASitem::RGB12:
-      if (IS_LITTLE_ENDIAN())
-        readers_raw[i] = new LASreadItemRaw_RGB12_LE();
-      else
-        readers_raw[i] = new LASreadItemRaw_RGB12_BE();
+      readers_raw[i] = new LASreadItemRaw_RGB12_LE();
       break;
     case LASitem::WAVEPACKET13:
-      if (IS_LITTLE_ENDIAN())
-        readers_raw[i] = new LASreadItemRaw_WAVEPACKET13_LE();
-      else
-        readers_raw[i] = new LASreadItemRaw_WAVEPACKET13_BE();
+      readers_raw[i] = new LASreadItemRaw_WAVEPACKET13_LE();
       break;
     case LASitem::BYTE:
       readers_raw[i] = new LASreadItemRaw_BYTE(items[i].size);
       break;
     case LASitem::POINT14:
-      if (IS_LITTLE_ENDIAN())
-        readers_raw[i] = new LASreadItemRaw_POINT14_LE();
-      else
-        return FALSE;
+      readers_raw[i] = new LASreadItemRaw_POINT14_LE();
       break;
     case LASitem::RGBNIR14:
-      if (IS_LITTLE_ENDIAN())
-        readers_raw[i] = new LASreadItemRaw_RGBNIR14_LE();
-      else
-        readers_raw[i] = new LASreadItemRaw_RGBNIR14_BE();
+      readers_raw[i] = new LASreadItemRaw_RGBNIR14_LE();
       break;
     default:
       return FALSE;
@@ -396,7 +378,7 @@ BOOL LASreadPoint::read(U8* const * point)
       }
     }
   }
-  catch (I32 exception) 
+  catch (I32 exception)
   {
     // create error string
     if (last_error == 0) last_error = new CHAR[128];
