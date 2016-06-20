@@ -419,7 +419,7 @@ laszip_get_point_pointer(
 LASZIP_API laszip_I32
 laszip_get_point_count(
     void *                     pointer
-    , laszip_I64*                      count
+    , uint64_t*                      count
 )
 {
   if (pointer == 0) return 1;
@@ -429,7 +429,7 @@ laszip_get_point_count(
   {
     if (count == 0)
     {
-      sprintf(laszip_dll->error, "laszip_I64 pointer 'count' is zero");
+      sprintf(laszip_dll->error, "uint64_t pointer 'count' is zero");
       return 1;
     }
 
@@ -3963,7 +3963,7 @@ laszip_inside_rectangle(
 LASZIP_API laszip_I32
 laszip_seek_point(
     void *                     pointer
-    , laszip_I64                       index
+    , uint64_t                       index
 )
 {
   if (pointer == 0) return 1;

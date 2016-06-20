@@ -72,7 +72,7 @@ void example1(int argc, char* file_name_in, char* file_name_out)
 
   // how many points does the file have
 
-  laszip_I64 npoints = (header->number_of_point_records ? header->number_of_point_records : header->extended_number_of_point_records);
+  uint64_t npoints = (header->number_of_point_records ? header->number_of_point_records : header->extended_number_of_point_records);
 
   // report how many points the file has
 
@@ -116,7 +116,7 @@ void example1(int argc, char* file_name_in, char* file_name_out)
 
   // read the points
 
-  laszip_I64 p_count = 0;
+  uint64_t p_count = 0;
 
   while (p_count < npoints)
   {
@@ -215,7 +215,7 @@ void example2(int argc, char* file_name_in, char* file_name_out)
 
   // how many points does the file have
 
-  laszip_I64 npoints = (header_read->number_of_point_records ? header_read->number_of_point_records : header_read->extended_number_of_point_records);
+  uint64_t npoints = (header_read->number_of_point_records ? header_read->number_of_point_records : header_read->extended_number_of_point_records);
 
   // report how many points the file has
 
@@ -352,7 +352,7 @@ void example2(int argc, char* file_name_in, char* file_name_out)
 
   // read the points
 
-  laszip_I64 p_count = 0;
+  uint64_t p_count = 0;
 
   while (p_count < npoints)
   {
@@ -568,7 +568,7 @@ void example3(int argc, char* file_name_in, char* file_name_out)
 
   // write five points
 
-  laszip_I64 p_count = 0;
+  uint64_t p_count = 0;
   double coordinates[3];
 
   // populate the first point
@@ -799,7 +799,7 @@ void example4(int argc, char* file_name_in, char* file_name_out)
 
   // how many points does the file have
 
-  laszip_I64 npoints = (header->number_of_point_records ? header->number_of_point_records : header->extended_number_of_point_records);
+  uint64_t npoints = (header->number_of_point_records ? header->number_of_point_records : header->extended_number_of_point_records);
 
   // report how many points the file has
 
@@ -862,7 +862,7 @@ void example4(int argc, char* file_name_in, char* file_name_out)
   fprintf(stderr,"writing file '%s' %scompressed\n", file_name_out, (compress ? "" : "un"));
 
   laszip_BOOL is_done = 0;
-  laszip_I64 p_count = 0;
+  uint64_t p_count = 0;
 
   while (p_count < npoints)
   {
@@ -965,7 +965,7 @@ void example5(int argc, char* file_name_in, char* file_name_out)
 
 	// how many points does the file have
 
-	laszip_I64 npoints = (header->number_of_point_records ? header->number_of_point_records : header->extended_number_of_point_records);
+	uint64_t npoints = (header->number_of_point_records ? header->number_of_point_records : header->extended_number_of_point_records);
 
 	// report how many points the file has
 
@@ -1020,7 +1020,7 @@ void example5(int argc, char* file_name_in, char* file_name_out)
 
 	// read the points
 
-	laszip_I64 p_count = 0;
+	uint64_t p_count = 0;
 
 	while (p_count < npoints)
 	{
@@ -1195,7 +1195,7 @@ void example6(int argc, char* file_name_in, char* file_name_out)
 
     // write five points
 
-    laszip_I64 p_count = 0;
+    uint64_t p_count = 0;
     double coordinates[3];
 
     // populate the first point
@@ -1507,7 +1507,7 @@ void example7(int argc, char* file_name_in, char* file_name_out)
 
     // write five points
 
-    laszip_I64 p_count = 0;
+    uint64_t p_count = 0;
     double coordinates[3];
 
     // populate the first point
@@ -1743,7 +1743,7 @@ void example8(int argc, char* file_name_in, char* file_name_out)
 
     // how many points does the file have
 
-    laszip_I64 npoints = (header->number_of_point_records ? header->number_of_point_records : header->extended_number_of_point_records);
+    uint64_t npoints = (header->number_of_point_records ? header->number_of_point_records : header->extended_number_of_point_records);
 
     // report how many points the file has
 
@@ -1801,7 +1801,7 @@ void example8(int argc, char* file_name_in, char* file_name_out)
 
     // read the points
 
-    laszip_I64 p_count = 0;
+    uint64_t p_count = 0;
 
     while (p_count < npoints)
     {
@@ -1999,7 +1999,7 @@ void example9(int argc, char* file_name_in, char* file_name_out)
 
     // write five points
 
-    laszip_I64 p_count = 0;
+    uint64_t p_count = 0;
     double coordinates[3];
 
     // populate the first point
@@ -2274,7 +2274,7 @@ void example10(int argc, char* file_name_in, char* file_name_out)
 
     // how many points does the LAS 1.x (x < 4) file have
 
-    laszip_I64 npoints = header_read->number_of_point_records;
+    uint64_t npoints = header_read->number_of_point_records;
 
     // report how many points the file has
 
@@ -2480,7 +2480,7 @@ void example10(int argc, char* file_name_in, char* file_name_out)
 
     // read the points
 
-    laszip_I64 p_count = 0;
+    uint64_t p_count = 0;
 
     while (p_count < npoints)
     {
@@ -2678,7 +2678,7 @@ void example11(int argc, char* file_name_in, char* file_name_out)
 
     // write five points
 
-    laszip_I64 p_count = 0;
+    uint64_t p_count = 0;
     double coordinates[3];
 
     // populate the first point

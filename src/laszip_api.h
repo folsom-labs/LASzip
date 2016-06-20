@@ -59,7 +59,6 @@ typedef uint64_t           laszip_U64;
 typedef int8_t             laszip_I8;
 typedef int16_t            laszip_I16;
 typedef int32_t            laszip_I32;
-typedef int64_t            laszip_I64;
 
 typedef struct laszip_geokey
 {
@@ -246,7 +245,7 @@ laszip_get_point_pointer(
 LASZIP_API laszip_I32
 laszip_get_point_count(
     void *                     pointer
-    , laszip_I64*                      count
+    , uint64_t*                      count
 );
 
 /*---------------------------------------------------------------------------*/
@@ -435,7 +434,7 @@ laszip_inside_rectangle(
 LASZIP_API laszip_I32
 laszip_seek_point(
     void *                     pointer
-    , laszip_I64                       index
+    , uint64_t                       index
 );
 
 /*---------------------------------------------------------------------------*/
