@@ -161,7 +161,7 @@ laszip_get_version(
 /*---------------------------------------------------------------------------*/
 LASZIP_API laszip_I32
 laszip_get_error(
-    laszip_POINTER                     pointer
+    void *                     pointer
     , laszip_CHAR**                    error
 )
 {
@@ -184,7 +184,7 @@ laszip_get_error(
 /*---------------------------------------------------------------------------*/
 LASZIP_API laszip_I32
 laszip_get_warning(
-    laszip_POINTER                     pointer
+    void *                     pointer
     , laszip_CHAR**                    warning
 )
 {
@@ -207,7 +207,7 @@ laszip_get_warning(
 /*---------------------------------------------------------------------------*/
 LASZIP_API laszip_I32
 laszip_create(
-    laszip_POINTER*                    pointer
+    void **                    pointer
 )
 {
   if (pointer == 0) return 1;
@@ -241,7 +241,7 @@ laszip_create(
 /*---------------------------------------------------------------------------*/
 LASZIP_API laszip_I32
 laszip_clean(
-    laszip_POINTER                     pointer
+    void *                     pointer
 )
 {
   if (pointer == 0) return 1;
@@ -334,7 +334,7 @@ laszip_clean(
 /*---------------------------------------------------------------------------*/
 LASZIP_API laszip_I32
 laszip_destroy(
-    laszip_POINTER                     pointer
+    void *                     pointer
 )
 {
   if (pointer == 0) return 1;
@@ -358,7 +358,7 @@ laszip_destroy(
 /*---------------------------------------------------------------------------*/
 LASZIP_API laszip_I32
 laszip_get_header_pointer(
-    laszip_POINTER                     pointer
+    void *                     pointer
     , laszip_header_struct**           header_pointer
 )
 {
@@ -388,7 +388,7 @@ laszip_get_header_pointer(
 /*---------------------------------------------------------------------------*/
 LASZIP_API laszip_I32
 laszip_get_point_pointer(
-    laszip_POINTER                     pointer
+    void *                     pointer
     , laszip_point_struct**            point_pointer
 )
 {
@@ -418,7 +418,7 @@ laszip_get_point_pointer(
 /*---------------------------------------------------------------------------*/
 LASZIP_API laszip_I32
 laszip_get_point_count(
-    laszip_POINTER                     pointer
+    void *                     pointer
     , laszip_I64*                      count
 )
 {
@@ -454,7 +454,7 @@ laszip_get_point_count(
 /*---------------------------------------------------------------------------*/
 LASZIP_API laszip_I32
 laszip_set_header(
-    laszip_POINTER                     pointer
+    void *                     pointer
     , const laszip_header_struct*      header
 )
 {
@@ -640,7 +640,7 @@ laszip_set_header(
 /*---------------------------------------------------------------------------*/
 LASZIP_API laszip_I32
 laszip_check_for_integer_overflow(
-    laszip_POINTER                     pointer
+    void *                     pointer
 )
 {
   if (pointer == 0) return 1;
@@ -714,7 +714,7 @@ laszip_check_for_integer_overflow(
 /*---------------------------------------------------------------------------*/
 LASZIP_API laszip_I32
 laszip_auto_offset(
-    laszip_POINTER                     pointer
+    void *                     pointer
 )
 {
   if (pointer == 0) return 1;
@@ -813,7 +813,7 @@ laszip_auto_offset(
 /*---------------------------------------------------------------------------*/
 LASZIP_API laszip_I32
 laszip_set_point(
-    laszip_POINTER                     pointer
+    void *                     pointer
     , const laszip_point_struct*       point
 )
 {
@@ -880,7 +880,7 @@ laszip_set_point(
 /*---------------------------------------------------------------------------*/
 LASZIP_API laszip_I32
 laszip_set_coordinates(
-    laszip_POINTER                     pointer
+    void *                     pointer
     , const laszip_F64*                coordinates
 )
 {
@@ -928,7 +928,7 @@ laszip_set_coordinates(
 /*---------------------------------------------------------------------------*/
 LASZIP_API laszip_I32
 laszip_get_coordinates(
-    laszip_POINTER                     pointer
+    void *                     pointer
     , laszip_F64*                      coordinates
 )
 {
@@ -970,7 +970,7 @@ laszip_get_coordinates(
 /*---------------------------------------------------------------------------*/
 LASZIP_API laszip_I32
 laszip_set_geokeys(
-    laszip_POINTER                     pointer
+    void *                     pointer
     , laszip_U32                       number
     , const laszip_geokey_struct*      key_entries
 )
@@ -1039,7 +1039,7 @@ laszip_set_geokeys(
 /*---------------------------------------------------------------------------*/
 LASZIP_API laszip_I32
 laszip_set_geodouble_params(
-    laszip_POINTER                     pointer
+    void *                     pointer
     , laszip_U32                       number
     , const laszip_F64*                geodouble_params
 )
@@ -1094,7 +1094,7 @@ laszip_set_geodouble_params(
 /*---------------------------------------------------------------------------*/
 LASZIP_API laszip_I32
 laszip_set_geoascii_params(
-    laszip_POINTER                     pointer
+    void *                     pointer
     , laszip_U32                       number
     , const laszip_CHAR*               geoascii_params
 )
@@ -1149,7 +1149,7 @@ laszip_set_geoascii_params(
 /*---------------------------------------------------------------------------*/
 LASZIP_API laszip_I32
 laszip_add_attribute(
-    laszip_POINTER                     pointer
+    void *                     pointer
     , laszip_U32                       type
     , const laszip_CHAR*               name
     , const laszip_CHAR*               description
@@ -1225,7 +1225,7 @@ laszip_add_attribute(
 /*---------------------------------------------------------------------------*/
 LASZIP_API laszip_I32
 laszip_add_vlr(
-    laszip_POINTER                     pointer
+    void *                     pointer
     , const laszip_CHAR*               user_id
     , laszip_U16                       record_id
     , laszip_U16                       record_length_after_header
@@ -1347,7 +1347,7 @@ laszip_add_vlr(
 /*---------------------------------------------------------------------------*/
 LASZIP_API laszip_I32
 laszip_remove_vlr(
-    laszip_POINTER                     pointer
+    void *                     pointer
     , const laszip_CHAR*               user_id
     , laszip_U16                       record_id
 )
@@ -1441,7 +1441,7 @@ laszip_remove_vlr(
 /*---------------------------------------------------------------------------*/
 LASZIP_API laszip_I32
 laszip_preserve_generating_software(
-    laszip_POINTER                     pointer
+    void *                     pointer
     , const laszip_BOOL                preserve
 )
 {
@@ -1477,7 +1477,7 @@ laszip_preserve_generating_software(
 /*---------------------------------------------------------------------------*/
 LASZIP_API laszip_I32
 laszip_request_compatibility_mode(
-    laszip_POINTER                     pointer
+    void *                     pointer
     , const laszip_BOOL                request
 )
 {
@@ -1513,7 +1513,7 @@ laszip_request_compatibility_mode(
 /*---------------------------------------------------------------------------*/
 LASZIP_API laszip_I32
 laszip_create_spatial_index(
-    laszip_POINTER                     pointer
+    void *                     pointer
     , const laszip_BOOL                create
     , const laszip_BOOL                append
 )
@@ -1557,7 +1557,7 @@ laszip_create_spatial_index(
 /*---------------------------------------------------------------------------*/
 LASZIP_API laszip_I32
 laszip_open_writer(
-    laszip_POINTER                     pointer
+    void *                     pointer
     , const laszip_CHAR*               file_name
     , laszip_BOOL                      compress
 )
@@ -2547,7 +2547,7 @@ laszip_open_writer(
 /*---------------------------------------------------------------------------*/
 LASZIP_API laszip_I32
 laszip_write_point(
-    laszip_POINTER                     pointer
+    void *                     pointer
 )
 {
   if (pointer == 0) return 1;
@@ -2658,7 +2658,7 @@ laszip_write_point(
 /*---------------------------------------------------------------------------*/
 LASZIP_API laszip_I32
 laszip_write_indexed_point(
-    laszip_POINTER                     pointer
+    void *                     pointer
 )
 {
   if (pointer == 0) return 1;
@@ -2695,7 +2695,7 @@ laszip_write_indexed_point(
 /*---------------------------------------------------------------------------*/
 LASZIP_API laszip_I32
 laszip_update_inventory(
-    laszip_POINTER                     pointer
+    void *                     pointer
 )
 {
   if (pointer == 0) return 1;
@@ -2723,7 +2723,7 @@ laszip_update_inventory(
 /*---------------------------------------------------------------------------*/
 LASZIP_API laszip_I32
 laszip_close_writer(
-    laszip_POINTER                     pointer
+    void *                     pointer
 )
 {
   if (pointer == 0) return 1;
@@ -2869,7 +2869,7 @@ laszip_close_writer(
 /*---------------------------------------------------------------------------*/
 LASZIP_API laszip_I32
 laszip_exploit_spatial_index(
-    laszip_POINTER                     pointer
+    void *                     pointer
     , const laszip_BOOL                exploit
 )
 {
@@ -2905,7 +2905,7 @@ laszip_exploit_spatial_index(
 /*---------------------------------------------------------------------------*/
 LASZIP_API laszip_I32
 laszip_open_reader(
-    laszip_POINTER                     pointer
+    void *                     pointer
     , const laszip_CHAR*               file_name
     , laszip_BOOL*                     is_compressed
 )
@@ -3820,7 +3820,7 @@ laszip_open_reader(
 /*---------------------------------------------------------------------------*/
 LASZIP_API laszip_I32
 laszip_has_spatial_index(
-    laszip_POINTER                     pointer
+    void *                     pointer
     , laszip_BOOL*                     is_indexed
     , laszip_BOOL*                     is_appended
 )
@@ -3886,7 +3886,7 @@ laszip_has_spatial_index(
 /*---------------------------------------------------------------------------*/
 LASZIP_API laszip_I32
 laszip_inside_rectangle(
-    laszip_POINTER                     pointer
+    void *                     pointer
     , const laszip_F64                 r_min_x
     , const laszip_F64                 r_min_y
     , const laszip_F64                 r_max_x
@@ -3962,7 +3962,7 @@ laszip_inside_rectangle(
 /*---------------------------------------------------------------------------*/
 LASZIP_API laszip_I32
 laszip_seek_point(
-    laszip_POINTER                     pointer
+    void *                     pointer
     , laszip_I64                       index
 )
 {
@@ -3996,7 +3996,7 @@ laszip_seek_point(
 /*---------------------------------------------------------------------------*/
 LASZIP_API laszip_I32
 laszip_read_point(
-    laszip_POINTER                     pointer
+    void *                     pointer
 )
 {
   if (pointer == 0) return 1;
@@ -4071,7 +4071,7 @@ laszip_read_point(
 /*---------------------------------------------------------------------------*/
 LASZIP_API laszip_I32
 laszip_read_inside_point(
-    laszip_POINTER                     pointer
+    void *                     pointer
     , laszip_BOOL*                     is_done
 )
 {
@@ -4140,7 +4140,7 @@ laszip_read_inside_point(
 /*---------------------------------------------------------------------------*/
 LASZIP_API laszip_I32
 laszip_close_reader(
-    laszip_POINTER                     pointer
+    void *                     pointer
 )
 {
   if (pointer == 0) return 1;

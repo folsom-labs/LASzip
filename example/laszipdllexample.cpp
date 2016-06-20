@@ -63,7 +63,7 @@ void usage(bool wait=false)
   exit(1);
 }
 
-static void dll_error(laszip_POINTER laszip)
+static void dll_error(void * laszip)
 {
   if (laszip)
   {
@@ -76,7 +76,7 @@ static void dll_error(laszip_POINTER laszip)
   }
 }
 
-static void byebye(bool error=false, bool wait=false, laszip_POINTER laszip=0)
+static void byebye(bool error=false, bool wait=false, void * laszip=0)
 {
   if (error)
   {

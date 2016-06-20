@@ -7,7 +7,7 @@
 #include "laszip_api.h"
 #include "mydefs.hpp"
 
-static void dll_error(laszip_POINTER laszip)
+static void dll_error(void * laszip)
 {
   if (laszip)
   {
@@ -20,7 +20,7 @@ static void dll_error(laszip_POINTER laszip)
   }
 }
 
-static void byebye(bool error=false, bool wait=false, laszip_POINTER laszip=0)
+static void byebye(bool error=false, bool wait=false, void * laszip=0)
 {
   if (error)
   {  
@@ -44,7 +44,7 @@ void example1(int argc, char* file_name_in, char* file_name_out)
   fprintf(stderr,"running EXAMPLE_ONE (reading *without* and writing *without* compatibility mode)\n");
 
   double start_time = taketime();
-  laszip_POINTER laszip_reader;
+  void * laszip_reader;
   if (laszip_create(&laszip_reader))
   {
     fprintf(stderr,"DLL ERROR: creating laszip reader\n");
@@ -89,7 +89,7 @@ void example1(int argc, char* file_name_in, char* file_name_out)
     byebye(true, argc==1, laszip_reader);
   }
 
-  laszip_POINTER laszip_writer;
+  void * laszip_writer;
   if (laszip_create(&laszip_writer))
   {
     fprintf(stderr,"DLL ERROR: creating laszip writer\n");
@@ -187,7 +187,7 @@ void example2(int argc, char* file_name_in, char* file_name_out)
 
   double start_time = taketime();
 
-  laszip_POINTER laszip_reader;
+  void * laszip_reader;
   if (laszip_create(&laszip_reader))
   {
     fprintf(stderr,"DLL ERROR: creating laszip reader\n");
@@ -222,7 +222,7 @@ void example2(int argc, char* file_name_in, char* file_name_out)
   fprintf(stderr,"file '%s' contains %lld points\n", file_name_in, npoints);
   //fprintf(stderr,"file '%s' contains %I64d points\n", file_name_in, npoints);
 
-  laszip_POINTER laszip_writer;
+  void * laszip_writer;
   if (laszip_create(&laszip_writer))
   {
     fprintf(stderr,"DLL ERROR: creating laszip writer\n");
@@ -448,7 +448,7 @@ void example3(int argc, char* file_name_in, char* file_name_out)
   fprintf(stderr,"running EXAMPLE_THREE (writing five points of type 1 to LAS 1.2 file)\n");
 
   double start_time = taketime();
-  laszip_POINTER laszip_writer;
+  void * laszip_writer;
   if (laszip_create(&laszip_writer))
   {
     fprintf(stderr,"DLL ERROR: creating laszip writer\n");
@@ -752,7 +752,7 @@ void example4(int argc, char* file_name_in, char* file_name_out)
   fprintf(stderr,"running EXAMPLE_FOUR (reading area-of-interest from a file exploiting possibly existing spatial indexing information)\n");
 
   double start_time = taketime();
-  laszip_POINTER laszip_reader;
+  void * laszip_reader;
   if (laszip_create(&laszip_reader))
   {
     fprintf(stderr,"DLL ERROR: creating laszip reader\n");
@@ -838,7 +838,7 @@ void example4(int argc, char* file_name_in, char* file_name_out)
     byebye(true, argc==1, laszip_reader);
   }
 
-  laszip_POINTER laszip_writer;
+  void * laszip_writer;
   if (laszip_create(&laszip_writer))
   {
     fprintf(stderr,"DLL ERROR: creating laszip writer\n");
@@ -937,7 +937,7 @@ void example5(int argc, char* file_name_in, char* file_name_out)
 	fprintf(stderr,"running EXAMPLE_FIVE (reading from one file and writing to another file while simultaneously generating a spatial index)\n");
 
   double start_time = taketime();
-	laszip_POINTER laszip_reader;
+	void * laszip_reader;
 	if (laszip_create(&laszip_reader))
 	{
 	  fprintf(stderr,"DLL ERROR: creating laszip reader\n");
@@ -982,7 +982,7 @@ void example5(int argc, char* file_name_in, char* file_name_out)
 	  byebye(true, argc==1, laszip_reader);
 	}
 
-	laszip_POINTER laszip_writer;
+	void * laszip_writer;
 	if (laszip_create(&laszip_writer))
 	{
 	  fprintf(stderr,"DLL ERROR: creating laszip writer\n");
@@ -1090,7 +1090,7 @@ void example6(int argc, char* file_name_in, char* file_name_out)
     fprintf(stderr,"running EXAMPLE_SIX (writing five points of type 6 to LAS 1.4 without compatibility)\n");
 
     double start_time = taketime();
-    laszip_POINTER laszip_writer;
+    void * laszip_writer;
     if (laszip_create(&laszip_writer))
     {
       fprintf(stderr,"DLL ERROR: creating laszip writer\n");
@@ -1395,7 +1395,7 @@ void example7(int argc, char* file_name_in, char* file_name_out)
     fprintf(stderr,"running EXAMPLE_SEVEN (writing five points of type 6 to LAS 1.4 *with* compatibility to compressed LAZ *and* also uncompressed LAS)\n");
 
     double start_time = taketime();
-    laszip_POINTER laszip_writer;
+    void * laszip_writer;
     if (laszip_create(&laszip_writer))
     {
       fprintf(stderr,"DLL ERROR: creating laszip writer\n");
@@ -1706,7 +1706,7 @@ void example8(int argc, char* file_name_in, char* file_name_out)
     fprintf(stderr,"running EXAMPLE_EIGHT (always *with* compatibility mode when reading but when writing *only* for compressed output)\n");
 
     double start_time = taketime();
-    laszip_POINTER laszip_reader;
+    void * laszip_reader;
     if (laszip_create(&laszip_reader))
     {
       fprintf(stderr,"DLL ERROR: creating laszip reader\n");
@@ -1760,7 +1760,7 @@ void example8(int argc, char* file_name_in, char* file_name_out)
       byebye(true, argc==1, laszip_reader);
     }
 
-    laszip_POINTER laszip_writer;
+    void * laszip_writer;
     if (laszip_create(&laszip_writer))
     {
       fprintf(stderr,"DLL ERROR: creating laszip writer\n");
@@ -1869,7 +1869,7 @@ void example9(int argc, char* file_name_in, char* file_name_out)
     fprintf(stderr,"running EXAMPLE_NINE (writing LAS 1.4 points with \"extra bytes\" *with* compatibility to compressed LAZ *and* also uncompressed LAS)\n");
 
     double start_time = taketime();
-    laszip_POINTER laszip_writer;
+    void * laszip_writer;
     if (laszip_create(&laszip_writer))
     {
       fprintf(stderr,"DLL ERROR: creating laszip writer\n");
@@ -2229,7 +2229,7 @@ void example10(int argc, char* file_name_in, char* file_name_out)
     fprintf(stderr,"running EXAMPLE_TEN (read LAS 1.0-1.3 file, upconvert old to new point types, write LAS 1.4 compatibility mode *only* for compressed output)\n");
     double start_time = taketime();
 
-    laszip_POINTER laszip_reader;
+    void * laszip_reader;
     if (laszip_create(&laszip_reader))
     {
       fprintf(stderr,"DLL ERROR: creating laszip reader\n");
@@ -2291,7 +2291,7 @@ void example10(int argc, char* file_name_in, char* file_name_out)
       byebye(true, argc==1, laszip_reader);
     }
 
-    laszip_POINTER laszip_writer;
+    void * laszip_writer;
     if (laszip_create(&laszip_writer))
     {
       fprintf(stderr,"DLL ERROR: creating laszip writer\n");
@@ -2569,7 +2569,7 @@ void example11(int argc, char* file_name_in, char* file_name_out)
     fprintf(stderr,"running EXAMPLE_ELEVEN (writing points to LAS 1.4 without a-priori knowlegde of bounding box or point count (compatibility only for LAZ))\n");
     double start_time = taketime();
 
-    laszip_POINTER laszip_writer;
+    void * laszip_writer;
     if (laszip_create(&laszip_writer))
     {
       fprintf(stderr,"DLL ERROR: creating laszip writer\n");
