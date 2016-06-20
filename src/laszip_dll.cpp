@@ -969,61 +969,6 @@ laszip_get_coordinates(
 
 /*---------------------------------------------------------------------------*/
 LASZIP_API int32_t
-laszip_set_geodouble_params(
-    void *                     pointer
-    , uint32_t                       number
-    , const double*                geodouble_params
-)
-{
-  if (pointer == 0) return 1;
-  laszip_dll_struct* laszip_dll = (laszip_dll_struct*)pointer;
-
-  try
-  {
-    if (number == 0)
-    {
-      sprintf(laszip_dll->error, "number of geodouble_params is zero");
-      return 1;
-    }
-
-    if (geodouble_params == 0)
-    {
-      sprintf(laszip_dll->error, "double pointer 'geodouble_params' is zero");
-      return 1;
-    }
-
-    if (laszip_dll->reader)
-    {
-      sprintf(laszip_dll->error, "cannot set geodouble_params after reader was opened");
-      return 1;
-    }
-
-    if (laszip_dll->writer)
-    {
-      sprintf(laszip_dll->error, "cannot set geodouble_params after writer was opened");
-      return 1;
-    }
-
-    // add the VLR
-
-    if (laszip_add_vlr(pointer, "LASF_Projection", 34736, number*8, 0, (uint8_t*)geodouble_params))
-    {
-      sprintf(laszip_dll->error, "setting %u geodouble_params", number);
-      return 1;
-    }
-  }
-  catch (...)
-  {
-    sprintf(laszip_dll->error, "internal error in laszip_set_geodouble_params");
-    return 1;
-  }
-
-  laszip_dll->error[0] = '\0';
-  return 0;
-}
-
-/*---------------------------------------------------------------------------*/
-LASZIP_API int32_t
 laszip_set_geoascii_params(
     void *                     pointer
     , uint32_t                       number
