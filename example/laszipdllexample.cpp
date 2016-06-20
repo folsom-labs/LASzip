@@ -107,10 +107,10 @@ int main(int argc, char *argv[])
   char* file_name_in = 0;
   char* file_name_out = 0;
 
-  laszip_U8 version_major;
-  laszip_U8 version_minor;
-  laszip_U16 version_revision;
-  laszip_U32 version_build;
+  uint8_t version_major;
+  uint8_t version_minor;
+  uint16_t version_revision;
+  uint32_t version_build;
 
   if (laszip_get_version(&version_major, &version_minor, &version_revision, &version_build))
   {

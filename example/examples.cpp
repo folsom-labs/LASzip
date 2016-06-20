@@ -182,7 +182,7 @@ void example1(int argc, char* file_name_in, char* file_name_out)
 
 void example2(int argc, char* file_name_in, char* file_name_out)
 {
-  laszip_U32 i;
+  uint32_t i;
   fprintf(stderr,"running EXAMPLE_TWO (another way of reading *without* and writing *without* compatibility mode)\n");
 
   double start_time = taketime();
@@ -2026,10 +2026,10 @@ void example9(int argc, char* file_name_in, char* file_name_out)
     point->gps_time = 53413162.560400;
 
     // set attribute 'height above ground' quantized to 0.05 m
-    *((laszip_I16*)(point->extra_bytes + 0)) = (laszip_I16)(12.50 / 0.05);
+    *((int16_t*)(point->extra_bytes + 0)) = (int16_t)(12.50 / 0.05);
 
     // set attribute 'coverage count'
-    *((laszip_U8*)(point->extra_bytes + 2)) = 3;
+    *((uint8_t*)(point->extra_bytes + 2)) = 3;
 
     // write the first point
 
@@ -2065,10 +2065,10 @@ void example9(int argc, char* file_name_in, char* file_name_out)
     point->gps_time = 53413162.563600;
 
     // set attribute 'height above ground' quantized to 0.05 m
-    *((laszip_I16*)(point->extra_bytes + 0)) = (laszip_I16)(9.32 / 0.05);
+    *((int16_t*)(point->extra_bytes + 0)) = (int16_t)(9.32 / 0.05);
 
     // set attribute 'coverage count'
-    *((laszip_U8*)(point->extra_bytes + 2)) = 5;
+    *((uint8_t*)(point->extra_bytes + 2)) = 5;
 
     // write the second point
 
@@ -2104,10 +2104,10 @@ void example9(int argc, char* file_name_in, char* file_name_out)
     point->gps_time = 53413162.566800;
 
     // set attribute 'height above ground' quantized to 0.05 m
-    *((laszip_I16*)(point->extra_bytes + 0)) = (laszip_I16)(23.50 / 0.05);
+    *((int16_t*)(point->extra_bytes + 0)) = (int16_t)(23.50 / 0.05);
 
     // set attribute 'coverage count'
-    *((laszip_U8*)(point->extra_bytes + 2)) = 0;
+    *((uint8_t*)(point->extra_bytes + 2)) = 0;
 
     // write the third point
 
@@ -2143,10 +2143,10 @@ void example9(int argc, char* file_name_in, char* file_name_out)
     point->gps_time = 53413162.580200;
 
     // set attribute 'height above ground' quantized to 0.05 m
-    *((laszip_I16*)(point->extra_bytes + 0)) = (laszip_I16)(8.65 / 0.05);
+    *((int16_t*)(point->extra_bytes + 0)) = (int16_t)(8.65 / 0.05);
 
     // set attribute 'coverage count'
-    *((laszip_U8*)(point->extra_bytes + 2)) = 6;
+    *((uint8_t*)(point->extra_bytes + 2)) = 6;
 
     // write the fourth point
 
@@ -2182,10 +2182,10 @@ void example9(int argc, char* file_name_in, char* file_name_out)
     point->gps_time = 53413162.580200;
 
     // set attribute 'height above ground' quantized to 0.05 m
-    *((laszip_I16*)(point->extra_bytes + 0)) = (laszip_I16)(16.13 / 0.05);
+    *((int16_t*)(point->extra_bytes + 0)) = (int16_t)(16.13 / 0.05);
 
     // set attribute 'coverage count'
-    *((laszip_U8*)(point->extra_bytes + 2)) = 2;
+    *((uint8_t*)(point->extra_bytes + 2)) = 2;
 
     // write the fifth point
 
@@ -2513,7 +2513,7 @@ void example10(int argc, char* file_name_in, char* file_name_out)
       point_write->extended_classification = point_read->classification;
       point_write->extended_return_number = point_read->return_number;
       point_write->extended_number_of_returns = point_read->number_of_returns;
-      point_write->extended_scan_angle = (laszip_I16)( (point_read->scan_angle_rank > 0) ? ((1.0 / 0.006 * point_read->scan_angle_rank) + 0.5) : ((1.0 / 0.006 * point_read->scan_angle_rank) - 0.5) );
+      point_write->extended_scan_angle = (int16_t)( (point_read->scan_angle_rank > 0) ? ((1.0 / 0.006 * point_read->scan_angle_rank) + 0.5) : ((1.0 / 0.006 * point_read->scan_angle_rank) - 0.5) );
 
       if (point_read->num_extra_bytes)
       {

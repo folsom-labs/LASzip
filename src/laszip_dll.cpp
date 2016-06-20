@@ -137,10 +137,10 @@ typedef struct laszip_dll {
 /*---------------------------------------------------------------------------*/
 LASZIP_API int32_t
 laszip_get_version(
-    laszip_U8*                         version_major
-    , laszip_U8*                       version_minor
-    , laszip_U16*                      version_revision
-    , laszip_U32*                      version_build
+    uint8_t*                         version_major
+    , uint8_t*                       version_minor
+    , uint16_t*                      version_revision
+    , uint32_t*                      version_build
 )
 {
   try
@@ -971,7 +971,7 @@ laszip_get_coordinates(
 LASZIP_API int32_t
 laszip_set_geokeys(
     void *                     pointer
-    , laszip_U32                       number
+    , uint32_t                       number
     , const laszip_geokey_struct*      key_entries
 )
 {
@@ -1020,7 +1020,7 @@ laszip_set_geokeys(
 
     // add the VLR
 
-    if (laszip_add_vlr(pointer, "LASF_Projection", 34735, 8 + number*8, 0, (laszip_U8*)key_entries_plus_one))
+    if (laszip_add_vlr(pointer, "LASF_Projection", 34735, 8 + number*8, 0, (uint8_t*)key_entries_plus_one))
     {
       sprintf(laszip_dll->error, "setting %u geodouble_params", number);
       return 1;
@@ -1040,7 +1040,7 @@ laszip_set_geokeys(
 LASZIP_API int32_t
 laszip_set_geodouble_params(
     void *                     pointer
-    , laszip_U32                       number
+    , uint32_t                       number
     , const double*                geodouble_params
 )
 {
@@ -1075,7 +1075,7 @@ laszip_set_geodouble_params(
 
     // add the VLR
 
-    if (laszip_add_vlr(pointer, "LASF_Projection", 34736, number*8, 0, (laszip_U8*)geodouble_params))
+    if (laszip_add_vlr(pointer, "LASF_Projection", 34736, number*8, 0, (uint8_t*)geodouble_params))
     {
       sprintf(laszip_dll->error, "setting %u geodouble_params", number);
       return 1;
@@ -1095,7 +1095,7 @@ laszip_set_geodouble_params(
 LASZIP_API int32_t
 laszip_set_geoascii_params(
     void *                     pointer
-    , laszip_U32                       number
+    , uint32_t                       number
     , const char*               geoascii_params
 )
 {
@@ -1130,7 +1130,7 @@ laszip_set_geoascii_params(
 
     // add the VLR
 
-    if (laszip_add_vlr(pointer, "LASF_Projection", 34737, number, 0, (laszip_U8*)geoascii_params))
+    if (laszip_add_vlr(pointer, "LASF_Projection", 34737, number, 0, (uint8_t*)geoascii_params))
     {
       sprintf(laszip_dll->error, "setting %u geoascii_params", number);
       return 1;
@@ -1150,7 +1150,7 @@ laszip_set_geoascii_params(
 LASZIP_API int32_t
 laszip_add_attribute(
     void *                     pointer
-    , laszip_U32                       type
+    , uint32_t                       type
     , const char*               name
     , const char*               description
     , double                       scale
@@ -1164,7 +1164,7 @@ laszip_add_attribute(
   {
     if (type > LAS_ATTRIBUTE_F64)
     {
-      sprintf(laszip_dll->error, "laszip_U32 'type' is %u but needs to be between %d and %d", type, LAS_ATTRIBUTE_U8, LAS_ATTRIBUTE_F64);
+      sprintf(laszip_dll->error, "uint32_t 'type' is %u but needs to be between %d and %d", type, LAS_ATTRIBUTE_U8, LAS_ATTRIBUTE_F64);
       return 1;
     }
 
@@ -1206,7 +1206,7 @@ laszip_add_attribute(
       return 1;
     }
 
-    if (laszip_add_vlr(pointer, "LASF_Spec\0\0\0\0\0\0", 4, laszip_dll->attributer->number_attributes*sizeof(LASattribute), 0, (laszip_U8*)laszip_dll->attributer->attributes))
+    if (laszip_add_vlr(pointer, "LASF_Spec\0\0\0\0\0\0", 4, laszip_dll->attributer->number_attributes*sizeof(LASattribute), 0, (uint8_t*)laszip_dll->attributer->attributes))
     {
       sprintf(laszip_dll->error, "adding the new extra bytes VLR with the additional attribute '%s'", name);
       return 1;
@@ -1227,10 +1227,10 @@ LASZIP_API int32_t
 laszip_add_vlr(
     void *                     pointer
     , const char*               user_id
-    , laszip_U16                       record_id
-    , laszip_U16                       record_length_after_header
+    , uint16_t                       record_id
+    , uint16_t                       record_length_after_header
     , const char*               description
-    , const laszip_U8*                 data
+    , const uint8_t*                 data
 )
 {
   if (pointer == 0) return 1;
@@ -1349,7 +1349,7 @@ LASZIP_API int32_t
 laszip_remove_vlr(
     void *                     pointer
     , const char*               user_id
-    , laszip_U16                       record_id
+    , uint16_t                       record_id
 )
 {
   if (pointer == 0) return 1;
@@ -1779,7 +1779,7 @@ laszip_open_writer(
 
         // add the compatibility VLR
 
-        if (laszip_add_vlr(pointer, "lascompatible\0\0", 22204, 2+2+4+148, 0, (laszip_U8*)out->takeData()))
+        if (laszip_add_vlr(pointer, "lascompatible\0\0", 22204, 2+2+4+148, 0, (uint8_t*)out->takeData()))
         {
           sprintf(laszip_dll->error, "adding the compatibility VLR");
           return 1;
@@ -1873,7 +1873,7 @@ laszip_open_writer(
 
         // add the extra bytes VLR with the additional attributes
 
-        if (laszip_add_vlr(pointer, "LASF_Spec\0\0\0\0\0\0", 4, laszip_dll->attributer->number_attributes*sizeof(LASattribute), 0, (laszip_U8*)laszip_dll->attributer->attributes))
+        if (laszip_add_vlr(pointer, "LASF_Spec\0\0\0\0\0\0", 4, laszip_dll->attributer->number_attributes*sizeof(LASattribute), 0, (uint8_t*)laszip_dll->attributer->attributes))
         {
           sprintf(laszip_dll->error, "adding the extra bytes VLR with the additional attributes");
           return 1;
@@ -3682,7 +3682,7 @@ laszip_open_reader(
 
             if (attributer.number_attributes)
             {
-              if (laszip_add_vlr(pointer, "LASF_Spec\0\0\0\0\0\0", 4, attributer.number_attributes*sizeof(LASattribute), 0, (laszip_U8*)attributer.attributes))
+              if (laszip_add_vlr(pointer, "LASF_Spec\0\0\0\0\0\0", 4, attributer.number_attributes*sizeof(LASattribute), 0, (uint8_t*)attributer.attributes))
               {
                 sprintf(laszip_dll->error, "rewriting the extra bytes VLR without 'LAS 1.4 compatibility mode' attributes");
                 return 1;
