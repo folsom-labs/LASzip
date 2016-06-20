@@ -58,7 +58,7 @@ typedef uint32_t           laszip_U32;
 typedef uint64_t           laszip_U64;
 typedef int8_t             laszip_I8;
 typedef int16_t            laszip_I16;
-typedef int32_t            laszip_I32;
+typedef int32_t            int32_t;
 
 typedef struct laszip_geokey
 {
@@ -136,9 +136,9 @@ typedef struct laszip_header
 
 typedef struct laszip_point
 {
-  laszip_I32 X;
-  laszip_I32 Y;
-  laszip_I32 Z;
+  int32_t X;
+  int32_t Y;
+  int32_t Z;
   laszip_U16 intensity;
   laszip_U8 return_number : 3;
   laszip_U8 number_of_returns : 3;
@@ -168,7 +168,7 @@ typedef struct laszip_point
   laszip_U16 rgb[4];
   laszip_U8 wave_packet[29];
 
-  laszip_I32 num_extra_bytes;
+  int32_t num_extra_bytes;
   laszip_U8* extra_bytes;
 
 } laszip_point_struct;
@@ -180,7 +180,7 @@ typedef struct laszip_point
 #define LASZIP_API
 
 /*---------------------------------------------------------------------------*/
-LASZIP_API laszip_I32
+LASZIP_API int32_t
 laszip_get_version
 (
     laszip_U8*                         version_major
@@ -190,13 +190,13 @@ laszip_get_version
 );
 
 /*---------------------------------------------------------------------------*/
-LASZIP_API laszip_I32
+LASZIP_API int32_t
 laszip_create(
     void **                    pointer
 );
 
 /*---------------------------------------------------------------------------*/
-LASZIP_API laszip_I32
+LASZIP_API int32_t
 laszip_get_error
 (
     void *                     pointer
@@ -204,7 +204,7 @@ laszip_get_error
 );
 
 /*---------------------------------------------------------------------------*/
-LASZIP_API laszip_I32
+LASZIP_API int32_t
 laszip_get_warning
 (
     void *                     pointer
@@ -212,13 +212,13 @@ laszip_get_warning
 );
 
 /*---------------------------------------------------------------------------*/
-LASZIP_API laszip_I32
+LASZIP_API int32_t
 laszip_clean(
     void *                     pointer
 );
 
 /*---------------------------------------------------------------------------*/
-LASZIP_API laszip_I32
+LASZIP_API int32_t
 laszip_destroy(
     void *                     pointer
 );
@@ -228,68 +228,68 @@ laszip_destroy(
 /*---------------------------------------------------------------------------*/
 
 /*---------------------------------------------------------------------------*/
-LASZIP_API laszip_I32
+LASZIP_API int32_t
 laszip_get_header_pointer(
     void *                     pointer
     , laszip_header_struct**           header_pointer
 );
 
 /*---------------------------------------------------------------------------*/
-LASZIP_API laszip_I32
+LASZIP_API int32_t
 laszip_get_point_pointer(
     void *                     pointer
     , laszip_point_struct**            point_pointer
 );
 
 /*---------------------------------------------------------------------------*/
-LASZIP_API laszip_I32
+LASZIP_API int32_t
 laszip_get_point_count(
     void *                     pointer
     , uint64_t*                      count
 );
 
 /*---------------------------------------------------------------------------*/
-LASZIP_API laszip_I32
+LASZIP_API int32_t
 laszip_set_header(
     void *                     pointer
     , const laszip_header_struct*      header
 );
 
 /*---------------------------------------------------------------------------*/
-LASZIP_API laszip_I32
+LASZIP_API int32_t
 laszip_check_for_integer_overflow(
     void *                     pointer
 );
 
 /*---------------------------------------------------------------------------*/
-LASZIP_API laszip_I32
+LASZIP_API int32_t
 laszip_auto_offset(
     void *                     pointer
 );
 
 /*---------------------------------------------------------------------------*/
-LASZIP_API laszip_I32
+LASZIP_API int32_t
 laszip_set_point(
     void *                     pointer
     , const laszip_point_struct*       point
 );
 
 /*---------------------------------------------------------------------------*/
-LASZIP_API laszip_I32
+LASZIP_API int32_t
 laszip_set_coordinates(
     void *                     pointer
     , const double*                coordinates
 );
 
 /*---------------------------------------------------------------------------*/
-LASZIP_API laszip_I32
+LASZIP_API int32_t
 laszip_get_coordinates(
     void *                     pointer
     , double*                      coordinates
 );
 
 /*---------------------------------------------------------------------------*/
-LASZIP_API laszip_I32
+LASZIP_API int32_t
 laszip_set_geokeys(
     void *                     pointer
     , laszip_U32                       number
@@ -297,7 +297,7 @@ laszip_set_geokeys(
 );
 
 /*---------------------------------------------------------------------------*/
-LASZIP_API laszip_I32
+LASZIP_API int32_t
 laszip_set_geodouble_params(
     void *                     pointer
     , laszip_U32                       number
@@ -305,7 +305,7 @@ laszip_set_geodouble_params(
 );
 
 /*---------------------------------------------------------------------------*/
-LASZIP_API laszip_I32
+LASZIP_API int32_t
 laszip_set_geoascii_params(
     void *                     pointer
     , laszip_U32                       number
@@ -313,7 +313,7 @@ laszip_set_geoascii_params(
 );
 
 /*---------------------------------------------------------------------------*/
-LASZIP_API laszip_I32
+LASZIP_API int32_t
 laszip_add_attribute(
     void *                     pointer
     , laszip_U32                       type
@@ -324,7 +324,7 @@ laszip_add_attribute(
 );
 
 /*---------------------------------------------------------------------------*/
-LASZIP_API laszip_I32
+LASZIP_API int32_t
 laszip_add_vlr(
     void *                     pointer
     , const char*               user_id
@@ -335,7 +335,7 @@ laszip_add_vlr(
 );
 
 /*---------------------------------------------------------------------------*/
-LASZIP_API laszip_I32
+LASZIP_API int32_t
 laszip_remove_vlr(
     void *                     pointer
     , const char*               user_id
@@ -343,7 +343,7 @@ laszip_remove_vlr(
 );
 
 /*---------------------------------------------------------------------------*/
-LASZIP_API laszip_I32
+LASZIP_API int32_t
 laszip_create_spatial_index(
     void *                     pointer
     , const laszip_BOOL                create
@@ -351,21 +351,21 @@ laszip_create_spatial_index(
 );
 
 /*---------------------------------------------------------------------------*/
-LASZIP_API laszip_I32
+LASZIP_API int32_t
 laszip_preserve_generating_software(
     void *                     pointer
     , const laszip_BOOL                preserve
 );
 
 /*---------------------------------------------------------------------------*/
-LASZIP_API laszip_I32
+LASZIP_API int32_t
 laszip_request_compatibility_mode(
     void *                     pointer
     , const laszip_BOOL                request
 );
 
 /*---------------------------------------------------------------------------*/
-LASZIP_API laszip_I32
+LASZIP_API int32_t
 laszip_open_writer(
     void *                     pointer
     , const char*               file_name
@@ -373,38 +373,38 @@ laszip_open_writer(
 );
 
 /*---------------------------------------------------------------------------*/
-LASZIP_API laszip_I32
+LASZIP_API int32_t
 laszip_write_point(
     void *                     pointer
 );
 
 /*---------------------------------------------------------------------------*/
-LASZIP_API laszip_I32
+LASZIP_API int32_t
 laszip_write_indexed_point(
     void *                     pointer
 );
 
 /*---------------------------------------------------------------------------*/
-LASZIP_API laszip_I32
+LASZIP_API int32_t
 laszip_update_inventory(
     void *                     pointer
 );
 
 /*---------------------------------------------------------------------------*/
-LASZIP_API laszip_I32
+LASZIP_API int32_t
 laszip_close_writer(
     void *                     pointer
 );
 
 /*---------------------------------------------------------------------------*/
-LASZIP_API laszip_I32
+LASZIP_API int32_t
 laszip_exploit_spatial_index(
     void *                     pointer
     , const laszip_BOOL                exploit
 );
 
 /*---------------------------------------------------------------------------*/
-LASZIP_API laszip_I32
+LASZIP_API int32_t
 laszip_open_reader(
     void *                     pointer
     , const char*               file_name
@@ -412,7 +412,7 @@ laszip_open_reader(
 );
 
 /*---------------------------------------------------------------------------*/
-LASZIP_API laszip_I32
+LASZIP_API int32_t
 laszip_has_spatial_index(
     void *                     pointer
     , laszip_BOOL*                     is_indexed
@@ -420,7 +420,7 @@ laszip_has_spatial_index(
 );
 
 /*---------------------------------------------------------------------------*/
-LASZIP_API laszip_I32
+LASZIP_API int32_t
 laszip_inside_rectangle(
     void *                     pointer
     , double                       min_x
@@ -431,27 +431,27 @@ laszip_inside_rectangle(
 );
 
 /*---------------------------------------------------------------------------*/
-LASZIP_API laszip_I32
+LASZIP_API int32_t
 laszip_seek_point(
     void *                     pointer
     , uint64_t                       index
 );
 
 /*---------------------------------------------------------------------------*/
-LASZIP_API laszip_I32
+LASZIP_API int32_t
 laszip_read_point(
     void *                     pointer
 );
 
 /*---------------------------------------------------------------------------*/
-LASZIP_API laszip_I32
+LASZIP_API int32_t
 laszip_read_inside_point(
     void *                     pointer
     , laszip_BOOL*                     is_done
 );
 
 /*---------------------------------------------------------------------------*/
-LASZIP_API laszip_I32
+LASZIP_API int32_t
 laszip_close_reader(
     void *                     pointer
 );
@@ -461,13 +461,13 @@ laszip_close_reader(
 /*---------------------------------------------------------------------------*/
 
 /*---------------------------------------------------------------------------*/
-LASZIP_API laszip_I32
+LASZIP_API int32_t
 laszip_load_dll
 (
 );
 
 /*---------------------------------------------------------------------------*/
-LASZIP_API laszip_I32
+LASZIP_API int32_t
 laszip_unload_dll
 (
 );

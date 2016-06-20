@@ -301,7 +301,7 @@ void example2(int argc, char* file_name_in, char* file_name_out)
 
   if (header_read->number_of_variable_length_records)
   {
-    fprintf(stderr,"offset_to_point_data before adding %u VLRs is      : %d\n", header_read->number_of_variable_length_records, (laszip_I32)header_write->offset_to_point_data);
+    fprintf(stderr,"offset_to_point_data before adding %u VLRs is      : %d\n", header_read->number_of_variable_length_records, (int32_t)header_write->offset_to_point_data);
     for (i = 0; i < header_read->number_of_variable_length_records; i++)
     {
       if (laszip_add_vlr(laszip_writer, header_read->vlrs[i].user_id, header_read->vlrs[i].record_id, header_read->vlrs[i].record_length_after_header, header_read->vlrs[i].description, header_read->vlrs[i].data))
@@ -309,7 +309,7 @@ void example2(int argc, char* file_name_in, char* file_name_out)
         fprintf(stderr,"DLL ERROR: adding VLR %u of %u to the header of the laszip writer\n", i+i, header_read->number_of_variable_length_records);
         byebye(true, argc==1, laszip_writer);
       }
-      fprintf(stderr,"offset_to_point_data after adding VLR number %u is : %d\n", i+1, (laszip_I32)header_write->offset_to_point_data);
+      fprintf(stderr,"offset_to_point_data after adding VLR number %u is : %d\n", i+1, (int32_t)header_write->offset_to_point_data);
     }
   }
 
@@ -490,7 +490,7 @@ void example3(int argc, char* file_name_in, char* file_name_out)
     byebye(true, argc==1, laszip_writer);
   }
 
-  fprintf(stderr,"offset_to_point_data before adding funny VLR is    : %d\n", (laszip_I32)header->offset_to_point_data);
+  fprintf(stderr,"offset_to_point_data before adding funny VLR is    : %d\n", (int32_t)header->offset_to_point_data);
 
   // add some funny VLR
 
@@ -536,7 +536,7 @@ void example3(int argc, char* file_name_in, char* file_name_out)
 
   // add the geokeys (create or replace the appropriate VLR)
 
-  fprintf(stderr,"offset_to_point_data before adding projection VLR  : %d\n", (laszip_I32)header->offset_to_point_data);
+  fprintf(stderr,"offset_to_point_data before adding projection VLR  : %d\n", (int32_t)header->offset_to_point_data);
 
   if (laszip_set_geokeys(laszip_writer, 5, key_entries))
   {
@@ -544,7 +544,7 @@ void example3(int argc, char* file_name_in, char* file_name_out)
     byebye(true, argc==1, laszip_writer);
   }
   
-  fprintf(stderr,"offset_to_point_data after adding two VLRs         : %d\n", (laszip_I32)header->offset_to_point_data);
+  fprintf(stderr,"offset_to_point_data after adding two VLRs         : %d\n", (int32_t)header->offset_to_point_data);
 
   laszip_BOOL compress = (strstr(file_name_out, ".laz") != 0);
 
@@ -1145,7 +1145,7 @@ void example6(int argc, char* file_name_in, char* file_name_out)
       byebye(true, argc==1, laszip_writer);
     }
 
-    fprintf(stderr,"offset_to_point_data before adding  empty OGC WKT VLR is : %d\n", (laszip_I32)header->offset_to_point_data);
+    fprintf(stderr,"offset_to_point_data before adding  empty OGC WKT VLR is : %d\n", (int32_t)header->offset_to_point_data);
 
     // add intentionally empty OGC WKT
 
@@ -1155,7 +1155,7 @@ void example6(int argc, char* file_name_in, char* file_name_out)
       byebye(true, argc==1, laszip_writer);
     }
 
-    fprintf(stderr,"offset_to_point_data before adding funny VLR is          : %d\n", (laszip_I32)header->offset_to_point_data);
+    fprintf(stderr,"offset_to_point_data before adding funny VLR is          : %d\n", (int32_t)header->offset_to_point_data);
 
     // add some funny VLR
 
@@ -1165,7 +1165,7 @@ void example6(int argc, char* file_name_in, char* file_name_out)
       byebye(true, argc==1, laszip_writer);
     }
     
-    fprintf(stderr,"offset_to_point_data after adding VLRs                   : %d\n", (laszip_I32)header->offset_to_point_data);
+    fprintf(stderr,"offset_to_point_data after adding VLRs                   : %d\n", (int32_t)header->offset_to_point_data);
 
     laszip_BOOL compress = (strstr(file_name_out, ".laz") != 0);
 
@@ -1450,7 +1450,7 @@ void example7(int argc, char* file_name_in, char* file_name_out)
       byebye(true, argc==1, laszip_writer);
     }
 
-    fprintf(stderr,"offset_to_point_data before adding  empty OGC WKT VLR is : %d\n", (laszip_I32)header->offset_to_point_data);
+    fprintf(stderr,"offset_to_point_data before adding  empty OGC WKT VLR is : %d\n", (int32_t)header->offset_to_point_data);
 
     // add intentionally empty OGC WKT
 
@@ -1460,7 +1460,7 @@ void example7(int argc, char* file_name_in, char* file_name_out)
       byebye(true, argc==1, laszip_writer);
     }
 
-    fprintf(stderr,"offset_to_point_data before adding funny VLR is          : %d\n", (laszip_I32)header->offset_to_point_data);
+    fprintf(stderr,"offset_to_point_data before adding funny VLR is          : %d\n", (int32_t)header->offset_to_point_data);
 
     // add some funny VLR
 
@@ -1470,7 +1470,7 @@ void example7(int argc, char* file_name_in, char* file_name_out)
       byebye(true, argc==1, laszip_writer);
     }
     
-    fprintf(stderr,"offset_to_point_data after adding VLRs                   : %d\n", (laszip_I32)header->offset_to_point_data);
+    fprintf(stderr,"offset_to_point_data after adding VLRs                   : %d\n", (int32_t)header->offset_to_point_data);
 
     // enable the compatibility mode
 
@@ -1926,7 +1926,7 @@ void example9(int argc, char* file_name_in, char* file_name_out)
 
     // add description for the two attributes in the three "extra bytes"
 
-    fprintf(stderr,"offset_to_point_data before adding 'height above ground' is : %d\n", (laszip_I32)header->offset_to_point_data);
+    fprintf(stderr,"offset_to_point_data before adding 'height above ground' is : %d\n", (int32_t)header->offset_to_point_data);
 
     if (laszip_add_attribute(laszip_writer, 3, "height above ground", "quantized to 5 cm above 1s SRTM", 0.05, 0.0))
     {
@@ -1934,7 +1934,7 @@ void example9(int argc, char* file_name_in, char* file_name_out)
       byebye(true, argc==1, laszip_writer);
     }
 
-    fprintf(stderr,"offset_to_point_data before adding 'coverage count' is      : %d\n", (laszip_I32)header->offset_to_point_data);
+    fprintf(stderr,"offset_to_point_data before adding 'coverage count' is      : %d\n", (int32_t)header->offset_to_point_data);
 
     if (laszip_add_attribute(laszip_writer, 0, "coverage count", "by 0.5 m radius of high returns", 1.0, 0.0))
     {
@@ -1942,7 +1942,7 @@ void example9(int argc, char* file_name_in, char* file_name_out)
       byebye(true, argc==1, laszip_writer);
     }
 
-    fprintf(stderr,"offset_to_point_data before adding  empty OGC WKT VLR is    : %d\n", (laszip_I32)header->offset_to_point_data);
+    fprintf(stderr,"offset_to_point_data before adding  empty OGC WKT VLR is    : %d\n", (int32_t)header->offset_to_point_data);
 
     // add intentionally empty OGC WKT
 
@@ -1952,7 +1952,7 @@ void example9(int argc, char* file_name_in, char* file_name_out)
       byebye(true, argc==1, laszip_writer);
     }
 
-    fprintf(stderr,"offset_to_point_data before adding funny VLR is             : %d\n", (laszip_I32)header->offset_to_point_data);
+    fprintf(stderr,"offset_to_point_data before adding funny VLR is             : %d\n", (int32_t)header->offset_to_point_data);
 
     // add some funny VLR
 
@@ -1962,7 +1962,7 @@ void example9(int argc, char* file_name_in, char* file_name_out)
       byebye(true, argc==1, laszip_writer);
     }
     
-    fprintf(stderr,"offset_to_point_data after adding VLRs                      : %d\n", (laszip_I32)header->offset_to_point_data);
+    fprintf(stderr,"offset_to_point_data after adding VLRs                      : %d\n", (int32_t)header->offset_to_point_data);
 
     // enable the compatibility mode
 
@@ -2378,7 +2378,7 @@ void example10(int argc, char* file_name_in, char* file_name_out)
 
     if (header_read->number_of_variable_length_records)
     {
-      fprintf(stderr,"offset_to_point_data before adding %u VLRs is      : %d\n", header_read->number_of_variable_length_records, (laszip_I32)header_write->offset_to_point_data);
+      fprintf(stderr,"offset_to_point_data before adding %u VLRs is      : %d\n", header_read->number_of_variable_length_records, (int32_t)header_write->offset_to_point_data);
       for (U32 i = 0; i < header_read->number_of_variable_length_records; i++)
       {
         if (laszip_add_vlr(laszip_writer, header_read->vlrs[i].user_id, header_read->vlrs[i].record_id, header_read->vlrs[i].record_length_after_header, header_read->vlrs[i].description, header_read->vlrs[i].data))
@@ -2386,7 +2386,7 @@ void example10(int argc, char* file_name_in, char* file_name_out)
           fprintf(stderr,"DLL ERROR: adding VLR %u of %u to the header of the laszip writer\n", i+i, header_read->number_of_variable_length_records);
           byebye(true, argc==1, laszip_writer);
         }
-        fprintf(stderr,"offset_to_point_data after adding VLR number %u is : %d\n", i+1, (laszip_I32)header_write->offset_to_point_data);
+        fprintf(stderr,"offset_to_point_data after adding VLR number %u is : %d\n", i+1, (int32_t)header_write->offset_to_point_data);
       }
     }
 
@@ -2616,7 +2616,7 @@ void example11(int argc, char* file_name_in, char* file_name_out)
     header->max_z = 0.0;
     header->min_z = 0.0;
 
-    fprintf(stderr,"offset_to_point_data before adding  empty OGC WKT VLR is : %d\n", (laszip_I32)header->offset_to_point_data);
+    fprintf(stderr,"offset_to_point_data before adding  empty OGC WKT VLR is : %d\n", (int32_t)header->offset_to_point_data);
 
     // add intentionally empty OGC WKT
 
@@ -2626,7 +2626,7 @@ void example11(int argc, char* file_name_in, char* file_name_out)
       byebye(true, argc==1, laszip_writer);
     }
 
-    fprintf(stderr,"offset_to_point_data before adding funny VLR is          : %d\n", (laszip_I32)header->offset_to_point_data);
+    fprintf(stderr,"offset_to_point_data before adding funny VLR is          : %d\n", (int32_t)header->offset_to_point_data);
 
     // add some funny VLR
 
@@ -2636,7 +2636,7 @@ void example11(int argc, char* file_name_in, char* file_name_out)
       byebye(true, argc==1, laszip_writer);
     }
     
-    fprintf(stderr,"offset_to_point_data after adding VLRs                   : %d\n", (laszip_I32)header->offset_to_point_data);
+    fprintf(stderr,"offset_to_point_data after adding VLRs                   : %d\n", (int32_t)header->offset_to_point_data);
 
     // compressed output or not?
 
