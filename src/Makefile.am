@@ -17,7 +17,6 @@ liblibrary_la_SOURCES =				arithmeticmodel.cpp \
                         lasreadpoint.hpp \
                         bytestreamin.hpp \
                         bytestreamin_file.hpp \
-                        bytestreamin_istream.hpp \
                         bytestreamout.hpp \
                         lasreaditemraw.hpp \
                         lasreaditem.hpp \
