@@ -1,0 +1,334 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		035D4C321D19AD6700514743 /* arithmeticdecoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 035D4C111D19AD6600514743 /* arithmeticdecoder.cpp */; };
+		035D4C331D19AD6700514743 /* arithmeticmodel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 035D4C131D19AD6600514743 /* arithmeticmodel.cpp */; };
+		035D4C341D19AD6700514743 /* integercompressor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 035D4C181D19AD6700514743 /* integercompressor.cpp */; };
+		035D4C351D19AD6700514743 /* lasindex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 035D4C1B1D19AD6700514743 /* lasindex.cpp */; };
+		035D4C361D19AD6700514743 /* lasinterval.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 035D4C1D1D19AD6700514743 /* lasinterval.cpp */; };
+		035D4C371D19AD6700514743 /* lasquadtree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 035D4C201D19AD6700514743 /* lasquadtree.cpp */; };
+		035D4C381D19AD6700514743 /* lasreaditemcompressed_v1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 035D4C241D19AD6700514743 /* lasreaditemcompressed_v1.cpp */; };
+		035D4C391D19AD6700514743 /* lasreaditemcompressed_v2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 035D4C261D19AD6700514743 /* lasreaditemcompressed_v2.cpp */; };
+		035D4C3A1D19AD6700514743 /* lasreadpoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 035D4C291D19AD6700514743 /* lasreadpoint.cpp */; };
+		035D4C3B1D19AD6700514743 /* laszip_dll.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 035D4C2E1D19AD6700514743 /* laszip_dll.cpp */; };
+		035D4C3C1D19AD6700514743 /* laszip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 035D4C2F1D19AD6700514743 /* laszip.cpp */; };
+		035D4C3E1D19AD7800514743 /* lazinfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 035D4C3D1D19AD7800514743 /* lazinfo.cpp */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		035D4C051D19AD3D00514743 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		035D4C071D19AD3D00514743 /* laszip */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = laszip; sourceTree = BUILT_PRODUCTS_DIR; };
+		035D4C111D19AD6600514743 /* arithmeticdecoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = arithmeticdecoder.cpp; path = ../../src/arithmeticdecoder.cpp; sourceTree = "<group>"; };
+		035D4C121D19AD6600514743 /* arithmeticdecoder.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = arithmeticdecoder.hpp; path = ../../src/arithmeticdecoder.hpp; sourceTree = "<group>"; };
+		035D4C131D19AD6600514743 /* arithmeticmodel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = arithmeticmodel.cpp; path = ../../src/arithmeticmodel.cpp; sourceTree = "<group>"; };
+		035D4C141D19AD6600514743 /* arithmeticmodel.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = arithmeticmodel.hpp; path = ../../src/arithmeticmodel.hpp; sourceTree = "<group>"; };
+		035D4C151D19AD6600514743 /* bytestreamin_array.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = bytestreamin_array.hpp; path = ../../src/bytestreamin_array.hpp; sourceTree = "<group>"; };
+		035D4C161D19AD6600514743 /* bytestreamin_file.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = bytestreamin_file.hpp; path = ../../src/bytestreamin_file.hpp; sourceTree = "<group>"; };
+		035D4C171D19AD6600514743 /* bytestreamin.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = bytestreamin.hpp; path = ../../src/bytestreamin.hpp; sourceTree = "<group>"; };
+		035D4C181D19AD6700514743 /* integercompressor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = integercompressor.cpp; path = ../../src/integercompressor.cpp; sourceTree = "<group>"; };
+		035D4C191D19AD6700514743 /* integercompressor.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = integercompressor.hpp; path = ../../src/integercompressor.hpp; sourceTree = "<group>"; };
+		035D4C1A1D19AD6700514743 /* lasattributer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = lasattributer.hpp; path = ../../src/lasattributer.hpp; sourceTree = "<group>"; };
+		035D4C1B1D19AD6700514743 /* lasindex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = lasindex.cpp; path = ../../src/lasindex.cpp; sourceTree = "<group>"; };
+		035D4C1C1D19AD6700514743 /* lasindex.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = lasindex.hpp; path = ../../src/lasindex.hpp; sourceTree = "<group>"; };
+		035D4C1D1D19AD6700514743 /* lasinterval.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = lasinterval.cpp; path = ../../src/lasinterval.cpp; sourceTree = "<group>"; };
+		035D4C1E1D19AD6700514743 /* lasinterval.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = lasinterval.hpp; path = ../../src/lasinterval.hpp; sourceTree = "<group>"; };
+		035D4C1F1D19AD6700514743 /* laspoint.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = laspoint.hpp; path = ../../src/laspoint.hpp; sourceTree = "<group>"; };
+		035D4C201D19AD6700514743 /* lasquadtree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = lasquadtree.cpp; path = ../../src/lasquadtree.cpp; sourceTree = "<group>"; };
+		035D4C211D19AD6700514743 /* lasquadtree.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = lasquadtree.hpp; path = ../../src/lasquadtree.hpp; sourceTree = "<group>"; };
+		035D4C221D19AD6700514743 /* lasquantizer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = lasquantizer.hpp; path = ../../src/lasquantizer.hpp; sourceTree = "<group>"; };
+		035D4C231D19AD6700514743 /* lasreaditem.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = lasreaditem.hpp; path = ../../src/lasreaditem.hpp; sourceTree = "<group>"; };
+		035D4C241D19AD6700514743 /* lasreaditemcompressed_v1.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = lasreaditemcompressed_v1.cpp; path = ../../src/lasreaditemcompressed_v1.cpp; sourceTree = "<group>"; };
+		035D4C251D19AD6700514743 /* lasreaditemcompressed_v1.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = lasreaditemcompressed_v1.hpp; path = ../../src/lasreaditemcompressed_v1.hpp; sourceTree = "<group>"; };
+		035D4C261D19AD6700514743 /* lasreaditemcompressed_v2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = lasreaditemcompressed_v2.cpp; path = ../../src/lasreaditemcompressed_v2.cpp; sourceTree = "<group>"; };
+		035D4C271D19AD6700514743 /* lasreaditemcompressed_v2.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = lasreaditemcompressed_v2.hpp; path = ../../src/lasreaditemcompressed_v2.hpp; sourceTree = "<group>"; };
+		035D4C281D19AD6700514743 /* lasreaditemraw.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = lasreaditemraw.hpp; path = ../../src/lasreaditemraw.hpp; sourceTree = "<group>"; };
+		035D4C291D19AD6700514743 /* lasreadpoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = lasreadpoint.cpp; path = ../../src/lasreadpoint.cpp; sourceTree = "<group>"; };
+		035D4C2A1D19AD6700514743 /* lasreadpoint.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = lasreadpoint.hpp; path = ../../src/lasreadpoint.hpp; sourceTree = "<group>"; };
+		035D4C2B1D19AD6700514743 /* laszip_api.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = laszip_api.h; path = ../../src/laszip_api.h; sourceTree = "<group>"; };
+		035D4C2C1D19AD6700514743 /* laszip_common_v1.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = laszip_common_v1.hpp; path = ../../src/laszip_common_v1.hpp; sourceTree = "<group>"; };
+		035D4C2D1D19AD6700514743 /* laszip_common_v2.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = laszip_common_v2.hpp; path = ../../src/laszip_common_v2.hpp; sourceTree = "<group>"; };
+		035D4C2E1D19AD6700514743 /* laszip_dll.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = laszip_dll.cpp; path = ../../src/laszip_dll.cpp; sourceTree = "<group>"; };
+		035D4C2F1D19AD6700514743 /* laszip.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = laszip.cpp; path = ../../src/laszip.cpp; sourceTree = "<group>"; };
+		035D4C301D19AD6700514743 /* laszip.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = laszip.hpp; path = ../../src/laszip.hpp; sourceTree = "<group>"; };
+		035D4C311D19AD6700514743 /* mydefs.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = mydefs.hpp; path = ../../src/mydefs.hpp; sourceTree = "<group>"; };
+		035D4C3D1D19AD7800514743 /* lazinfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = lazinfo.cpp; path = ../../lazinfo.cpp; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		035D4C041D19AD3D00514743 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		035D4BFE1D19AD3D00514743 = {
+			isa = PBXGroup;
+			children = (
+				035D4C091D19AD3D00514743 /* laszip */,
+				035D4C081D19AD3D00514743 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		035D4C081D19AD3D00514743 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				035D4C071D19AD3D00514743 /* laszip */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		035D4C091D19AD3D00514743 /* laszip */ = {
+			isa = PBXGroup;
+			children = (
+				035D4C3D1D19AD7800514743 /* lazinfo.cpp */,
+				035D4C111D19AD6600514743 /* arithmeticdecoder.cpp */,
+				035D4C121D19AD6600514743 /* arithmeticdecoder.hpp */,
+				035D4C131D19AD6600514743 /* arithmeticmodel.cpp */,
+				035D4C141D19AD6600514743 /* arithmeticmodel.hpp */,
+				035D4C151D19AD6600514743 /* bytestreamin_array.hpp */,
+				035D4C161D19AD6600514743 /* bytestreamin_file.hpp */,
+				035D4C171D19AD6600514743 /* bytestreamin.hpp */,
+				035D4C181D19AD6700514743 /* integercompressor.cpp */,
+				035D4C191D19AD6700514743 /* integercompressor.hpp */,
+				035D4C1A1D19AD6700514743 /* lasattributer.hpp */,
+				035D4C1B1D19AD6700514743 /* lasindex.cpp */,
+				035D4C1C1D19AD6700514743 /* lasindex.hpp */,
+				035D4C1D1D19AD6700514743 /* lasinterval.cpp */,
+				035D4C1E1D19AD6700514743 /* lasinterval.hpp */,
+				035D4C1F1D19AD6700514743 /* laspoint.hpp */,
+				035D4C201D19AD6700514743 /* lasquadtree.cpp */,
+				035D4C211D19AD6700514743 /* lasquadtree.hpp */,
+				035D4C221D19AD6700514743 /* lasquantizer.hpp */,
+				035D4C231D19AD6700514743 /* lasreaditem.hpp */,
+				035D4C241D19AD6700514743 /* lasreaditemcompressed_v1.cpp */,
+				035D4C251D19AD6700514743 /* lasreaditemcompressed_v1.hpp */,
+				035D4C261D19AD6700514743 /* lasreaditemcompressed_v2.cpp */,
+				035D4C271D19AD6700514743 /* lasreaditemcompressed_v2.hpp */,
+				035D4C281D19AD6700514743 /* lasreaditemraw.hpp */,
+				035D4C291D19AD6700514743 /* lasreadpoint.cpp */,
+				035D4C2A1D19AD6700514743 /* lasreadpoint.hpp */,
+				035D4C2B1D19AD6700514743 /* laszip_api.h */,
+				035D4C2C1D19AD6700514743 /* laszip_common_v1.hpp */,
+				035D4C2D1D19AD6700514743 /* laszip_common_v2.hpp */,
+				035D4C2E1D19AD6700514743 /* laszip_dll.cpp */,
+				035D4C2F1D19AD6700514743 /* laszip.cpp */,
+				035D4C301D19AD6700514743 /* laszip.hpp */,
+				035D4C311D19AD6700514743 /* mydefs.hpp */,
+			);
+			path = laszip;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		035D4C061D19AD3D00514743 /* laszip */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 035D4C0E1D19AD3D00514743 /* Build configuration list for PBXNativeTarget "laszip" */;
+			buildPhases = (
+				035D4C031D19AD3D00514743 /* Sources */,
+				035D4C041D19AD3D00514743 /* Frameworks */,
+				035D4C051D19AD3D00514743 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = laszip;
+			productName = laszip;
+			productReference = 035D4C071D19AD3D00514743 /* laszip */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		035D4BFF1D19AD3D00514743 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0730;
+				ORGANIZATIONNAME = "Krzysztof Kowalczyk";
+				TargetAttributes = {
+					035D4C061D19AD3D00514743 = {
+						CreatedOnToolsVersion = 7.3.1;
+					};
+				};
+			};
+			buildConfigurationList = 035D4C021D19AD3D00514743 /* Build configuration list for PBXProject "laszip" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 035D4BFE1D19AD3D00514743;
+			productRefGroup = 035D4C081D19AD3D00514743 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				035D4C061D19AD3D00514743 /* laszip */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		035D4C031D19AD3D00514743 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				035D4C361D19AD6700514743 /* lasinterval.cpp in Sources */,
+				035D4C3B1D19AD6700514743 /* laszip_dll.cpp in Sources */,
+				035D4C371D19AD6700514743 /* lasquadtree.cpp in Sources */,
+				035D4C3E1D19AD7800514743 /* lazinfo.cpp in Sources */,
+				035D4C321D19AD6700514743 /* arithmeticdecoder.cpp in Sources */,
+				035D4C381D19AD6700514743 /* lasreaditemcompressed_v1.cpp in Sources */,
+				035D4C391D19AD6700514743 /* lasreaditemcompressed_v2.cpp in Sources */,
+				035D4C3A1D19AD6700514743 /* lasreadpoint.cpp in Sources */,
+				035D4C3C1D19AD6700514743 /* laszip.cpp in Sources */,
+				035D4C351D19AD6700514743 /* lasindex.cpp in Sources */,
+				035D4C331D19AD6700514743 /* arithmeticmodel.cpp in Sources */,
+				035D4C341D19AD6700514743 /* integercompressor.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		035D4C0C1D19AD3D00514743 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		035D4C0D1D19AD3D00514743 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		035D4C0F1D19AD3D00514743 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		035D4C101D19AD3D00514743 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		035D4C021D19AD3D00514743 /* Build configuration list for PBXProject "laszip" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				035D4C0C1D19AD3D00514743 /* Debug */,
+				035D4C0D1D19AD3D00514743 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		035D4C0E1D19AD3D00514743 /* Build configuration list for PBXNativeTarget "laszip" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				035D4C0F1D19AD3D00514743 /* Debug */,
+				035D4C101D19AD3D00514743 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 035D4BFF1D19AD3D00514743 /* Project object */;
+}

@@ -147,7 +147,7 @@ BOOL LASinterval::add(const U32 p_index, const I32 c_index)
 // get total number of cells
 U32 LASinterval::get_number_cells() const
 {
-  return ((my_cell_hash*)cells)->size();
+  return (U32)((my_cell_hash*)cells)->size();
 }
 
 // get total number of intervals
@@ -228,7 +228,7 @@ void LASinterval::merge_intervals(U32 maximum_intervals, const BOOL verbose)
     return;
   }
 
-  U32 size = map.size();
+  U32 size = (U32)map.size();
   while (size > maximum_intervals)
   {
     map_element = map.begin();

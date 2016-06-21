@@ -36,11 +36,7 @@
 
 #include "lasquadtree.hpp"
 #include "lasinterval.hpp"
-#ifdef LASZIPDLL_EXPORTS
 #include "lasreadpoint.hpp"
-#else
-#include "lasreader.hpp"
-#endif
 #include "bytestreamin_file.hpp"
 
 // Check if on OS X and using cland (unordered map isn't part of tr1 namespace)
@@ -364,7 +360,6 @@ BOOL LASindex::read(ByteStreamIn* stream)
 
 // seek to next interval point
 
-#ifdef LASZIPDLL_EXPORTS
 BOOL LASindex::seek_next(LASreadPoint* reader, I64 &p_count)
 {
   if (!have_interval)
@@ -379,21 +374,6 @@ BOOL LASindex::seek_next(LASreadPoint* reader, I64 &p_count)
   }
   return TRUE;
 }
-#else
-BOOL LASindex::seek_next(LASreader* lasreader)
-{
-  if (!have_interval)
-  {
-    if (!has_intervals()) return FALSE;
-    lasreader->seek(start);
-  }
-  if (lasreader->p_count == end)
-  {
-    have_interval = FALSE;
-  }
-  return TRUE;
-}
-#endif
 
 // merge the intervals of non-empty cells
 BOOL LASindex::merge_intervals()

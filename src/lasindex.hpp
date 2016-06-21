@@ -41,11 +41,7 @@
 
 class LASquadtree;
 class LASinterval;
-#ifdef LASZIPDLL_EXPORTS
 class LASreadPoint;
-#else
-class LASreader;
-#endif
 class ByteStreamIn;
 
 class LASindex
@@ -79,11 +75,7 @@ public:
   U32 cells;
 
   // seek to next interval
-#ifdef LASZIPDLL_EXPORTS
   BOOL seek_next(LASreadPoint* reader, I64 &p_count);
-#else
-  BOOL seek_next(LASreader* lasreader);
-#endif
 
   // for debugging
   void print(BOOL verbose);
