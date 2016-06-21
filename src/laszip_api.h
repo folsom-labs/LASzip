@@ -293,25 +293,7 @@ laszip_request_compatibility_mode(
 
 /*---------------------------------------------------------------------------*/
 LASZIP_API int32_t
-laszip_write_point(
-    void *                     pointer
-);
-
-/*---------------------------------------------------------------------------*/
-LASZIP_API int32_t
-laszip_write_indexed_point(
-    void *                     pointer
-);
-
-/*---------------------------------------------------------------------------*/
-LASZIP_API int32_t
 laszip_update_inventory(
-    void *                     pointer
-);
-
-/*---------------------------------------------------------------------------*/
-LASZIP_API int32_t
-laszip_close_writer(
     void *                     pointer
 );
 
