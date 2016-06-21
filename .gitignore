@@ -2,6 +2,8 @@ lasz_tool
 lasz_tool.dSYM/
 unlaz
 unlaz.dSYM/
+lazinfo
+lazinfo.dSYM/
 in.laz
 out.las
 lidar.las
