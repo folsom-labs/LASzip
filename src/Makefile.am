@@ -19,8 +19,6 @@ liblibrary_la_SOURCES =				arithmeticmodel.cpp \
                         laswriteitemcompressed_v2.hpp \
 						lasreaditemcompressed_v2.cpp \
                         lasreaditemcompressed_v2.hpp \
-						laswritepoint.cpp \
-                        laswritepoint.hpp \
 						lasreadpoint.cpp \
                         lasreadpoint.hpp \
                         bytestreamin.hpp \

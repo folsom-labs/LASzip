@@ -37,11 +37,8 @@
 
 #include "laszip.hpp"
 #include "lasattributer.hpp"
-#include "bytestreamout_file.hpp"
 #include "bytestreamin_file.hpp"
-#include "bytestreamout_array.hpp"
 #include "bytestreamin_array.hpp"
-#include "laswritepoint.hpp"
 #include "lasreadpoint.hpp"
 #include "lasquadtree.hpp"
 #include "lasindex.hpp"
@@ -109,8 +106,6 @@ typedef struct laszip_dll {
   FILE* file;
   ByteStreamIn* streamin;
   LASreadPoint* reader;
-  ByteStreamOut* streamout;
-  LASwritePoint* writer;
   LASattributer* attributer;
   CHAR error[1024];
   CHAR warning[1024];
@@ -228,12 +223,6 @@ laszip_clean(
     if (laszip_dll->reader)
     {
       sprintf(laszip_dll->error, "cannot clean while reader is open.");
-      return 1;
-    }
-
-    if (laszip_dll->writer)
-    {
-      sprintf(laszip_dll->error, "cannot clean while writer is open.");
       return 1;
     }
 
@@ -409,7 +398,7 @@ laszip_get_point_count(
       return 1;
     }
 
-    if ((laszip_dll->reader == 0) && (laszip_dll->writer == 0))
+    if (laszip_dll->reader == 0)
     {
       sprintf(laszip_dll->error, "getting count before reader or writer was opened");
       return 1;
@@ -515,12 +504,6 @@ laszip_auto_offset(
     if (laszip_dll->reader)
     {
       sprintf(laszip_dll->error, "cannot auto offset after reader was opened");
-      return 1;
-    }
-
-    if (laszip_dll->writer)
-    {
-      sprintf(laszip_dll->error, "cannot auto offset after writer was opened");
       return 1;
     }
 
@@ -676,12 +659,6 @@ laszip_add_vlr(
       return 1;
     }
 
-    if (laszip_dll->writer)
-    {
-      sprintf(laszip_dll->error, "cannot add vlr after writer was opened");
-      return 1;
-    }
-
     U32 i = 0;
 
     if (laszip_dll->header.vlrs)
@@ -789,12 +766,6 @@ laszip_remove_vlr(
       return 1;
     }
 
-    if (laszip_dll->writer)
-    {
-      sprintf(laszip_dll->error, "cannot remove vlr after writer was opened");
-      return 1;
-    }
-
     U32 i = 0;
 
     if (laszip_dll->header.vlrs)
@@ -876,12 +847,6 @@ laszip_preserve_generating_software(
       return 1;
     }
 
-    if (laszip_dll->writer)
-    {
-      sprintf(laszip_dll->error, "writer is already open");
-      return 1;
-    }
-
     laszip_dll->preserve_generating_software = preserve;
   }
   catch (...)
@@ -909,12 +874,6 @@ laszip_request_compatibility_mode(
     if (laszip_dll->reader)
     {
       sprintf(laszip_dll->error, "reader is already open");
-      return 1;
-    }
-
-    if (laszip_dll->writer)
-    {
-      sprintf(laszip_dll->error, "writer is already open");
       return 1;
     }
 
@@ -946,12 +905,6 @@ laszip_create_spatial_index(
     if (laszip_dll->reader)
     {
       sprintf(laszip_dll->error, "reader is already open");
-      return 1;
-    }
-
-    if (laszip_dll->writer)
-    {
-      sprintf(laszip_dll->error, "writer is already open");
       return 1;
     }
 
@@ -1020,12 +973,6 @@ laszip_exploit_spatial_index(
       return 1;
     }
 
-    if (laszip_dll->writer)
-    {
-      sprintf(laszip_dll->error, "writer is already open");
-      return 1;
-    }
-
     laszip_dll->lax_exploit = exploit;
   }
   catch (...)
@@ -1060,12 +1007,6 @@ laszip_open_reader(
     if (is_compressed == 0)
     {
       sprintf(laszip_dll->error, "laszip_BOOL pointer 'is_compressed' is zero");
-      return 1;
-    }
-
-    if (laszip_dll->writer)
-    {
-      sprintf(laszip_dll->error, "writer is already open");
       return 1;
     }
 
@@ -1969,12 +1910,6 @@ laszip_has_spatial_index(
     if (laszip_dll->reader == 0)
     {
       sprintf(laszip_dll->error, "reader is not open");
-      return 1;
-    }
-
-    if (laszip_dll->writer)
-    {
-      sprintf(laszip_dll->error, "writer is already open");
       return 1;
     }
 
