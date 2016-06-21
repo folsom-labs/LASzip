@@ -11,12 +11,8 @@ liblibrary_la_SOURCES =				arithmeticmodel.cpp \
                         arithmeticencoder.hpp \
 						integercompressor.cpp \
                         integercompressor.hpp \
-						laswriteitemcompressed_v1.cpp \
-                        laswriteitemcompressed_v1.hpp \
 						lasreaditemcompressed_v1.cpp \
                         lasreaditemcompressed_v1.hpp \
-						laswriteitemcompressed_v2.cpp \
-                        laswriteitemcompressed_v2.hpp \
 						lasreaditemcompressed_v2.cpp \
                         lasreaditemcompressed_v2.hpp \
 						lasreadpoint.cpp \
@@ -33,5 +29,4 @@ liblibrary_la_SOURCES =				arithmeticmodel.cpp \
                         laszip_common_v2.hpp \
                         mydefs.hpp \
 						laszip.cpp \
-                        laswriteitemraw.hpp \
                         lasreaditem.hpp
