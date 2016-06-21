@@ -293,14 +293,6 @@ laszip_request_compatibility_mode(
 
 /*---------------------------------------------------------------------------*/
 LASZIP_API int32_t
-laszip_open_writer(
-    void *                     pointer
-    , const char*               file_name
-    , laszip_BOOL                      compress
-);
-
-/*---------------------------------------------------------------------------*/
-LASZIP_API int32_t
 laszip_write_point(
     void *                     pointer
 );
