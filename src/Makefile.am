@@ -7,8 +7,6 @@ liblibrary_la_SOURCES =				arithmeticmodel.cpp \
                         arithmeticmodel.hpp \
 						arithmeticdecoder.cpp \
                         arithmeticdecoder.hpp \
-						arithmeticencoder.cpp \
-                        arithmeticencoder.hpp \
 						integercompressor.cpp \
                         integercompressor.hpp \
 						lasreaditemcompressed_v1.cpp \
@@ -25,7 +23,6 @@ liblibrary_la_SOURCES =				arithmeticmodel.cpp \
                         bytestreamout_ostream.hpp \
                         lasreaditemraw.hpp \
                         lasreaditem.hpp \
-                        laswriteitem.hpp \
                         laszip_common_v2.hpp \
                         mydefs.hpp \
 						laszip.cpp \

@@ -2,7 +2,7 @@
 ===============================================================================
 
   FILE:  integercompressor.cpp
-  
+
   CONTENTS:
 
     see corresponding header file
@@ -21,11 +21,11 @@
 
     This software is distributed WITHOUT ANY WARRANTY and without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-  
+
   CHANGE HISTORY:
-  
+
     see corresponding header file
-  
+
 ===============================================================================
 */
 #include "integercompressor.hpp"
@@ -43,72 +43,10 @@
 #include <math.h>
 #endif
 
-IntegerCompressor::IntegerCompressor(ArithmeticEncoder* enc, U32 bits, U32 contexts, U32 bits_high, U32 range)
-{
-  assert(enc);
-  this->enc = enc;
-  this->dec = 0;
-  this->bits = bits;
-  this->contexts = contexts;
-  this->bits_high = bits_high;
-  this->range = range;
-
-  if (range) // the corrector's significant bits and range
-  {
-    corr_bits = 0;
-    corr_range = range;
-    while (range)
-    {
-      range = range >> 1;
-      corr_bits++;
-    }
-    if (corr_range == (1u << (corr_bits-1)))
-    {
-      corr_bits--;
-    }
-		// the corrector must fall into this interval
-    corr_min = -((I32)(corr_range/2));
-  	corr_max = corr_min + corr_range - 1;
-  }
-  else if (bits && bits < 32)
-  {
-    corr_bits = bits;
-    corr_range = 1u << bits;
-		// the corrector must fall into this interval
-    corr_min = -((I32)(corr_range/2));
-  	corr_max = corr_min + corr_range - 1;
-  }
-	else
-	{
-    corr_bits = 32;
-		corr_range = 0;
-		// the corrector must fall into this interval
-    corr_min = I32_MIN;
-    corr_max = I32_MAX;
-	}
-
-  k = 0;
-
-  mBits = 0;
-  mCorrector = 0;
-
-#ifdef CREATE_HISTOGRAMS
-  corr_histogram = (int**)malloc(sizeof(int*) * (corr_bits+1));
-  for (int k = 0; k <= corr_bits; k++)
-  {
-    corr_histogram[k] = (int*)malloc(sizeof(int) * ((1<<k)+1));
-    for (int c = 0; c <= (1<<k); c++)
-    {
-      corr_histogram[k][c] = 0;
-    }
-  }  
-#endif
-}
 
 IntegerCompressor::IntegerCompressor(ArithmeticDecoder* dec, U32 bits, U32 contexts, U32 bits_high, U32 range)
 {
   assert(dec);
-  this->enc = 0;
   this->dec = dec;
   this->bits = bits;
   this->contexts = contexts;
@@ -162,20 +100,17 @@ IntegerCompressor::~IntegerCompressor()
   {
     for (i = 0; i < contexts; i++)
     {
-      if (enc) enc->destroySymbolModel(mBits[i]);
-      else     dec->destroySymbolModel(mBits[i]);
+      dec->destroySymbolModel(mBits[i]);
     }
     delete [] mBits;
   }
 #ifndef COMPRESS_ONLY_K
   if (mCorrector)
   {
-    if (enc) enc->destroyBitModel((ArithmeticBitModel*)mCorrector[0]);
-    else     dec->destroyBitModel((ArithmeticBitModel*)mCorrector[0]);
+    dec->destroyBitModel((ArithmeticBitModel*)mCorrector[0]);
     for (i = 1; i <= corr_bits; i++)
     {
-      if (enc) enc->destroySymbolModel(mCorrector[i]);
-      else     dec->destroySymbolModel(mCorrector[i]);
+      dec->destroySymbolModel(mCorrector[i]);
     }
     delete [] mCorrector;
   }
@@ -209,66 +144,10 @@ IntegerCompressor::~IntegerCompressor()
       total_number += number;
       total_entropy += (entropy*number);
       total_raw += ((k?k:1)*number);
-    }  
+    }
     fprintf(stderr, "TOTAL: number: %d entropy: %lg raw: %lg\n",total_number,total_entropy/total_number,total_raw/total_number);
   }
 #endif
-}
-
-void IntegerCompressor::initCompressor()
-{
-  U32 i;
-
-  assert(enc);
-
-  // maybe create the models
-  if (mBits == 0)
-  {
-    mBits = new ArithmeticModel*[contexts];
-    for (i = 0; i < contexts; i++)
-    {
-      mBits[i] = enc->createSymbolModel(corr_bits+1);
-    }
-#ifndef COMPRESS_ONLY_K
-    mCorrector = new ArithmeticModel*[corr_bits+1];
-    mCorrector[0] = (ArithmeticModel*)enc->createBitModel();
-    for (i = 1; i <= corr_bits; i++)
-    {
-      if (i <= bits_high)
-      {
-        mCorrector[i] = enc->createSymbolModel(1<<i);
-      }
-      else
-      {
-        mCorrector[i] = enc->createSymbolModel(1<<bits_high);
-      }
-    }
-#endif
-  }
-
-  // certainly init the models
-  for (i = 0; i < contexts; i++)
-  {
-    enc->initSymbolModel(mBits[i]);
-  }
-#ifndef COMPRESS_ONLY_K
-  enc->initBitModel((ArithmeticBitModel*)mCorrector[0]);
-  for (i = 1; i <= corr_bits; i++)
-  {
-    enc->initSymbolModel(mCorrector[i]);
-  }
-#endif
-}
-
-void IntegerCompressor::compress(I32 pred, I32 real, U32 context)
-{
-  assert(enc);
-  // the corrector will be within the interval [ - (corr_range - 1)  ...  + (corr_range - 1) ]
-  I32 corr = real - pred;
-  // we fold the corrector into the interval [ corr_min  ...  corr_max ]
-  if (corr < corr_min) corr += corr_range;
-  else if (corr > corr_max) corr -= corr_range;
-  writeCorrector(corr, mBits[context]);
 }
 
 void IntegerCompressor::initDecompressor()
@@ -325,144 +204,6 @@ I32 IntegerCompressor::decompress(I32 pred, U32 context)
   return real;
 }
 
-/*
-static const char log_table256[256] = 
-{
-  -1, 0, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3,
-   4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
-   5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
-   5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
-   6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6,
-   6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6,
-   6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6,
-   6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6,
-   7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
-   7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
-   7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
-   7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
-   7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
-   7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
-   7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
-   7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7
-};
-
-unsigned int v; // 32-bit word to find the log of
-unsigned r;     // r will be lg(v)
-register unsigned int t, tt; // temporaries
-
-if (tt = v >> 16)
-{
-  r = (t = tt >> 8) ? 24 + LogTable256[t] : 16 + LogTable256[tt];
-}
-else 
-{
-  r = (t = v >> 8) ? 8 + LogTable256[t] : LogTable256[v];
-}
-*/
-
-void IntegerCompressor::writeCorrector(I32 c, ArithmeticModel* mBits)
-{
-  U32 c1;
-
-  // find the tighest interval [ - (2^k - 1)  ...  + (2^k) ] that contains c
-
-  k = 0;
-
-  // do this by checking the absolute value of c (adjusted for the case that c is 2^k)
-
-  c1 = (c <= 0 ? -c : c-1);
-
-  // this loop could be replaced with more efficient code
-
-  while (c1)
-  {
-    c1 = c1 >> 1;
-    k = k + 1;
-  }
-
-  // the number k is between 0 and corr_bits and describes the interval the corrector falls into
-  // we can compress the exact location of c within this interval using k bits
-
-  enc->encodeSymbol(mBits, k);
-
-#ifdef COMPRESS_ONLY_K
-  if (k) // then c is either smaller than 0 or bigger than 1
-  {
-    assert((c != 0) && (c != 1));
-    if (k < 32)
-    {
-      // translate the corrector c into the k-bit interval [ 0 ... 2^k - 1 ]
-      if (c < 0) // then c is in the interval [ - (2^k - 1)  ...  - (2^(k-1)) ]
-      {
-        // so we translate c into the interval [ 0 ...  + 2^(k-1) - 1 ] by adding (2^k - 1)
-        enc->writeBits(k, c + ((1<<k) - 1));
-#ifdef CREATE_HISTOGRAMS
-        corr_histogram[k][c + ((1<<k) - 1)]++;
-#endif
-      }
-      else // then c is in the interval [ 2^(k-1) + 1  ...  2^k ]
-      {
-        // so we translate c into the interval [ 2^(k-1) ...  + 2^k - 1 ] by subtracting 1
-        enc->writeBits(k, c - 1);
-#ifdef CREATE_HISTOGRAMS
-        corr_histogram[k][c - 1]++;
-#endif
-      }
-    }
-  }
-  else // then c is 0 or 1
-  {
-    assert((c == 0) || (c == 1));
-    enc->writeBit(c);
-#ifdef CREATE_HISTOGRAMS
-    corr_histogram[0][c]++;
-#endif
-  }
-#else // COMPRESS_ONLY_K
-  if (k) // then c is either smaller than 0 or bigger than 1
-  {
-    assert((c != 0) && (c != 1));
-    if (k < 32)
-    {
-      // translate the corrector c into the k-bit interval [ 0 ... 2^k - 1 ]
-      if (c < 0) // then c is in the interval [ - (2^k - 1)  ...  - (2^(k-1)) ]
-      {
-        // so we translate c into the interval [ 0 ...  + 2^(k-1) - 1 ] by adding (2^k - 1)
-        c += ((1<<k) - 1);
-      }
-      else // then c is in the interval [ 2^(k-1) + 1  ...  2^k ]
-      {
-        // so we translate c into the interval [ 2^(k-1) ...  + 2^k - 1 ] by subtracting 1
-        c -= 1;
-      }
-      if (k <= bits_high) // for small k we code the interval in one step
-      {
-        // compress c with the range coder
-        enc->encodeSymbol(mCorrector[k], c);
-      }
-      else // for larger k we need to code the interval in two steps
-      {
-        // figure out how many lower bits there are 
-        int k1 = k-bits_high;
-        // c1 represents the lowest k-bits_high+1 bits
-        c1 = c & ((1<<k1) - 1);
-        // c represents the highest bits_high bits
-        c = c >> k1;
-        // compress the higher bits using a context table
-        enc->encodeSymbol(mCorrector[k], c);
-        // store the lower k1 bits raw
-        enc->writeBits(k1, c1);
-      }
-    }
-  }
-  else // then c is 0 or 1
-  {
-    assert((c == 0) || (c == 1));
-    enc->encodeBit((ArithmeticBitModel*)mCorrector[0],c);
-  }
-#endif // COMPRESS_ONLY_K
-}
-
 I32 IntegerCompressor::readCorrector(ArithmeticModel* mBits)
 {
   I32 c;
@@ -482,7 +223,7 @@ I32 IntegerCompressor::readCorrector(ArithmeticModel* mBits)
 
       if (c >= (1<<(k-1))) // if c is in the interval [ 2^(k-1)  ...  + 2^k - 1 ]
       {
-        // so we translate c back into the interval [ 2^(k-1) + 1  ...  2^k ] by adding 1 
+        // so we translate c back into the interval [ 2^(k-1) + 1  ...  2^k ] by adding 1
         c += 1;
       }
       else // otherwise c is in the interval [ 0 ...  + 2^(k-1) - 1 ]
@@ -524,7 +265,7 @@ I32 IntegerCompressor::readCorrector(ArithmeticModel* mBits)
       // translate c back into its correct interval
       if (c >= (1<<(k-1))) // if c is in the interval [ 2^(k-1)  ...  + 2^k - 1 ]
       {
-        // so we translate c back into the interval [ 2^(k-1) + 1  ...  2^k ] by adding 1 
+        // so we translate c back into the interval [ 2^(k-1) + 1  ...  2^k ] by adding 1
         c += 1;
       }
       else // otherwise c is in the interval [ 0 ...  + 2^(k-1) - 1 ]
