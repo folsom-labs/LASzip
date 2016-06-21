@@ -2,9 +2,9 @@
 ===============================================================================
 
   FILE:  arithmeticdecoder.hpp
-  
+
   CONTENTS:
-      
+
     A modular C++ wrapper for an adapted version of Amir Said's FastAC Code.
     see: http://www.cipr.rpi.edu/~said/FastAC.html
 
@@ -22,15 +22,15 @@
 
     This software is distributed WITHOUT ANY WARRANTY and without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-  
+
   CHANGE HISTORY:
-  
+
     13 November 2014 -- integrity check in readBits(), readByte(), readShort()
      6 September 2014 -- removed the (unused) inheritance from EntropyDecoder
     10 January 2011 -- licensing change for LGPL release and liblas integration
      8 December 2010 -- unified framework for all entropy coders
     30 October 2009 -- refactoring Amir Said's FastAC code
-  
+
 ===============================================================================
 */
 #ifndef ARITHMETIC_DECODER_HPP
@@ -85,14 +85,8 @@ public:
 /* Decode an unsigned int without modelling                  */
   U32 readInt();
 
-/* Decode a float without modelling                          */
-  F32 readFloat();
-
 /* Decode an unsigned 64 bit int without modelling           */
   U64 readInt64();
-
-/* Decode a double without modelling                         */
-  F64 readDouble();
 
 private:
 

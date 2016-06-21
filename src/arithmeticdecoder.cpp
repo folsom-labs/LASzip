@@ -2,9 +2,9 @@
 ===============================================================================
 
   FILE:  arithmeticdecoder.cpp
-  
+
   CONTENTS:
-      
+
     A modular C++ wrapper for an adapted version of Amir Said's FastAC Code.
     see: http://www.cipr.rpi.edu/~said/FastAC.html
 
@@ -22,11 +22,11 @@
 
     This software is distributed WITHOUT ANY WARRANTY and without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-  
+
   CHANGE HISTORY:
-  
+
     see header file
-  
+
 ===============================================================================
 */
 
@@ -280,25 +280,11 @@ U32 ArithmeticDecoder::readInt()
   return (upperInt<<16)|lowerInt;
 }
 
-F32 ArithmeticDecoder::readFloat() /* danger in float reinterpretation */
-{
-  U32I32F32 u32i32f32;
-  u32i32f32.u32 = readInt();
-  return u32i32f32.f32;
-}
-
 U64 ArithmeticDecoder::readInt64()
 {
   U64 lowerInt = readInt();
   U64 upperInt = readInt();
   return (upperInt<<32)|lowerInt;
-}
-
-F64 ArithmeticDecoder::readDouble() /* danger in float reinterpretation */
-{
-  U64I64F64 u64i64f64;
-  u64i64f64.u64 = readInt64();
-  return u64i64f64.f64;
 }
 
 ArithmeticDecoder::~ArithmeticDecoder()

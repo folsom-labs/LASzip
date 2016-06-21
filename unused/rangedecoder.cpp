@@ -20,27 +20,27 @@
 ===============================================================================
 
   FILE:  rangedecoder.cpp
-  
+
   CONTENTS:
-      
+
     see header file
 
   PROGRAMMERS:
-  
+
     martin isenburg@cs.unc.edu
-  
+
   COPYRIGHT:
-  
+
     copyright (C) 2003 martin isenburg (isenburg@cs.unc.edu)
-    
+
     This software is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-  
+
   CHANGE HISTORY:
-  
+
     see header file
-  
+
 ===============================================================================
 */
 #include "rangedecoder.hpp"
@@ -204,28 +204,12 @@ U32 RangeDecoder::readInt()
   return upperInt*U16_MAX_PLUS_ONE+lowerInt;
 }
 
-/* Decode a float without modelling                          */
-F32 RangeDecoder::readFloat()
-{
-  U32F32 u32f32;
-  u32f32.u32 = readInt();
-  return u32f32.f32;
-}
-
 /* Decode an unsigned 64 bit int without modelling           */
 U64 RangeDecoder::readInt64()
 {
   U64 lowerInt = readInt();
   U64 upperInt = readInt();
   return upperInt*U32_MAX_PLUS_ONE+lowerInt;
-}
-
-/* Decode a double without modelling                         */
-F64 RangeDecoder::readDouble()
-{
-  U64F64 u64f64;
-  u64f64.u64 = readInt64();
-  return u64f64.f64;
 }
 
 U32 RangeDecoder::culshift(U32 shift)
@@ -289,7 +273,7 @@ U32 RangeDecoder::readRange(U32 range)
     tmp1 = readRange(range) << 16;
     return (tmp1|tmp);
   }
-  
+
   normalize();
   help = this->range/range;
   tmp = low/help;

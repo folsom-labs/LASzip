@@ -304,6 +304,7 @@
 		035D4C101D19AD3D00514743 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

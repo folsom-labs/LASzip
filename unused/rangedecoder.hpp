@@ -20,27 +20,27 @@
 ===============================================================================
 
   FILE:  rangedecoder.hpp
-  
+
   CONTENTS:
-      
+
   PROGRAMMERS:
-  
+
     martin isenburg@cs.unc.edu
-  
+
   COPYRIGHT:
-  
+
     Copyright (C) 2003 Martin Isenburg (isenburg@cs.unc.edu)
-    
+
     This software is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-  
+
   CHANGE HISTORY:
-  
+
     15 December 2010 -- unified framework for all entropy coders
     8 December 2010 -- unified framework for all entropy coders
     14 January 2003 -- adapted from michael schindler's code before SIGGRAPH
-  
+
 ===============================================================================
 */
 #ifndef RANGEDECODER_HPP
@@ -91,14 +91,8 @@ public:
 /* Decode an unsigned int without modelling                  */
   U32 readInt();
 
-/* Decode a float without modelling                          */
-  F32 readFloat();
-
 /* Decode an unsigned 64 bit int without modelling           */
   U64 readInt64();
-
-/* Decode a double without modelling                         */
-  F64 readDouble();
 
 private:
 
