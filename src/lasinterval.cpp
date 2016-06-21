@@ -2,17 +2,17 @@
 ===============================================================================
 
   FILE:  lasinterval.cpp
-  
+
   CONTENTS:
-  
+
     see corresponding header file
-  
+
   PROGRAMMERS:
-  
+
     martin.isenburg@rapidlasso.com  -  http://rapidlasso.com
-  
+
   COPYRIGHT:
-  
+
     (c) 2011-2015, martin isenburg, rapidlasso - fast tools to catch reality
 
     This is free software; you can redistribute and/or modify it under the
@@ -21,17 +21,16 @@
 
     This software is distributed WITHOUT ANY WARRANTY and without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-  
+
   CHANGE HISTORY:
-  
+
     see corresponding header file
-  
+
 ===============================================================================
 */
 #include "lasinterval.hpp"
 
 #include "bytestreamin.hpp"
-#include "bytestreamout.hpp"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -624,80 +623,5 @@ BOOL LASinterval::read(ByteStreamIn* stream)
     number_cells--;
   }
 
-  return TRUE;
-}
-
-BOOL LASinterval::write(ByteStreamOut* stream) const
-{
-  if (!stream->putBytes((U8*)"LASV", 4))
-  {
-    fprintf(stderr,"ERROR (LASinterval): writing signature\n");
-    return FALSE;
-  }
-  U32 version = 0;
-  if (!stream->put32bitsLE((U8*)&version))
-  {
-    fprintf(stderr,"ERROR (LASinterval): writing version\n");
-    return FALSE;
-  }
-  // write number of cells
-  U32 number_cells = ((my_cell_hash*)cells)->size();
-  if (!stream->put32bitsLE((U8*)&number_cells))
-  {
-    fprintf(stderr,"ERROR (LASinterval): writing number of cells %d\n", number_cells);
-    return FALSE;
-  }
-  // loop over all cells
-  my_cell_hash::iterator hash_element = ((my_cell_hash*)cells)->begin();
-  while (hash_element != ((my_cell_hash*)cells)->end())
-  {
-    LASintervalCell* cell = (*hash_element).second;
-    // count number of intervals and points in cell
-    U32 number_intervals = 0;
-    U32 number_points = ((LASintervalStartCell*)cell)->full;
-    while (cell)
-    {
-      number_intervals++;
-      cell = cell->next;
-    }
-    // write index of cell
-    I32 cell_index = (*hash_element).first;
-    if (!stream->put32bitsLE((U8*)&cell_index))
-    {
-      fprintf(stderr,"ERROR (LASinterval): writing cell index %d\n", cell_index);
-      return FALSE;
-    }
-    // write number of intervals in cell
-    if (!stream->put32bitsLE((U8*)&number_intervals))
-    {
-      fprintf(stderr,"ERROR (LASinterval): writing number of intervals %d in cell\n", number_intervals);
-      return FALSE;
-    }
-    // write number of points in cell
-    if (!stream->put32bitsLE((U8*)&number_points))
-    {
-      fprintf(stderr,"ERROR (LASinterval): writing number of points %d in cell\n", number_points);
-      return FALSE;
-    }
-    // write intervals
-    cell = (*hash_element).second;
-    while (cell)
-    {
-      // write start of interval
-      if (!stream->put32bitsLE((U8*)&(cell->start)))
-      {
-        fprintf(stderr,"ERROR (LASinterval): writing start %d of interval\n", cell->start);
-        return FALSE;
-      }
-      // write end of interval
-      if (!stream->put32bitsLE((U8*)&(cell->end)))
-      {
-        fprintf(stderr,"ERROR (LASinterval): writing end %d of interval\n", cell->end);
-        return FALSE;
-      }
-      cell = cell->next;
-    }
-    hash_element++;
-  }
   return TRUE;
 }

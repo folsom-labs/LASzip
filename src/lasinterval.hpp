@@ -2,9 +2,9 @@
 ===============================================================================
 
   FILE:  lasinterval.hpp
-  
+
   CONTENTS:
-  
+
     Used by lasindex to manage intervals of consecutive LiDAR points that are
     read sequentially.
 
@@ -22,11 +22,11 @@
 
     This software is distributed WITHOUT ANY WARRANTY and without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-  
+
   CHANGE HISTORY:
-  
+
     29 April 2011 -- created after cable outage during the royal wedding (-:
-  
+
 ===============================================================================
 */
 #ifndef LAS_INTERVAL_HPP
@@ -35,7 +35,6 @@
 #include "mydefs.hpp"
 
 class ByteStreamIn;
-class ByteStreamOut;
 
 class LASintervalCell
 {
@@ -82,7 +81,6 @@ public:
 
   // read from file or write to file
   BOOL read(ByteStreamIn* stream);
-  BOOL write(ByteStreamOut* stream) const;
 
   // get one cell after the other
   void get_cells();
@@ -91,7 +89,7 @@ public:
   // get a particular cell
   BOOL get_cell(const I32 c_index);
 
-  // add cell's intervals to those that will be merged 
+  // add cell's intervals to those that will be merged
   BOOL add_current_cell_to_merge_cell_set();
   BOOL add_cell_to_merge_cell_set(const I32 c_index, const BOOL erase=FALSE);
   BOOL merge(const BOOL erase=FALSE);
