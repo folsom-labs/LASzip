@@ -233,13 +233,6 @@ laszip_get_point_count(
 
 /*---------------------------------------------------------------------------*/
 LASZIP_API int32_t
-laszip_set_header(
-    void *                     pointer
-    , const laszip_header_struct*      header
-);
-
-/*---------------------------------------------------------------------------*/
-LASZIP_API int32_t
 laszip_check_for_integer_overflow(
     void *                     pointer
 );
@@ -248,20 +241,6 @@ laszip_check_for_integer_overflow(
 LASZIP_API int32_t
 laszip_auto_offset(
     void *                     pointer
-);
-
-/*---------------------------------------------------------------------------*/
-LASZIP_API int32_t
-laszip_set_point(
-    void *                     pointer
-    , const laszip_point_struct*       point
-);
-
-/*---------------------------------------------------------------------------*/
-LASZIP_API int32_t
-laszip_set_coordinates(
-    void *                     pointer
-    , const double*                coordinates
 );
 
 /*---------------------------------------------------------------------------*/
