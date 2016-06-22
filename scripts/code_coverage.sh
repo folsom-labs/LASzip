@@ -10,14 +10,14 @@ set -o pipefail
 
 D=/usr/local/opt/llvm/bin
 
-xcrun $D/clang -std=c++11 -g -Wall -fprofile-instr-generate -fcoverage-mapping -Isrc -lstdc++ src/*.cpp lazinfo.cpp -o lazinfo_cov
-
 rm -rf lazinfo_cov.profdata default.profraw
+
+$D/clang -std=c++11 -g -Wall -fprofile-instr-generate -fcoverage-mapping -Isrc -lstdc++ src/*.cpp lazinfo.cpp -o lazinfo_cov
 
 ./lazinfo_cov ~/data/lidar/971.laz
 
-xcrun $D/llvm-profdata merge -o lazinfo_cov.profdata default.profraw
+$D/llvm-profdata merge -o lazinfo_cov.profdata default.profraw
 
-xcrun $D/llvm-cov report -instr-profile=lazinfo_cov.profdata ./lazinfo_cov
+$D/llvm-cov report -instr-profile=lazinfo_cov.profdata ./lazinfo_cov
 
-xcrun $D/llvm-cov show -instr-profile=lazinfo_cov.profdata ./lazinfo_cov
+$D/llvm-cov show -instr-profile=lazinfo_cov.profdata ./lazinfo_cov

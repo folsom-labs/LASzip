@@ -8,3 +8,5 @@ in.laz
 out.las
 lidar.las
 xcuserdata/
+lazinfo_cov
+lazinfo_cov.dSYM/
