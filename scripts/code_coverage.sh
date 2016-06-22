@@ -18,6 +18,9 @@ $D/clang -std=c++11 -g -Wall -fprofile-instr-generate -fcoverage-mapping -Isrc -
 
 $D/llvm-profdata merge -o lazinfo_cov.profdata default.profraw
 
+# TODO: why do I get "error: Failed to load coverage: Malformed coverage data"
+# from llvm-cov report and llvm-cov show? Did I happen to install llvm at bad
+# time?
 $D/llvm-cov report -instr-profile=lazinfo_cov.profdata ./lazinfo_cov
 
 $D/llvm-cov show -instr-profile=lazinfo_cov.profdata ./lazinfo_cov

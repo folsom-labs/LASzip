@@ -10,3 +10,5 @@ lidar.las
 xcuserdata/
 lazinfo_cov
 lazinfo_cov.dSYM/
+default.profraw
+lazinfo_cov.profdata
