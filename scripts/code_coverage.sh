@@ -17,4 +17,6 @@ rm -rf lazinfo_cov.profdata default.profraw
 
 xcrun $D/llvm-profdata merge -o lazinfo_cov.profdata default.profraw
 
-xcrun $D/llvm-cov show ./lazinfo_cov -instr-profile=lazinfo_cov.profdata src/* lazinfo.cpp
+xcrun $D/llvm-cov report -instr-profile=lazinfo_cov.profdata ./lazinfo_cov
+
+xcrun $D/llvm-cov show -instr-profile=lazinfo_cov.profdata ./lazinfo_cov
