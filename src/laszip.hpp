@@ -67,7 +67,6 @@ public:
   bool pack(unsigned char*& bytes, int& num);
 
   // setup
-  bool request_compatibility_mode(const unsigned short requested_compatibility_mode=0); // 0 = none, 1 = LAS 1.4 compatibility mode
   bool setup(const unsigned char point_type, const unsigned short point_size, const unsigned short compressor=LASZIP_COMPRESSOR_DEFAULT);
   bool setup(const unsigned short num_items, const LASitem* items, const unsigned short compressor);
   bool set_chunk_size(const unsigned int chunk_size);             /* for compressor only */

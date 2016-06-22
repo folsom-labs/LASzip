@@ -150,8 +150,6 @@ typedef struct laszip_dll {
   F64 lax_r_max_x;
   F64 lax_r_max_y;
   BOOL preserve_generating_software;
-  BOOL request_compatibility_mode;
-  BOOL compatibility_mode;
   I32 start_scan_angle;
   I32 start_extended_returns;
   I32 start_classification;
@@ -181,7 +179,6 @@ int32_t laszip_add_vlr(
 
 int32_t laszip_remove_vlr(laszip_dll_struct *pointer, const char*user_id, uint16_t record_id);
 int32_t laszip_preserve_generating_software(laszip_dll_struct *pointer, const laszip_BOOL preserve);
-int32_t laszip_request_compatibility_mode(laszip_dll_struct *pointer, const laszip_BOOL request);
 int32_t laszip_open_reader(laszip_dll_struct *pointer, const char *file_name, laszip_BOOL *is_compressed);
 
 int32_t laszip_seek_point(laszip_dll_struct *pointer, uint64_t index);

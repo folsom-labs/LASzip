@@ -249,24 +249,6 @@ bool LASzip::check()
   return true;
 }
 
-bool LASzip::request_compatibility_mode(const U16 requested_compatibility_mode)
-{
-  if (num_items != 0) return return_error("request compatibility mode before calling setup()");
-  if (requested_compatibility_mode > 1)
-  {
-    return return_error("compatibility mode larger than 1 not supported");
-  }
-  if (requested_compatibility_mode)
-  {
-    options = options | 0x00000001;
-  }
-  else
-  {
-    options = options & 0xFFFFFFFE;
-  }
-  return true;
-}
-
 bool LASzip::setup(const U8 point_type, const U16 point_size, const U16 compressor)
 {
   if (!check_compressor(compressor)) return false;
