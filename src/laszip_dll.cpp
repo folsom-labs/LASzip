@@ -6,60 +6,6 @@
 #include "bytestreamin_array.hpp"
 #include "lasreadpoint.hpp"
 
-class laszip_dll_inventory
-{
-public:
-  BOOL active() const { return (first == FALSE); };
-  U32 number_of_point_records;
-  U32 number_of_points_by_return[16];
-  I32 max_X;
-  I32 min_X;
-  I32 max_Y;
-  I32 min_Y;
-  I32 max_Z;
-  I32 min_Z;
-  void add(const laszip_point_struct* point)
-  {
-    number_of_point_records++;
-    if (point->extended_point_type)
-    {
-      number_of_points_by_return[point->extended_return_number]++;
-    }
-    else
-    {
-      number_of_points_by_return[point->return_number]++;
-    }
-    if (first)
-    {
-      min_X = max_X = point->X;
-      min_Y = max_Y = point->Y;
-      min_Z = max_Z = point->Z;
-      first = FALSE;
-    }
-    else
-    {
-      if (point->X < min_X) min_X = point->X;
-      else if (point->X > max_X) max_X = point->X;
-      if (point->Y < min_Y) min_Y = point->Y;
-      else if (point->Y > max_Y) max_Y = point->Y;
-      if (point->Z < min_Z) min_Z = point->Z;
-      else if (point->Z > max_Z) max_Z = point->Z;
-    }
-  }
-  laszip_dll_inventory()
-  {
-    U32 i;
-    number_of_point_records = 0;
-    for (i = 0; i < 16; i++) number_of_points_by_return[i] = 0;
-    max_X = min_X = 0;
-    max_Y = min_Y = 0;
-    max_Z = min_Z = 0;
-    first = TRUE;
-  }
-private:
-  BOOL first;
-};
-
 int32_t
 laszip_get_error(
     laszip_dll_struct *                     laszip_dll
@@ -716,24 +662,6 @@ laszip_request_compatibility_mode(
   }
 
   laszip_dll->request_compatibility_mode = request;
-
-  laszip_dll->error[0] = '\0';
-  return 0;
-}
-
-int32_t
-laszip_update_inventory(
-    laszip_dll_struct *                     laszip_dll
-)
-{
-  if (laszip_dll == 0) return 1;
-
-  if (laszip_dll->inventory == 0)
-  {
-    laszip_dll->inventory = new laszip_dll_inventory;
-  }
-
-  laszip_dll->inventory->add(&laszip_dll->point);
 
   laszip_dll->error[0] = '\0';
   return 0;

@@ -133,8 +133,6 @@ typedef struct laszip_point
 
 } laszip_point_struct;
 
-class laszip_dll_inventory;
-
 typedef struct laszip_dll {
   laszip_header_struct header;
   I64 p_count;
@@ -159,7 +157,6 @@ typedef struct laszip_dll {
   I32 start_classification;
   I32 start_flags_and_channel;
   I32 start_NIR_band;
-  laszip_dll_inventory* inventory;
 } laszip_dll_struct;
 
 int32_t laszip_create(laszip_dll_struct **pointer);
@@ -185,7 +182,6 @@ int32_t laszip_add_vlr(
 int32_t laszip_remove_vlr(laszip_dll_struct *pointer, const char*user_id, uint16_t record_id);
 int32_t laszip_preserve_generating_software(laszip_dll_struct *pointer, const laszip_BOOL preserve);
 int32_t laszip_request_compatibility_mode(laszip_dll_struct *pointer, const laszip_BOOL request);
-int32_t laszip_update_inventory(laszip_dll_struct *pointer);
 int32_t laszip_open_reader(laszip_dll_struct *pointer, const char *file_name, laszip_BOOL *is_compressed);
 
 int32_t laszip_seek_point(laszip_dll_struct *pointer, uint64_t index);
