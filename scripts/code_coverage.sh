@@ -2,6 +2,7 @@
 
 # based on https://gist.github.com/markd2/9ba66145135321fa4830
 # and https://alastairs-place.net/blog/2016/05/20/code-coverage-from-the-command-line-with-clang/
+# http://llvm.org/docs/CommandGuide/llvm-cov.html#llvm-cov-report
 
 set -o nounset
 set -o errexit
