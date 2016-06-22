@@ -4,9 +4,7 @@ set -o nounset
 set -o errexit
 set -o pipefail
 
-rm -rf ./lasz_tool
+rm -rf ./lazinfo
+clang -std=c++11 -g -Wall -Isrc -lstdc++ src/*.cpp lazinfo.cpp -o lazinfo
+./lasinfo $@
 
-clang -g -Wall -Isrc -lstdc++ src/*.cpp example/laszipdllexample.cpp example/examples.cpp -o lasz_tool
-
-echo "runing lasz_tool"
-./lasz_tool in.laz out.las
