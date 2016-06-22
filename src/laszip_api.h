@@ -167,15 +167,6 @@ int32_t laszip_get_point_pointer(laszip_dll_struct *pointer, laszip_point_struct
 int32_t laszip_get_point_count(laszip_dll_struct *pointer, uint64_t *count);
 int32_t laszip_check_for_integer_overflow(laszip_dll_struct *pointer);
 int32_t laszip_auto_offset(laszip_dll_struct *pointer);
-int32_t laszip_get_coordinates(laszip_dll_struct *pointer, double *coordinates);
-
-int32_t laszip_add_vlr(
-    laszip_dll_struct *                     pointer
-    , const char*               user_id
-    , uint16_t                       record_id
-    , uint16_t                       record_length_after_header
-    , const char*               description
-    , const uint8_t*                 data);
 
 int32_t laszip_preserve_generating_software(laszip_dll_struct *pointer, const laszip_BOOL preserve);
 int32_t laszip_open_reader(laszip_dll_struct *pointer, const char *file_name, laszip_BOOL *is_compressed);
