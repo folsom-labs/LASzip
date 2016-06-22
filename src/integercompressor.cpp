@@ -33,16 +33,8 @@
 #define COMPRESS_ONLY_K
 #undef COMPRESS_ONLY_K
 
-#define CREATE_HISTOGRAMS
-#undef CREATE_HISTOGRAMS
-
 #include <stdlib.h>
 #include <assert.h>
-
-#ifdef CREATE_HISTOGRAMS
-#include <math.h>
-#endif
-
 
 IntegerCompressor::IntegerCompressor(ArithmeticDecoder* dec, U32 bits, U32 contexts, U32 bits_high, U32 range)
 {
@@ -113,39 +105,6 @@ IntegerCompressor::~IntegerCompressor()
       dec->destroySymbolModel(mCorrector[i]);
     }
     delete [] mCorrector;
-  }
-#endif
-
-#ifdef CREATE_HISTOGRAMS
-  if (end)
-  {
-    int total_number = 0;
-    double total_entropy = 0.0f;
-    double total_raw = 0.0f;
-    for (int k = 0; k <= corr_bits; k++)
-    {
-      int number = 0;
-      int different = 0;
-      for (int c = 0; c <= (1<<k); c++)
-      {
-        number += corr_histogram[k][c];
-      }
-      double prob,entropy = 0.0f;
-      for (c = 0; c <= (1<<k); c++)
-      {
-        if (corr_histogram[k][c])
-        {
-          different++;
-          prob = (double)corr_histogram[k][c]/(double)number;
-          entropy -= log(prob)*prob/log(2.0);
-        }
-      }
-      fprintf(stderr, "k: %d number: %d different: %d entropy: %lg raw: %1.1f\n",k,number,different,entropy, (float)(k?k:1));
-      total_number += number;
-      total_entropy += (entropy*number);
-      total_raw += ((k?k:1)*number);
-    }
-    fprintf(stderr, "TOTAL: number: %d entropy: %lg raw: %lg\n",total_number,total_entropy/total_number,total_raw/total_number);
   }
 #endif
 }

@@ -87,10 +87,6 @@ private:
   ArithmeticModel** mBits;
 
   ArithmeticModel** mCorrector;
-
-#ifdef CREATE_HISTOGRAMS
-  int** corr_histogram;
-#endif
 };
 
 #endif
