@@ -18,7 +18,6 @@ public:
   BOOL setup(const U32 num_items, const LASitem* items, const LASzip* laszip=0);
 
   BOOL init(ByteStreamIn* instream);
-  BOOL seek(const U32 current, const U32 target);
   BOOL read(U8* const * point);
   BOOL check_end();
   BOOL done();

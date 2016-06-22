@@ -1310,65 +1310,20 @@ laszip_open_reader(laszip_dll_struct * laszip_dll, const char* file_name, laszip
   return 0;
 }
 
-int32_t
-laszip_seek_point(
-    laszip_dll_struct *                     laszip_dll
-    , uint64_t                       index
-)
+int32_t laszip_read_point(laszip_dll_struct *laszip_dll)
 {
-  if (laszip_dll == 0) return 1;
-
-  try
+  // read the point
+  if (!laszip_dll->reader->read(laszip_dll->point_items))
   {
-    // seek to the point
-    if (!laszip_dll->reader->seek((U32)laszip_dll->p_count, (U32)index))
-    {
 #ifdef _WIN32
-      sprintf(laszip_dll->error, "seeking from index %I64d to index %I64d for file with %I64d points", laszip_dll->p_count, index, laszip_dll->npoints);
+    sprintf(laszip_dll->error, "reading point %I64d of %I64d total points", laszip_dll->p_count, laszip_dll->npoints);
 #else
-      sprintf(laszip_dll->error, "seeking from index %lld to index %lld for file with %lld points", laszip_dll->p_count, index, laszip_dll->npoints);
+    sprintf(laszip_dll->error, "reading point %lld of %lld total points", laszip_dll->p_count, laszip_dll->npoints);
 #endif
-      return 1;
-    }
-    laszip_dll->p_count = index;
-  }
-  catch (...)
-  {
-    sprintf(laszip_dll->error, "internal error in laszip_seek_point");
     return 1;
   }
 
-  laszip_dll->error[0] = '\0';
-  return 0;
-}
-
-int32_t
-laszip_read_point(
-    laszip_dll_struct *                     laszip_dll
-)
-{
-  if (laszip_dll == 0) return 1;
-
-  try
-  {
-    // read the point
-    if (!laszip_dll->reader->read(laszip_dll->point_items))
-    {
-#ifdef _WIN32
-      sprintf(laszip_dll->error, "reading point %I64d of %I64d total points", laszip_dll->p_count, laszip_dll->npoints);
-#else
-      sprintf(laszip_dll->error, "reading point %lld of %lld total points", laszip_dll->p_count, laszip_dll->npoints);
-#endif
-      return 1;
-    }
-
-    laszip_dll->p_count++;
-  }
-  catch (...)
-  {
-    sprintf(laszip_dll->error, "internal error in laszip_read_point");
-    return 1;
-  }
+  laszip_dll->p_count++;
 
   laszip_dll->error[0] = '\0';
   return 0;
