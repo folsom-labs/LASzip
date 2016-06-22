@@ -533,115 +533,15 @@ laszip_add_vlr(
   return 0;
 }
 
-int32_t
-laszip_remove_vlr(
-    laszip_dll_struct *                     laszip_dll
-    , const char*               user_id
-    , uint16_t                       record_id
-)
+int32_t laszip_preserve_generating_software(laszip_dll_struct *laszip_dll, const laszip_BOOL preserve)
 {
-  if (laszip_dll == 0) return 1;
-
-  try
+  if (laszip_dll->reader)
   {
-    if (user_id == 0)
-    {
-      sprintf(laszip_dll->error, "char pointer 'user_id' is zero");
-      return 1;
-    }
-
-    if (laszip_dll->reader)
-    {
-      sprintf(laszip_dll->error, "cannot remove vlr after reader was opened");
-      return 1;
-    }
-
-    U32 i = 0;
-
-    if (laszip_dll->header.vlrs)
-    {
-      for (i = 0; i < laszip_dll->header.number_of_variable_length_records; i++)
-      {
-        if ((strncmp(laszip_dll->header.vlrs[i].user_id, user_id, 16) == 0) && (laszip_dll->header.vlrs[i].record_id == record_id))
-        {
-          if (laszip_dll->header.vlrs[i].record_length_after_header)
-          {
-            laszip_dll->header.offset_to_point_data -= (54 + laszip_dll->header.vlrs[i].record_length_after_header);
-            delete [] laszip_dll->header.vlrs[i].data;
-            laszip_dll->header.vlrs[i].data = 0;
-          }
-          laszip_dll->header.number_of_variable_length_records--;
-          //
-          // HOBU: should this be for ( i = 0; ...) ?
-          // TODO: verify this is correct
-          //for (i = i; i < laszip_dll->header.number_of_variable_length_records; i++)
-          for (; i < laszip_dll->header.number_of_variable_length_records; i++)
-          {
-            laszip_dll->header.vlrs[i] = laszip_dll->header.vlrs[i+1];
-          }
-          if (laszip_dll->header.number_of_variable_length_records)
-          {
-            laszip_dll->header.vlrs = (laszip_vlr_struct*)realloc(laszip_dll->header.vlrs, sizeof(laszip_vlr_struct)*laszip_dll->header.number_of_variable_length_records);
-            if (laszip_dll->header.vlrs == 0)
-            {
-              sprintf(laszip_dll->error, "reallocating vlrs[%u] array", laszip_dll->header.number_of_variable_length_records);
-              return 1;
-            }
-          }
-          else
-          {
-            free(laszip_dll->header.vlrs);
-            laszip_dll->header.vlrs = 0;
-          }
-          i = U32_MAX;
-          break;
-        }
-      }
-      if (i != U32_MAX)
-      {
-        sprintf(laszip_dll->error, "cannot find VLR with user_id '%s' and record_id %d among the %u VLRs in the header", user_id, (I32)record_id, laszip_dll->header.number_of_variable_length_records);
-        return 1;
-      }
-    }
-    else
-    {
-      sprintf(laszip_dll->error, "cannot remove VLR with user_id '%s' and record_id %d because header has no VLRs", user_id, (I32)record_id);
-      return 1;
-    }
-  }
-  catch (...)
-  {
-    sprintf(laszip_dll->error, "internal error in laszip_add_vlr");
+    sprintf(laszip_dll->error, "reader is already open");
     return 1;
   }
 
-  laszip_dll->error[0] = '\0';
-  return 0;
-}
-
-int32_t
-laszip_preserve_generating_software(
-    laszip_dll_struct *                     laszip_dll
-    , const laszip_BOOL                preserve
-)
-{
-  if (laszip_dll == 0) return 1;
-
-  try
-  {
-    if (laszip_dll->reader)
-    {
-      sprintf(laszip_dll->error, "reader is already open");
-      return 1;
-    }
-
-    laszip_dll->preserve_generating_software = preserve;
-  }
-  catch (...)
-  {
-    sprintf(laszip_dll->error, "internal error in laszip_preserve_generating_software");
-    return 1;
-  }
+  laszip_dll->preserve_generating_software = preserve;
 
   laszip_dll->error[0] = '\0';
   return 0;

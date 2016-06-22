@@ -177,7 +177,6 @@ int32_t laszip_add_vlr(
     , const char*               description
     , const uint8_t*                 data);
 
-int32_t laszip_remove_vlr(laszip_dll_struct *pointer, const char*user_id, uint16_t record_id);
 int32_t laszip_preserve_generating_software(laszip_dll_struct *pointer, const laszip_BOOL preserve);
 int32_t laszip_open_reader(laszip_dll_struct *pointer, const char *file_name, laszip_BOOL *is_compressed);
 

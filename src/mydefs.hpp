@@ -117,4 +117,11 @@ typedef union U64I64F64 { U64 u64; I64 i64; F64 f64; } U64I64F64;
 #define TRUE    1
 #endif
 
+inline void crashif(bool cond) {
+  if (!cond) {
+    char *p = nullptr;
+    *p = 8;
+  }
+}
+
 #endif
