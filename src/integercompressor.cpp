@@ -30,9 +30,6 @@
 */
 #include "integercompressor.hpp"
 
-#define COMPRESS_ONLY_K
-#undef COMPRESS_ONLY_K
-
 #include <stdlib.h>
 #include <assert.h>
 
@@ -96,7 +93,7 @@ IntegerCompressor::~IntegerCompressor()
     }
     delete [] mBits;
   }
-#ifndef COMPRESS_ONLY_K
+
   if (mCorrector)
   {
     dec->destroyBitModel((ArithmeticBitModel*)mCorrector[0]);
@@ -106,7 +103,6 @@ IntegerCompressor::~IntegerCompressor()
     }
     delete [] mCorrector;
   }
-#endif
 }
 
 void IntegerCompressor::initDecompressor()
@@ -123,7 +119,7 @@ void IntegerCompressor::initDecompressor()
     {
       mBits[i] = dec->createSymbolModel(corr_bits+1);
     }
-#ifndef COMPRESS_ONLY_K
+
     mCorrector = new ArithmeticModel*[corr_bits+1];
     mCorrector[0] = (ArithmeticModel*)dec->createBitModel();
     for (i = 1; i <= corr_bits; i++)
@@ -137,7 +133,6 @@ void IntegerCompressor::initDecompressor()
         mCorrector[i] = dec->createSymbolModel(1<<bits_high);
       }
     }
-#endif
   }
 
   // certainly init the models
@@ -145,13 +140,12 @@ void IntegerCompressor::initDecompressor()
   {
     dec->initSymbolModel(mBits[i]);
   }
-#ifndef COMPRESS_ONLY_K
+
   dec->initBitModel((ArithmeticBitModel*)mCorrector[0]);
   for (i = 1; i <= corr_bits; i++)
   {
     dec->initSymbolModel(mCorrector[i]);
   }
-#endif
 }
 
 I32 IntegerCompressor::decompress(I32 pred, U32 context)
@@ -173,34 +167,6 @@ I32 IntegerCompressor::readCorrector(ArithmeticModel* mBits)
 
   // decode the exact location of the corrector within the interval
 
-#ifdef COMPRESS_ONLY_K
-  if (k) // then c is either smaller than 0 or bigger than 1
-  {
-    if (k < 32)
-    {
-      c = dec->readBits(k);
-
-      if (c >= (1<<(k-1))) // if c is in the interval [ 2^(k-1)  ...  + 2^k - 1 ]
-      {
-        // so we translate c back into the interval [ 2^(k-1) + 1  ...  2^k ] by adding 1
-        c += 1;
-      }
-      else // otherwise c is in the interval [ 0 ...  + 2^(k-1) - 1 ]
-      {
-        // so we translate c back into the interval [ - (2^k - 1)  ...  - (2^(k-1)) ] by subtracting (2^k - 1)
-        c -= ((1<<k) - 1);
-      }
-    }
-    else
-    {
-      c = corr_min;
-    }
-  }
-  else // then c is either 0 or 1
-  {
-    c = dec->readBit();
-  }
-#else // COMPRESS_ONLY_K
   if (k) // then c is either smaller than 0 or bigger than 1
   {
     if (k < 32)
@@ -242,7 +208,6 @@ I32 IntegerCompressor::readCorrector(ArithmeticModel* mBits)
   {
     c = dec->decodeBit((ArithmeticBitModel*)mCorrector[0]);
   }
-#endif // COMPRESS_ONLY_K
 
   return c;
 }
