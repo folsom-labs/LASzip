@@ -5,8 +5,6 @@
 #include "bytestreamin_file.hpp"
 #include "bytestreamin_array.hpp"
 #include "lasreadpoint.hpp"
-#include "lasquadtree.hpp"
-#include "lasindex.hpp"
 
 class laszip_dll_inventory
 {
@@ -724,34 +722,6 @@ laszip_request_compatibility_mode(
 }
 
 int32_t
-laszip_create_spatial_index(
-    laszip_dll_struct *                     laszip_dll
-    , const laszip_BOOL                create
-    , const laszip_BOOL                append
-)
-{
-  if (laszip_dll == 0) return 1;
-
-  if (laszip_dll->reader)
-  {
-    sprintf(laszip_dll->error, "reader is already open");
-    return 1;
-  }
-
-  if (append)
-  {
-    sprintf(laszip_dll->error, "appending of spatial index not (yet) supported in this version");
-    return 1;
-  }
-
-  laszip_dll->lax_create = create;
-  laszip_dll->lax_append = append;
-
-  laszip_dll->error[0] = '\0';
-  return 0;
-}
-
-int32_t
 laszip_update_inventory(
     laszip_dll_struct *                     laszip_dll
 )
@@ -764,34 +734,6 @@ laszip_update_inventory(
   }
 
   laszip_dll->inventory->add(&laszip_dll->point);
-
-  laszip_dll->error[0] = '\0';
-  return 0;
-}
-
-int32_t
-laszip_exploit_spatial_index(
-    laszip_dll_struct *                     laszip_dll
-    , const laszip_BOOL                exploit
-)
-{
-  if (laszip_dll == 0) return 1;
-
-  try
-  {
-    if (laszip_dll->reader)
-    {
-      sprintf(laszip_dll->error, "reader is already open");
-      return 1;
-    }
-
-    laszip_dll->lax_exploit = exploit;
-  }
-  catch (...)
-  {
-    sprintf(laszip_dll->error, "internal error in laszip_exploit_spatial_index");
-    return 1;
-  }
 
   laszip_dll->error[0] = '\0';
   return 0;
@@ -1668,19 +1610,6 @@ laszip_open_reader(
       return 1;
     }
 
-    // should we try to exploit existing spatial indexing information
-
-    if (laszip_dll->lax_exploit)
-    {
-      laszip_dll->lax_index = new LASindex();
-
-      if (!laszip_dll->lax_index->read(file_name))
-      {
-        delete laszip_dll->lax_index;
-        laszip_dll->lax_index = 0;
-      }
-    }
-
     delete laszip;
 
     // set the point number and point count
@@ -1691,138 +1620,6 @@ laszip_open_reader(
   catch (...)
   {
     sprintf(laszip_dll->error, "internal error in laszip_open_reader");
-    return 1;
-  }
-
-  laszip_dll->error[0] = '\0';
-  return 0;
-}
-
-int32_t
-laszip_has_spatial_index(
-    laszip_dll_struct *                     laszip_dll
-    , laszip_BOOL*                     is_indexed
-    , laszip_BOOL*                     is_appended
-)
-{
-  if (laszip_dll == 0) return 1;
-
-  try
-  {
-    if (is_indexed == 0)
-    {
-      sprintf(laszip_dll->error, "laszip_BOOL pointer 'is_indexed' is zero");
-      return 1;
-    }
-
-    if (laszip_dll->reader == 0)
-    {
-      sprintf(laszip_dll->error, "reader is not open");
-      return 1;
-    }
-
-    if (laszip_dll->lax_exploit == 0)
-    {
-      sprintf(laszip_dll->error, "exploiting of spatial indexing not enabled before opening reader");
-      return 1;
-    }
-
-    // check if reader found spatial indexing information when opening file
-
-    if (laszip_dll->lax_index)
-    {
-      *is_indexed = 1;
-    }
-    else
-    {
-      *is_indexed = 0;
-    }
-
-    // optional: inform whether spatial index is appended to LAZ file or in separate LAX file
-
-    if (is_appended)
-    {
-      *is_appended = 0;
-    }
-
-  }
-  catch (...)
-  {
-    sprintf(laszip_dll->error, "internal error in laszip_have_spatial_index");
-    return 1;
-  }
-
-  laszip_dll->error[0] = '\0';
-  return 0;
-}
-
-int32_t
-laszip_inside_rectangle(
-    laszip_dll_struct *                     laszip_dll
-    , const double                 r_min_x
-    , const double                 r_min_y
-    , const double                 r_max_x
-    , const double                 r_max_y
-    , laszip_BOOL*                     is_empty
-)
-{
-  if (laszip_dll == 0) return 1;
-
-  try
-  {
-    if (laszip_dll->reader == 0)
-    {
-      sprintf(laszip_dll->error, "reader is not open");
-      return 1;
-    }
-
-    if (is_empty == 0)
-    {
-      sprintf(laszip_dll->error, "laszip_BOOL pointer 'is_empty' is zero");
-      return 1;
-    }
-
-    if (laszip_dll->lax_exploit == FALSE)
-    {
-      sprintf(laszip_dll->error, "exploiting of spatial indexing not enabled before opening reader");
-      return 1;
-    }
-
-    laszip_dll->lax_r_min_x = r_min_x;
-    laszip_dll->lax_r_min_y = r_min_y;
-    laszip_dll->lax_r_max_x = r_max_x;
-    laszip_dll->lax_r_max_y = r_max_y;
-
-    if (laszip_dll->lax_index)
-    {
-      if (laszip_dll->lax_index->intersect_rectangle(r_min_x, r_min_y, r_max_x, r_max_y))
-      {
-        // no overlap between spatial indexing cells and query reactangle
-        *is_empty = 1;
-      }
-      else
-      {
-        *is_empty = 0;
-      }
-    }
-    else
-    {
-      if ((laszip_dll->header.min_x > r_max_x) || (laszip_dll->header.min_y > r_max_y) || (laszip_dll->header.max_x < r_min_x) || (laszip_dll->header.max_y < r_min_y))
-      {
-        // no overlap between header bouding box and query reactangle
-        *is_empty = 1;
-      }
-      else
-      {
-        *is_empty = 0;
-      }
-    }
-
-
-  }
-  catch (...)
-  {
-    sprintf(laszip_dll->error, "internal error in laszip_inside_rectangle");
     return 1;
   }
 
@@ -1949,46 +1746,27 @@ laszip_read_inside_point(
 
     *is_done = 1;
 
-    if (laszip_dll->lax_index)
+    while (laszip_dll->reader->read(laszip_dll->point_items))
     {
-      while (laszip_dll->lax_index->seek_next(laszip_dll->reader, laszip_dll->p_count))
-      {
-        if (laszip_dll->reader->read(laszip_dll->point_items))
-        {
-          laszip_dll->p_count++;
-          xy = laszip_dll->header.x_scale_factor*laszip_dll->point.X+laszip_dll->header.x_offset;
-          if (xy < laszip_dll->lax_r_min_x || xy >= laszip_dll->lax_r_max_x) continue;
-          xy = laszip_dll->header.y_scale_factor*laszip_dll->point.Y+laszip_dll->header.y_offset;
-          if (xy < laszip_dll->lax_r_min_y || xy >= laszip_dll->lax_r_max_y) continue;
-          *is_done = 0;
-          break;
-        }
-      }
+      laszip_dll->p_count++;
+      xy = laszip_dll->header.x_scale_factor*laszip_dll->point.X+laszip_dll->header.x_offset;
+      if (xy < laszip_dll->lax_r_min_x || xy >= laszip_dll->lax_r_max_x) continue;
+      xy = laszip_dll->header.y_scale_factor*laszip_dll->point.Y+laszip_dll->header.y_offset;
+      if (xy < laszip_dll->lax_r_min_y || xy >= laszip_dll->lax_r_max_y) continue;
+      *is_done = 0;
+      break;
     }
-    else
-    {
-      while (laszip_dll->reader->read(laszip_dll->point_items))
-      {
-        laszip_dll->p_count++;
-        xy = laszip_dll->header.x_scale_factor*laszip_dll->point.X+laszip_dll->header.x_offset;
-        if (xy < laszip_dll->lax_r_min_x || xy >= laszip_dll->lax_r_max_x) continue;
-        xy = laszip_dll->header.y_scale_factor*laszip_dll->point.Y+laszip_dll->header.y_offset;
-        if (xy < laszip_dll->lax_r_min_y || xy >= laszip_dll->lax_r_max_y) continue;
-        *is_done = 0;
-        break;
-      }
 
-      if (*is_done)
+    if (*is_done)
+    {
+      if (laszip_dll->p_count < laszip_dll->npoints)
       {
-        if (laszip_dll->p_count < laszip_dll->npoints)
-        {
 #ifdef _WIN32
-          sprintf(laszip_dll->error, "reading point %I64d of %I64d total points", laszip_dll->p_count, laszip_dll->npoints);
+        sprintf(laszip_dll->error, "reading point %I64d of %I64d total points", laszip_dll->p_count, laszip_dll->npoints);
 #else
-          sprintf(laszip_dll->error, "reading point %lld of %lld total points", laszip_dll->p_count, laszip_dll->npoints);
+        sprintf(laszip_dll->error, "reading point %lld of %lld total points", laszip_dll->p_count, laszip_dll->npoints);
 #endif
-          return 1;
-        }
+        return 1;
       }
     }
   }
@@ -2031,12 +1809,6 @@ laszip_close_reader(
 
     delete laszip_dll->streamin;
     laszip_dll->streamin = 0;
-
-    if (laszip_dll->lax_index)
-    {
-      delete laszip_dll->lax_index;
-      laszip_dll->lax_index = 0;
-    }
 
     fclose(laszip_dll->file);
     laszip_dll->file = 0;

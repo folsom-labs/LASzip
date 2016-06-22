@@ -147,15 +147,10 @@ typedef struct laszip_dll {
   LASattributer* attributer;
   CHAR error[1024];
   CHAR warning[1024];
-  LASindex* lax_index;
   F64 lax_r_min_x;
   F64 lax_r_min_y;
   F64 lax_r_max_x;
   F64 lax_r_max_y;
-  CHAR* lax_file_name;
-  BOOL lax_create;
-  BOOL lax_append;
-  BOOL lax_exploit;
   BOOL preserve_generating_software;
   BOOL request_compatibility_mode;
   BOOL compatibility_mode;
@@ -188,21 +183,10 @@ int32_t laszip_add_vlr(
     , const uint8_t*                 data);
 
 int32_t laszip_remove_vlr(laszip_dll_struct *pointer, const char*user_id, uint16_t record_id);
-int32_t laszip_create_spatial_index(laszip_dll_struct *pointer, const laszip_BOOL create, const laszip_BOOL append);
 int32_t laszip_preserve_generating_software(laszip_dll_struct *pointer, const laszip_BOOL preserve);
 int32_t laszip_request_compatibility_mode(laszip_dll_struct *pointer, const laszip_BOOL request);
 int32_t laszip_update_inventory(laszip_dll_struct *pointer);
-int32_t laszip_exploit_spatial_index(laszip_dll_struct *pointer, const laszip_BOOL exploit);
 int32_t laszip_open_reader(laszip_dll_struct *pointer, const char *file_name, laszip_BOOL *is_compressed);
-int32_t laszip_has_spatial_index(laszip_dll_struct *pointer, laszip_BOOL *is_indexed, laszip_BOOL *is_appended);
-
-int32_t laszip_inside_rectangle(
-    laszip_dll_struct *                     pointer
-    , double                       min_x
-    , double                       min_y
-    , double                       max_x
-    , double                       max_y
-    , laszip_BOOL*                     is_empty);
 
 int32_t laszip_seek_point(laszip_dll_struct *pointer, uint64_t index);
 int32_t laszip_read_point(laszip_dll_struct *pointer);
