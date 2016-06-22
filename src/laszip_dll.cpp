@@ -1660,92 +1660,31 @@ laszip_read_point(
   return 0;
 }
 
-int32_t
-laszip_read_inside_point(
-    laszip_dll_struct *                     laszip_dll
-    , laszip_BOOL*                     is_done
-)
+int32_t laszip_close_reader(laszip_dll_struct *laszip_dll)
 {
-  if (laszip_dll == 0) return 1;
-
-  try
+  if (laszip_dll->reader == 0)
   {
-    double xy;
-
-    *is_done = 1;
-
-    while (laszip_dll->reader->read(laszip_dll->point_items))
-    {
-      laszip_dll->p_count++;
-      xy = laszip_dll->header.x_scale_factor*laszip_dll->point.X+laszip_dll->header.x_offset;
-      if (xy < laszip_dll->lax_r_min_x || xy >= laszip_dll->lax_r_max_x) continue;
-      xy = laszip_dll->header.y_scale_factor*laszip_dll->point.Y+laszip_dll->header.y_offset;
-      if (xy < laszip_dll->lax_r_min_y || xy >= laszip_dll->lax_r_max_y) continue;
-      *is_done = 0;
-      break;
-    }
-
-    if (*is_done)
-    {
-      if (laszip_dll->p_count < laszip_dll->npoints)
-      {
-#ifdef _WIN32
-        sprintf(laszip_dll->error, "reading point %I64d of %I64d total points", laszip_dll->p_count, laszip_dll->npoints);
-#else
-        sprintf(laszip_dll->error, "reading point %lld of %lld total points", laszip_dll->p_count, laszip_dll->npoints);
-#endif
-        return 1;
-      }
-    }
-  }
-  catch (...)
-  {
-    sprintf(laszip_dll->error, "internal error in laszip_read_inside_point");
+    sprintf(laszip_dll->error, "closing reader before it was opened");
     return 1;
   }
 
-  laszip_dll->error[0] = '\0';
-  return 0;
-}
-
-int32_t
-laszip_close_reader(
-    laszip_dll_struct *                     laszip_dll
-)
-{
-  if (laszip_dll == 0) return 1;
-
-  try
+  if (!laszip_dll->reader->done())
   {
-    if (laszip_dll->reader == 0)
-    {
-      sprintf(laszip_dll->error, "closing reader before it was opened");
-      return 1;
-    }
-
-    if (!laszip_dll->reader->done())
-    {
-      sprintf(laszip_dll->error, "done of LASreadPoint failed");
-      return 1;
-    }
-
-    delete laszip_dll->reader;
-    laszip_dll->reader = 0;
-
-    delete [] laszip_dll->point_items;
-    laszip_dll->point_items = 0;
-
-    delete laszip_dll->streamin;
-    laszip_dll->streamin = 0;
-
-    fclose(laszip_dll->file);
-    laszip_dll->file = 0;
-  }
-  catch (...)
-  {
-    sprintf(laszip_dll->error, "internal error in laszip_close_reader");
+    sprintf(laszip_dll->error, "done of LASreadPoint failed");
     return 1;
   }
+
+  delete laszip_dll->reader;
+  laszip_dll->reader = 0;
+
+  delete [] laszip_dll->point_items;
+  laszip_dll->point_items = 0;
+
+  delete laszip_dll->streamin;
+  laszip_dll->streamin = 0;
+
+  fclose(laszip_dll->file);
+  laszip_dll->file = 0;
 
   laszip_dll->error[0] = '\0';
   return 0;

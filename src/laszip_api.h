@@ -186,7 +186,6 @@ int32_t laszip_open_reader(laszip_dll_struct *pointer, const char *file_name, la
 
 int32_t laszip_seek_point(laszip_dll_struct *pointer, uint64_t index);
 int32_t laszip_read_point(laszip_dll_struct *pointer);
-int32_t laszip_read_inside_point(laszip_dll_struct *pointer, laszip_BOOL*is_done);
 int32_t laszip_close_reader(laszip_dll_struct *pointer);
 
 #ifdef __cplusplus
