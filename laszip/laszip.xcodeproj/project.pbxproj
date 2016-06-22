@@ -10,9 +10,6 @@
 		035D4C321D19AD6700514743 /* arithmeticdecoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 035D4C111D19AD6600514743 /* arithmeticdecoder.cpp */; };
 		035D4C331D19AD6700514743 /* arithmeticmodel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 035D4C131D19AD6600514743 /* arithmeticmodel.cpp */; };
 		035D4C341D19AD6700514743 /* integercompressor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 035D4C181D19AD6700514743 /* integercompressor.cpp */; };
-		035D4C351D19AD6700514743 /* lasindex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 035D4C1B1D19AD6700514743 /* lasindex.cpp */; };
-		035D4C361D19AD6700514743 /* lasinterval.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 035D4C1D1D19AD6700514743 /* lasinterval.cpp */; };
-		035D4C371D19AD6700514743 /* lasquadtree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 035D4C201D19AD6700514743 /* lasquadtree.cpp */; };
 		035D4C381D19AD6700514743 /* lasreaditemcompressed_v1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 035D4C241D19AD6700514743 /* lasreaditemcompressed_v1.cpp */; };
 		035D4C391D19AD6700514743 /* lasreaditemcompressed_v2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 035D4C261D19AD6700514743 /* lasreaditemcompressed_v2.cpp */; };
 		035D4C3A1D19AD6700514743 /* lasreadpoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 035D4C291D19AD6700514743 /* lasreadpoint.cpp */; };
@@ -45,13 +42,7 @@
 		035D4C181D19AD6700514743 /* integercompressor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = integercompressor.cpp; path = ../../src/integercompressor.cpp; sourceTree = "<group>"; };
 		035D4C191D19AD6700514743 /* integercompressor.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = integercompressor.hpp; path = ../../src/integercompressor.hpp; sourceTree = "<group>"; };
 		035D4C1A1D19AD6700514743 /* lasattributer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = lasattributer.hpp; path = ../../src/lasattributer.hpp; sourceTree = "<group>"; };
-		035D4C1B1D19AD6700514743 /* lasindex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = lasindex.cpp; path = ../../src/lasindex.cpp; sourceTree = "<group>"; };
-		035D4C1C1D19AD6700514743 /* lasindex.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = lasindex.hpp; path = ../../src/lasindex.hpp; sourceTree = "<group>"; };
-		035D4C1D1D19AD6700514743 /* lasinterval.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = lasinterval.cpp; path = ../../src/lasinterval.cpp; sourceTree = "<group>"; };
-		035D4C1E1D19AD6700514743 /* lasinterval.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = lasinterval.hpp; path = ../../src/lasinterval.hpp; sourceTree = "<group>"; };
 		035D4C1F1D19AD6700514743 /* laspoint.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = laspoint.hpp; path = ../../src/laspoint.hpp; sourceTree = "<group>"; };
-		035D4C201D19AD6700514743 /* lasquadtree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = lasquadtree.cpp; path = ../../src/lasquadtree.cpp; sourceTree = "<group>"; };
-		035D4C211D19AD6700514743 /* lasquadtree.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = lasquadtree.hpp; path = ../../src/lasquadtree.hpp; sourceTree = "<group>"; };
 		035D4C221D19AD6700514743 /* lasquantizer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = lasquantizer.hpp; path = ../../src/lasquantizer.hpp; sourceTree = "<group>"; };
 		035D4C231D19AD6700514743 /* lasreaditem.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = lasreaditem.hpp; path = ../../src/lasreaditem.hpp; sourceTree = "<group>"; };
 		035D4C241D19AD6700514743 /* lasreaditemcompressed_v1.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = lasreaditemcompressed_v1.cpp; path = ../../src/lasreaditemcompressed_v1.cpp; sourceTree = "<group>"; };
@@ -112,13 +103,7 @@
 				035D4C181D19AD6700514743 /* integercompressor.cpp */,
 				035D4C191D19AD6700514743 /* integercompressor.hpp */,
 				035D4C1A1D19AD6700514743 /* lasattributer.hpp */,
-				035D4C1B1D19AD6700514743 /* lasindex.cpp */,
-				035D4C1C1D19AD6700514743 /* lasindex.hpp */,
-				035D4C1D1D19AD6700514743 /* lasinterval.cpp */,
-				035D4C1E1D19AD6700514743 /* lasinterval.hpp */,
 				035D4C1F1D19AD6700514743 /* laspoint.hpp */,
-				035D4C201D19AD6700514743 /* lasquadtree.cpp */,
-				035D4C211D19AD6700514743 /* lasquadtree.hpp */,
 				035D4C221D19AD6700514743 /* lasquantizer.hpp */,
 				035D4C231D19AD6700514743 /* lasreaditem.hpp */,
 				035D4C241D19AD6700514743 /* lasreaditemcompressed_v1.cpp */,
@@ -195,16 +180,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				035D4C361D19AD6700514743 /* lasinterval.cpp in Sources */,
 				035D4C3B1D19AD6700514743 /* laszip_dll.cpp in Sources */,
-				035D4C371D19AD6700514743 /* lasquadtree.cpp in Sources */,
 				035D4C3E1D19AD7800514743 /* lazinfo.cpp in Sources */,
 				035D4C321D19AD6700514743 /* arithmeticdecoder.cpp in Sources */,
 				035D4C381D19AD6700514743 /* lasreaditemcompressed_v1.cpp in Sources */,
 				035D4C391D19AD6700514743 /* lasreaditemcompressed_v2.cpp in Sources */,
 				035D4C3A1D19AD6700514743 /* lasreadpoint.cpp in Sources */,
 				035D4C3C1D19AD6700514743 /* laszip.cpp in Sources */,
-				035D4C351D19AD6700514743 /* lasindex.cpp in Sources */,
 				035D4C331D19AD6700514743 /* arithmeticmodel.cpp in Sources */,
 				035D4C341D19AD6700514743 /* integercompressor.cpp in Sources */,
 			);
@@ -328,6 +310,7 @@
 				035D4C101D19AD3D00514743 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
