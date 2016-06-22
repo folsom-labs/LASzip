@@ -1,35 +1,3 @@
-/*
-===============================================================================
-
-  FILE:  bytestreamin_file.hpp
-
-  CONTENTS:
-
-    Class for FILE*-based input streams with endian handling.
-
-  PROGRAMMERS:
-
-    martin.isenburg@rapidlasso.com  -  http://rapidlasso.com
-
-  COPYRIGHT:
-
-    (c) 2007-2012, martin isenburg, rapidlasso - fast tools to catch reality
-
-    This is free software; you can redistribute and/or modify it under the
-    terms of the GNU Lesser General Licence as published by the Free Software
-    Foundation. See the COPYING file for more information.
-
-    This software is distributed WITHOUT ANY WARRANTY and without even the
-    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-
-  CHANGE HISTORY:
-
-     1 October 2011 -- added 64 bit file support in MSVC 6.0 at McCafe at Hbf Linz
-    10 January 2011 -- licensing change for LGPL release and liblas integration
-    12 December 2010 -- created from ByteStreamOutFile after Howard got pushy (-;
-
-===============================================================================
-*/
 #ifndef BYTE_STREAM_IN_FILE_H
 #define BYTE_STREAM_IN_FILE_H
 

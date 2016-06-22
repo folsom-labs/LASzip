@@ -1,33 +1,3 @@
-/*
-===============================================================================
-
-  FILE:  lasquadtree.cpp
-
-  CONTENTS:
-
-    see corresponding header file
-
-  PROGRAMMERS:
-
-    martin.isenburg@rapidlasso.com  -  http://rapidlasso.com
-
-  COPYRIGHT:
-
-    (c) 2007-2015, martin isenburg, rapidlasso - fast tools to catch reality
-
-    This is free software; you can redistribute and/or modify it under the
-    terms of the GNU Lesser General Licence as published by the Free Software
-    Foundation. See the LICENSE.txt file for more information.
-
-    This software is distributed WITHOUT ANY WARRANTY and without even the
-    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-
-  CHANGE HISTORY:
-
-    see corresponding header file
-
-===============================================================================
-*/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -40,65 +10,6 @@
 using namespace std;
 
 typedef vector<I32> my_cell_vector;
-
-/*
-
-class LAScell
-{
-public:
-  LAScell* parent;
-  LAScell* child[4];
-  U32 num_children :  3;
-  U32 level        :  5;
-  U32 idx          : 24;
-  F32 mid_x;
-  F32 mid_y;
-  F32 half_size;
-  F32 get_min_x() const { return mid_x - half_size; };
-  F32 get_min_y() const { return mid_y - half_size; };
-  F32 get_max_x() const { return mid_x + half_size; };
-  F32 get_max_y() const { return mid_y + half_size; };
-  LAScell();
-};
-
-LAScell::LAScell()
-{
-  memset(this, 0, sizeof(LAScell));
-}
-
-  LAScell* get_cell(const F64 x, const F64 y);
-LAScell* LASquadtree::get_cell(const F64 x, const F64 y)
-{
-  LAScell* cell = &root;
-  while (cell && cell->num_children)
-  {
-    int child = 0;
-    if (x < cell->mid_x) // only if strictly less
-    {
-      child |= 1;
-    }
-    if (!(y < cell->mid_y)) // only if not strictly less
-    {
-      child |= 2;
-    }
-    cell = cell->child[child];
-  }
-  return cell;
-}
-
-static bool intersect_point(LAScell* cell, const float* p_pos)
-{
-  if (cell->num_children) // check if cell has children
-  {
-    int idx = 0;
-    if (p_pos[0] < cell->r_mid[0]) idx |= 1;
-    if (!(p_pos[1] < cell->r_mid[1])) idx |= 2;
-    if (cell->child[idx] && intersect_point(cell->child[idx], p_pos)) return true;
-    return false;
-  }
-  return true;
-}
-*/
 
 // returns the bounding box of the cell that x & y fall into at the specified level
 void LASquadtree::get_cell_bounding_box(const F64 x, const F64 y, U32 level, F32* min, F32* max) const

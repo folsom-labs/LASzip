@@ -13,7 +13,7 @@ void usage()
   exit(1);
 }
 
-static void dll_error(void * laszip)
+static void dll_error(laszip_dll_struct * laszip)
 {
   if (laszip) {
     return;
@@ -25,7 +25,7 @@ static void dll_error(void * laszip)
   fprintf(stderr,"DLL ERROR MESSAGE: %s\n", error);
 }
 
-static void fatal(void * laszip=nullptr)
+static void fatal(laszip_dll_struct * laszip=nullptr)
 {
   dll_error(laszip);
   exit(1);
@@ -34,7 +34,7 @@ static void fatal(void * laszip=nullptr)
 static void unlaz(char *file_name_in) {
   printf("file: %s\n", file_name_in);
 
-  void * laszip_reader = nullptr;
+  laszip_dll * laszip_reader = nullptr;
   if (laszip_create(&laszip_reader))
   {
     fprintf(stderr,"DLL ERROR: creating laszip reader\n");

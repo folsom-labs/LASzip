@@ -1,37 +1,3 @@
-/*
-===============================================================================
-
-  FILE:  lasquadtree.hpp
-
-  CONTENTS:
-
-    An efficient quadtree that can be used for spatial indexing, for tiling,
-    for sorting into space-filling curve order, and for injecting spatial
-    finalization tags to be used in memory-efficienct streaming algorithms.
-
-  PROGRAMMERS:
-
-    martin.isenburg@rapidlasso.com  -  http://rapidlasso.com
-
-  COPYRIGHT:
-
-    (c) 2007-2012, martin isenburg, rapidlasso - fast tools to catch reality
-
-    This is free software; you can redistribute and/or modify it under the
-    terms of the GNU Lesser General Licence as published by the Free Software
-    Foundation. See the LICENSE.txt file for more information.
-
-    This software is distributed WITHOUT ANY WARRANTY and without even the
-    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-
-  CHANGE HISTORY:
-
-    31 March 2015 -- remove unused LASquadtree inheritance of abstract LASspatial
-    11 May 2011 -- moved into LASlib so that LASreader supports spatial indexing
-    19 January 2011 -- created after mara met with silke to talk about africa
-
-===============================================================================
-*/
 #ifndef LAS_QUADTREE_HPP
 #define LAS_QUADTREE_HPP
 

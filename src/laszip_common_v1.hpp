@@ -1,36 +1,3 @@
-/*
-===============================================================================
-
-  FILE:  laszip_common_v1.hpp
-  
-  CONTENTS:
-  
-    Common defines and functionalities for version 1 of LASitemReadCompressed
-    and LASitemwriteCompressed.
-
-  PROGRAMMERS:
-
-    martin.isenburg@rapidlasso.com  -  http://rapidlasso.com
-    uday.karan@gmail.com - http://github.com/verma
-
-  COPYRIGHT:
-
-    (c) 2007-2014, martin isenburg, rapidlasso - fast tools to catch reality
-
-    This is free software; you can redistribute and/or modify it under the
-    terms of the GNU Lesser General Licence as published by the Free Software
-    Foundation. See the COPYING file for more information.
-
-    This software is distributed WITHOUT ANY WARRANTY and without even the
-    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-  
-  CHANGE HISTORY:
-  
-    10 April 2014 - refactor LASwavepacket13 and add other functions to it
-  
-===============================================================================
-*/
-
 #ifndef LASZIP_COMMON_V1_HPP
 #define LASZIP_COMMON_V1_HPP
 
@@ -60,7 +27,7 @@ struct LASwavepacket13
 
     return r;
   }
-  
+
   void inline pack(U8 *item)
   {
     // pack a LAS wavepacket into raw memory

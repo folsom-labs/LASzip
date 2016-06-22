@@ -1,34 +1,3 @@
-/*
-===============================================================================
-
-  FILE:  laszip_common_v2.hpp
-  
-  CONTENTS:
-  
-    Common defines and functionalities for version 2 of LASitemReadCompressed
-    and LASitemwriteCompressed.
-
-  PROGRAMMERS:
-
-    martin.isenburg@rapidlasso.com  -  http://rapidlasso.com
-
-  COPYRIGHT:
-
-    (c) 2007-2012, martin isenburg, rapidlasso - fast tools to catch reality
-
-    This is free software; you can redistribute and/or modify it under the
-    terms of the GNU Lesser General Licence as published by the Free Software
-    Foundation. See the COPYING file for more information.
-
-    This software is distributed WITHOUT ANY WARRANTY and without even the
-    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-  
-  CHANGE HISTORY:
-  
-    16 March 2011 -- created after designing the "streaming median" algorithm
-
-===============================================================================
-*/
 #ifndef LASZIP_COMMON_V2_HPP
 #define LASZIP_COMMON_V2_HPP
 
@@ -143,7 +112,7 @@ public:
 // counts n, or mix up the position of r and n. we therefore
 // "complete" the table to also map those "undesired" r & n
 // combinations to different contexts
-const U8 number_return_map[8][8] = 
+const U8 number_return_map[8][8] =
 {
   { 15, 14, 13, 12, 11, 10,  9,  8 },
   { 14,  0,  1,  3,  6, 10, 10,  9 },
@@ -171,7 +140,7 @@ const U8 number_return_map[8][8] =
 // counts n, or mix up the position of r and n. we therefore
 // "complete" the table to also map those "undesired" r & n
 // combinations to different contexts
-const U8 number_return_level[8][8] = 
+const U8 number_return_level[8][8] =
 {
   {  0,  1,  2,  3,  4,  5,  6,  7 },
   {  1,  0,  1,  2,  3,  4,  5,  6 },

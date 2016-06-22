@@ -1,34 +1,3 @@
-/*
-===============================================================================
-
-  FILE:  lasreaditemcompressed_v2.hpp
-  
-  CONTENTS:
-  
-    Implementation of LASitemReadCompressed for *all* items (version 2).
-
-  PROGRAMMERS:
-
-    martin.isenburg@rapidlasso.com  -  http://rapidlasso.com
-
-  COPYRIGHT:
-
-    (c) 2007-2014, martin isenburg, rapidlasso - fast tools to catch reality
-
-    This is free software; you can redistribute and/or modify it under the
-    terms of the GNU Lesser General Licence as published by the Free Software
-    Foundation. See the COPYING file for more information.
-
-    This software is distributed WITHOUT ANY WARRANTY and without even the
-    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-  
-  CHANGE HISTORY:
-  
-    6 September 2014 -- removed inheritance of EntropyEncoder and EntropyDecoder
-    5 March 2011 -- created first night in ibiza to improve the RGB compressor
-  
-===============================================================================
-*/
 #ifndef LAS_READ_ITEM_COMPRESSED_V2_HPP
 #define LAS_READ_ITEM_COMPRESSED_V2_HPP
 

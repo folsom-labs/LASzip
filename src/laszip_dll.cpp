@@ -1,39 +1,4 @@
-/*
-===============================================================================
-
-  FILE:  laszip_dll.cpp
-
-  CONTENTS:
-
-    see corresponding header file
-
-  PROGRAMMERS:
-
-    martin.isenburg@rapidlasso.com  -  http://rapidlasso.com
-
-  COPYRIGHT:
-
-    (c) 2007-2013, martin isenburg, rapidlasso - fast tools to catch reality
-
-    This is free software; you can redistribute and/or modify it under the
-    terms of the GNU Lesser General Licence as published by the Free Software
-    Foundation. See the COPYING file for more information.
-
-    This software is distributed WITHOUT ANY WARRANTY and without even the
-    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-
-  CHANGE HISTORY:
-
-    see corresponding header file
-
-===============================================================================
-*/
-
 #include "laszip_api.h"
-
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
 
 #include "laszip.hpp"
 #include "lasattributer.hpp"
@@ -97,47 +62,13 @@ private:
   BOOL first;
 };
 
-typedef struct laszip_dll {
-  laszip_header_struct header;
-  I64 p_count;
-  I64 npoints;
-  laszip_point_struct point;
-  U8** point_items;
-  FILE* file;
-  ByteStreamIn* streamin;
-  LASreadPoint* reader;
-  LASattributer* attributer;
-  CHAR error[1024];
-  CHAR warning[1024];
-  LASindex* lax_index;
-  F64 lax_r_min_x;
-  F64 lax_r_min_y;
-  F64 lax_r_max_x;
-  F64 lax_r_max_y;
-  CHAR* lax_file_name;
-  BOOL lax_create;
-  BOOL lax_append;
-  BOOL lax_exploit;
-  BOOL preserve_generating_software;
-  BOOL request_compatibility_mode;
-  BOOL compatibility_mode;
-  I32 start_scan_angle;
-  I32 start_extended_returns;
-  I32 start_classification;
-  I32 start_flags_and_channel;
-  I32 start_NIR_band;
-  laszip_dll_inventory* inventory;
-} laszip_dll_struct;
-
-/*---------------------------------------------------------------------------*/
-LASZIP_API int32_t
+int32_t
 laszip_get_error(
-    void *                     pointer
+    laszip_dll_struct *                     laszip_dll
     , char**                    error
 )
 {
-  if (pointer == 0) return 1;
-  laszip_dll_struct* laszip_dll = (laszip_dll_struct*)pointer;
+  if (laszip_dll == 0) return 1;
 
   try
   {
@@ -152,16 +83,12 @@ laszip_get_error(
   return 0;
 }
 
-/*---------------------------------------------------------------------------*/
-LASZIP_API int32_t
+int32_t
 laszip_get_warning(
-    void *                     pointer
+    laszip_dll_struct *                     laszip_dll
     , char**                    warning
 )
 {
-  if (pointer == 0) return 1;
-  laszip_dll_struct* laszip_dll = (laszip_dll_struct*)pointer;
-
   try
   {
     *warning = laszip_dll->warning;
@@ -175,48 +102,21 @@ laszip_get_warning(
   return 0;
 }
 
-/*---------------------------------------------------------------------------*/
-LASZIP_API int32_t
-laszip_create(
-    void **                    pointer
-)
+int32_t laszip_create(laszip_dll_struct **pointer)
 {
   if (pointer == 0) return 1;
 
-  try
-  {
-    laszip_dll_struct* laszip_dll = new laszip_dll_struct;
-    if (laszip_dll == 0)
-    {
-      return 1;
-    }
-
-    // zero everything
-
-    memset(laszip_dll, 0, sizeof(laszip_dll_struct));
-
-    // create the default
-
-    laszip_clean(laszip_dll);
-
-    *pointer = laszip_dll;
-  }
-  catch (...)
-  {
-    return 1;
-  }
+  laszip_dll_struct *laszip_dll  = new laszip_dll_struct;
+  memset(laszip_dll, 0, sizeof(laszip_dll_struct));
+  laszip_clean(laszip_dll);
+  *pointer = laszip_dll;
 
   return 0;
 }
 
-/*---------------------------------------------------------------------------*/
-LASZIP_API int32_t
-laszip_clean(
-    void *                     pointer
-)
+int32_t laszip_clean(laszip_dll_struct *laszip_dll)
 {
-  if (pointer == 0) return 1;
-  laszip_dll_struct* laszip_dll = (laszip_dll_struct*)pointer;
+  if (laszip_dll == 0) return 1;
 
   try
   {
@@ -296,14 +196,9 @@ laszip_clean(
   return 0;
 }
 
-/*---------------------------------------------------------------------------*/
-LASZIP_API int32_t
-laszip_destroy(
-    void *                     pointer
-)
+int32_t laszip_destroy(laszip_dll_struct *laszip_dll)
 {
-  if (pointer == 0) return 1;
-  laszip_dll_struct* laszip_dll = (laszip_dll_struct*)pointer;
+  if (laszip_dll == 0) return 1;
 
   int err = 0;
 
@@ -320,110 +215,75 @@ laszip_destroy(
   return err;
 }
 
-/*---------------------------------------------------------------------------*/
-LASZIP_API int32_t
+int32_t
 laszip_get_header_pointer(
-    void *                     pointer
+    laszip_dll_struct *laszip_dll
     , laszip_header_struct**           header_pointer
 )
 {
-  if (pointer == 0) return 1;
-  laszip_dll_struct* laszip_dll = (laszip_dll_struct*)pointer;
+  if (laszip_dll == 0) return 1;
 
-  try
+  if (header_pointer == 0)
   {
-    if (header_pointer == 0)
-    {
-      sprintf(laszip_dll->error, "laszip_header_struct pointer 'header_pointer' is zero");
-      return 1;
-    }
-
-    *header_pointer = &laszip_dll->header;
-  }
-  catch (...)
-  {
-    sprintf(laszip_dll->error, "internal error in laszip_get_header_pointer");
+    sprintf(laszip_dll->error, "laszip_header_struct pointer 'header_pointer' is zero");
     return 1;
   }
 
+  *header_pointer = &laszip_dll->header;
   laszip_dll->error[0] = '\0';
   return 0;
 }
 
-/*---------------------------------------------------------------------------*/
-LASZIP_API int32_t
+int32_t
 laszip_get_point_pointer(
-    void *                     pointer
+    laszip_dll_struct *laszip_dll
     , laszip_point_struct**            point_pointer
 )
 {
-  if (pointer == 0) return 1;
-  laszip_dll_struct* laszip_dll = (laszip_dll_struct*)pointer;
+  if (laszip_dll == 0) return 1;
 
-  try
+  if (point_pointer == 0)
   {
-    if (point_pointer == 0)
-    {
-      sprintf(laszip_dll->error, "laszip_point_struct pointer 'point_pointer' is zero");
-      return 1;
-    }
-
-    *point_pointer = &laszip_dll->point;
-  }
-  catch (...)
-  {
-    sprintf(laszip_dll->error, "internal error in laszip_get_point_pointer");
+    sprintf(laszip_dll->error, "laszip_point_struct pointer 'point_pointer' is zero");
     return 1;
   }
 
+  *point_pointer = &laszip_dll->point;
   laszip_dll->error[0] = '\0';
   return 0;
 }
 
-/*---------------------------------------------------------------------------*/
-LASZIP_API int32_t
+int32_t
 laszip_get_point_count(
-    void *                     pointer
+    laszip_dll_struct *laszip_dll
     , uint64_t*                      count
 )
 {
-  if (pointer == 0) return 1;
-  laszip_dll_struct* laszip_dll = (laszip_dll_struct*)pointer;
+  if (laszip_dll == 0) return 1;
 
-  try
+  if (count == 0)
   {
-    if (count == 0)
-    {
-      sprintf(laszip_dll->error, "uint64_t pointer 'count' is zero");
-      return 1;
-    }
-
-    if (laszip_dll->reader == 0)
-    {
-      sprintf(laszip_dll->error, "getting count before reader or writer was opened");
-      return 1;
-    }
-
-    *count = laszip_dll->p_count;
-  }
-  catch (...)
-  {
-    sprintf(laszip_dll->error, "internal error in laszip_get_point_count");
+    sprintf(laszip_dll->error, "uint64_t pointer 'count' is zero");
     return 1;
   }
+
+  if (laszip_dll->reader == 0)
+  {
+    sprintf(laszip_dll->error, "getting count before reader or writer was opened");
+    return 1;
+  }
+  *count = laszip_dll->p_count;
 
   laszip_dll->error[0] = '\0';
   return 0;
 }
 
-/*---------------------------------------------------------------------------*/
-LASZIP_API int32_t
+int32_t
 laszip_check_for_integer_overflow(
-    void *                     pointer
+    laszip_dll_struct *laszip_dll
 )
 {
-  if (pointer == 0) return 1;
-  laszip_dll_struct* laszip_dll = (laszip_dll_struct*)pointer;
+  if (laszip_dll == 0) return 1;
 
   try
   {
@@ -490,14 +350,9 @@ laszip_check_for_integer_overflow(
   return 0;
 }
 
-/*---------------------------------------------------------------------------*/
-LASZIP_API int32_t
-laszip_auto_offset(
-    void *                     pointer
-)
+int32_t laszip_auto_offset(laszip_dll_struct *laszip_dll)
 {
-  if (pointer == 0) return 1;
-  laszip_dll_struct* laszip_dll = (laszip_dll_struct*)pointer;
+  if (laszip_dll == 0) return 1;
 
   try
   {
@@ -565,7 +420,7 @@ laszip_auto_offset(
     header->y_offset = (I64_FLOOR(center_bb_y/y_scale_factor/10000000))*10000000*y_scale_factor;
     header->z_offset = (I64_FLOOR(center_bb_z/z_scale_factor/10000000))*10000000*z_scale_factor;
 
-    if (laszip_check_for_integer_overflow(pointer))
+    if (laszip_check_for_integer_overflow(laszip_dll))
     {
       header->x_offset = x_offset;
       header->y_offset = y_offset;
@@ -583,15 +438,10 @@ laszip_auto_offset(
   return 0;
 }
 
-/*---------------------------------------------------------------------------*/
-LASZIP_API int32_t
-laszip_get_coordinates(
-    void *                     pointer
-    , double*                      coordinates
-)
+int32_t
+laszip_get_coordinates(laszip_dll_struct *laszip_dll, double *coordinates)
 {
-  if (pointer == 0) return 1;
-  laszip_dll_struct* laszip_dll = (laszip_dll_struct*)pointer;
+  if (laszip_dll == 0) return 1;
 
   try
   {
@@ -625,10 +475,9 @@ laszip_get_coordinates(
   return 0;
 }
 
-/*---------------------------------------------------------------------------*/
-LASZIP_API int32_t
+int32_t
 laszip_add_vlr(
-    void *                     pointer
+    laszip_dll_struct *                     laszip_dll
     , const char*               user_id
     , uint16_t                       record_id
     , uint16_t                       record_length_after_header
@@ -636,8 +485,7 @@ laszip_add_vlr(
     , const uint8_t*                 data
 )
 {
-  if (pointer == 0) return 1;
-  laszip_dll_struct* laszip_dll = (laszip_dll_struct*)pointer;
+  if (laszip_dll == 0) return 1;
 
   try
   {
@@ -741,16 +589,14 @@ laszip_add_vlr(
   return 0;
 }
 
-/*---------------------------------------------------------------------------*/
-LASZIP_API int32_t
+int32_t
 laszip_remove_vlr(
-    void *                     pointer
+    laszip_dll_struct *                     laszip_dll
     , const char*               user_id
     , uint16_t                       record_id
 )
 {
-  if (pointer == 0) return 1;
-  laszip_dll_struct* laszip_dll = (laszip_dll_struct*)pointer;
+  if (laszip_dll == 0) return 1;
 
   try
   {
@@ -829,15 +675,13 @@ laszip_remove_vlr(
   return 0;
 }
 
-/*---------------------------------------------------------------------------*/
-LASZIP_API int32_t
+int32_t
 laszip_preserve_generating_software(
-    void *                     pointer
+    laszip_dll_struct *                     laszip_dll
     , const laszip_BOOL                preserve
 )
 {
-  if (pointer == 0) return 1;
-  laszip_dll_struct* laszip_dll = (laszip_dll_struct*)pointer;
+  if (laszip_dll == 0) return 1;
 
   try
   {
@@ -859,111 +703,79 @@ laszip_preserve_generating_software(
   return 0;
 }
 
-/*---------------------------------------------------------------------------*/
-LASZIP_API int32_t
+int32_t
 laszip_request_compatibility_mode(
-    void *                     pointer
+    laszip_dll_struct *                     laszip_dll
     , const laszip_BOOL                request
 )
 {
-  if (pointer == 0) return 1;
-  laszip_dll_struct* laszip_dll = (laszip_dll_struct*)pointer;
+  if (laszip_dll == 0) return 1;
 
-  try
+  if (laszip_dll->reader)
   {
-    if (laszip_dll->reader)
-    {
-      sprintf(laszip_dll->error, "reader is already open");
-      return 1;
-    }
-
-    laszip_dll->request_compatibility_mode = request;
-  }
-  catch (...)
-  {
-    sprintf(laszip_dll->error, "internal error in laszip_request_compatibility_mode");
+    sprintf(laszip_dll->error, "reader is already open");
     return 1;
   }
+
+  laszip_dll->request_compatibility_mode = request;
 
   laszip_dll->error[0] = '\0';
   return 0;
 }
 
-/*---------------------------------------------------------------------------*/
-LASZIP_API int32_t
+int32_t
 laszip_create_spatial_index(
-    void *                     pointer
+    laszip_dll_struct *                     laszip_dll
     , const laszip_BOOL                create
     , const laszip_BOOL                append
 )
 {
-  if (pointer == 0) return 1;
-  laszip_dll_struct* laszip_dll = (laszip_dll_struct*)pointer;
+  if (laszip_dll == 0) return 1;
 
-  try
+  if (laszip_dll->reader)
   {
-    if (laszip_dll->reader)
-    {
-      sprintf(laszip_dll->error, "reader is already open");
-      return 1;
-    }
-
-    if (append)
-    {
-      sprintf(laszip_dll->error, "appending of spatial index not (yet) supported in this version");
-      return 1;
-    }
-
-    laszip_dll->lax_create = create;
-    laszip_dll->lax_append = append;
-  }
-  catch (...)
-  {
-    sprintf(laszip_dll->error, "internal error in laszip_create_spatial_index");
+    sprintf(laszip_dll->error, "reader is already open");
     return 1;
   }
+
+  if (append)
+  {
+    sprintf(laszip_dll->error, "appending of spatial index not (yet) supported in this version");
+    return 1;
+  }
+
+  laszip_dll->lax_create = create;
+  laszip_dll->lax_append = append;
 
   laszip_dll->error[0] = '\0';
   return 0;
 }
 
-/*---------------------------------------------------------------------------*/
-LASZIP_API int32_t
+int32_t
 laszip_update_inventory(
-    void *                     pointer
+    laszip_dll_struct *                     laszip_dll
 )
 {
-  if (pointer == 0) return 1;
-  laszip_dll_struct* laszip_dll = (laszip_dll_struct*)pointer;
+  if (laszip_dll == 0) return 1;
 
-  try
+  if (laszip_dll->inventory == 0)
   {
-    if (laszip_dll->inventory == 0)
-    {
-      laszip_dll->inventory = new laszip_dll_inventory;
-    }
+    laszip_dll->inventory = new laszip_dll_inventory;
+  }
 
-    laszip_dll->inventory->add(&laszip_dll->point);
-  }
-  catch (...)
-  {
-    sprintf(laszip_dll->error, "internal error in laszip_update_inventory");
-    return 1;
-  }
+  laszip_dll->inventory->add(&laszip_dll->point);
 
   laszip_dll->error[0] = '\0';
   return 0;
 }
 
-/*---------------------------------------------------------------------------*/
-LASZIP_API int32_t
+int32_t
 laszip_exploit_spatial_index(
-    void *                     pointer
+    laszip_dll_struct *                     laszip_dll
     , const laszip_BOOL                exploit
 )
 {
-  if (pointer == 0) return 1;
-  laszip_dll_struct* laszip_dll = (laszip_dll_struct*)pointer;
+  if (laszip_dll == 0) return 1;
 
   try
   {
@@ -985,16 +797,14 @@ laszip_exploit_spatial_index(
   return 0;
 }
 
-/*---------------------------------------------------------------------------*/
-LASZIP_API int32_t
+int32_t
 laszip_open_reader(
-    void *                     pointer
+    laszip_dll_struct *                     laszip_dll
     , const char*               file_name
     , laszip_BOOL*                     is_compressed
 )
 {
-  if (pointer == 0) return 1;
-  laszip_dll_struct* laszip_dll = (laszip_dll_struct*)pointer;
+  if (laszip_dll == 0) return 1;
 
   try
   {
@@ -1735,7 +1545,7 @@ laszip_open_reader(
 
             // remove the compatibility VLR
 
-            if (laszip_remove_vlr(pointer, "lascompatible\0\0", 22204))
+            if (laszip_remove_vlr(laszip_dll, "lascompatible\0\0", 22204))
             {
               sprintf(laszip_dll->error, "removing the compatibility VLR");
               return 1;
@@ -1753,7 +1563,7 @@ laszip_open_reader(
 
             if (attributer.number_attributes)
             {
-              if (laszip_add_vlr(pointer, "LASF_Spec\0\0\0\0\0\0", 4, attributer.number_attributes*sizeof(LASattribute), 0, (uint8_t*)attributer.attributes))
+              if (laszip_add_vlr(laszip_dll, "LASF_Spec\0\0\0\0\0\0", 4, attributer.number_attributes*sizeof(LASattribute), 0, (uint8_t*)attributer.attributes))
               {
                 sprintf(laszip_dll->error, "rewriting the extra bytes VLR without 'LAS 1.4 compatibility mode' attributes");
                 return 1;
@@ -1761,7 +1571,7 @@ laszip_open_reader(
             }
             else
             {
-              if (laszip_remove_vlr(pointer, "LASF_Spec\0\0\0\0\0\0", 4))
+              if (laszip_remove_vlr(laszip_dll, "LASF_Spec\0\0\0\0\0\0", 4))
               {
                 sprintf(laszip_dll->error, "removing the LAS 1.4 attribute VLR");
                 return 1;
@@ -1888,16 +1698,14 @@ laszip_open_reader(
   return 0;
 }
 
-/*---------------------------------------------------------------------------*/
-LASZIP_API int32_t
+int32_t
 laszip_has_spatial_index(
-    void *                     pointer
+    laszip_dll_struct *                     laszip_dll
     , laszip_BOOL*                     is_indexed
     , laszip_BOOL*                     is_appended
 )
 {
-  if (pointer == 0) return 1;
-  laszip_dll_struct* laszip_dll = (laszip_dll_struct*)pointer;
+  if (laszip_dll == 0) return 1;
 
   try
   {
@@ -1948,10 +1756,9 @@ laszip_has_spatial_index(
   return 0;
 }
 
-/*---------------------------------------------------------------------------*/
-LASZIP_API int32_t
+int32_t
 laszip_inside_rectangle(
-    void *                     pointer
+    laszip_dll_struct *                     laszip_dll
     , const double                 r_min_x
     , const double                 r_min_y
     , const double                 r_max_x
@@ -1959,8 +1766,7 @@ laszip_inside_rectangle(
     , laszip_BOOL*                     is_empty
 )
 {
-  if (pointer == 0) return 1;
-  laszip_dll_struct* laszip_dll = (laszip_dll_struct*)pointer;
+  if (laszip_dll == 0) return 1;
 
   try
   {
@@ -2024,15 +1830,13 @@ laszip_inside_rectangle(
   return 0;
 }
 
-/*---------------------------------------------------------------------------*/
-LASZIP_API int32_t
+int32_t
 laszip_seek_point(
-    void *                     pointer
+    laszip_dll_struct *                     laszip_dll
     , uint64_t                       index
 )
 {
-  if (pointer == 0) return 1;
-  laszip_dll_struct* laszip_dll = (laszip_dll_struct*)pointer;
+  if (laszip_dll == 0) return 1;
 
   try
   {
@@ -2058,14 +1862,12 @@ laszip_seek_point(
   return 0;
 }
 
-/*---------------------------------------------------------------------------*/
-LASZIP_API int32_t
+int32_t
 laszip_read_point(
-    void *                     pointer
+    laszip_dll_struct *                     laszip_dll
 )
 {
-  if (pointer == 0) return 1;
-  laszip_dll_struct* laszip_dll = (laszip_dll_struct*)pointer;
+  if (laszip_dll == 0) return 1;
 
   try
   {
@@ -2133,15 +1935,13 @@ laszip_read_point(
   return 0;
 }
 
-/*---------------------------------------------------------------------------*/
-LASZIP_API int32_t
+int32_t
 laszip_read_inside_point(
-    void *                     pointer
+    laszip_dll_struct *                     laszip_dll
     , laszip_BOOL*                     is_done
 )
 {
-  if (pointer == 0) return 1;
-  laszip_dll_struct* laszip_dll = (laszip_dll_struct*)pointer;
+  if (laszip_dll == 0) return 1;
 
   try
   {
@@ -2202,14 +2002,12 @@ laszip_read_inside_point(
   return 0;
 }
 
-/*---------------------------------------------------------------------------*/
-LASZIP_API int32_t
+int32_t
 laszip_close_reader(
-    void *                     pointer
+    laszip_dll_struct *                     laszip_dll
 )
 {
-  if (pointer == 0) return 1;
-  laszip_dll_struct* laszip_dll = (laszip_dll_struct*)pointer;
+  if (laszip_dll == 0) return 1;
 
   try
   {

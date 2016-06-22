@@ -1,34 +1,3 @@
-/*
-===============================================================================
-
-  FILE:  laspoint.hpp
-  
-  CONTENTS:
-  
-    This class describes an LAS point and offers helper functions to access,
-    convert, and set the default (and any additional) point attributes.
-
-  PROGRAMMERS:
-
-    martin.isenburg@rapidlasso.com  -  http://rapidlasso.com
-
-  COPYRIGHT:
-
-    (c) 2007-2015, martin isenburg, rapidlasso - fast tools to catch reality
-
-    This is free software; you can redistribute and/or modify it under the
-    terms of the GNU Lesser General Licence as published by the Free Software
-    Foundation. See the LICENSE.txt file for more information.
-
-    This software is distributed WITHOUT ANY WARRANTY and without even the
-    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-  
-  CHANGE HISTORY:
-  
-    19 July 2015 -- created after FOSS4GE in the train back from Lake Como
-  
-===============================================================================
-*/
 #ifndef LAS_POINT_HPP
 #define LAS_POINT_HPP
 
@@ -471,7 +440,7 @@ public:
     have_nir = FALSE;
     extra_bytes_number = 0;
     total_point_size = 0;
-    
+
     num_items = 0;
     if (items) delete [] items;
     items = 0;
@@ -603,7 +572,7 @@ public:
     return FALSE;
   };
 
-  inline BOOL set_attribute(I32 index, const U8* data) 
+  inline BOOL set_attribute(I32 index, const U8* data)
   {
     if (has_attribute(index))
     {

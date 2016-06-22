@@ -1,35 +1,3 @@
-/*
-===============================================================================
-
-  FILE:  mydefs.hpp
-
-  CONTENTS:
-
-    Basic data type definitions and operations to be robust across platforms.
-
-  PROGRAMMERS:
-
-    martin.isenburg@rapidlasso.com  -  http://rapidlasso.com
-
-  COPYRIGHT:
-
-    (c) 2005-2015, martin isenburg, rapidlasso - fast tools to catch reality
-
-    This is free software; you can redistribute and/or modify it under the
-    terms of the GNU Lesser General Licence as published by the Free Software
-    Foundation. See the COPYING file for more information.
-
-    This software is distributed WITHOUT ANY WARRANTY and without even the
-    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-
-  CHANGE HISTORY:
-
-    28 October 2015 -- adding DLL bindings via 'COMPILE_AS_DLL' and 'USE_AS_DLL'
-    10 January 2011 -- licensing change for LGPL release and libLAS integration
-    13 July 2005 -- created after returning with many mosquito bites from OBX
-
-===============================================================================
-*/
 #ifndef MYDEFS_HPP
 #define MYDEFS_HPP
 

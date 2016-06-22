@@ -1,38 +1,3 @@
-/*
-===============================================================================
-
-  FILE:  arithmeticdecoder.hpp
-
-  CONTENTS:
-
-    A modular C++ wrapper for an adapted version of Amir Said's FastAC Code.
-    see: http://www.cipr.rpi.edu/~said/FastAC.html
-
-  PROGRAMMERS:
-
-    martin.isenburg@rapidlasso.com  -  http://rapidlasso.com
-
-  COPYRIGHT:
-
-    (c) 2007-2014, martin isenburg, rapidlasso - fast tools to catch reality
-
-    This is free software; you can redistribute and/or modify it under the
-    terms of the GNU Lesser General Licence as published by the Free Software
-    Foundation. See the COPYING file for more information.
-
-    This software is distributed WITHOUT ANY WARRANTY and without even the
-    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-
-  CHANGE HISTORY:
-
-    13 November 2014 -- integrity check in readBits(), readByte(), readShort()
-     6 September 2014 -- removed the (unused) inheritance from EntropyDecoder
-    10 January 2011 -- licensing change for LGPL release and liblas integration
-     8 December 2010 -- unified framework for all entropy coders
-    30 October 2009 -- refactoring Amir Said's FastAC code
-
-===============================================================================
-*/
 #ifndef ARITHMETIC_DECODER_HPP
 #define ARITHMETIC_DECODER_HPP
 

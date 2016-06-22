@@ -1,34 +1,3 @@
-/*
-===============================================================================
-
-  FILE:  lasattributer.hpp
-  
-  CONTENTS:
-  
-    This class assists with handling the "extra bytes" that allow storing 
-    additional per point attributes.
-
-  PROGRAMMERS:
-
-    martin.isenburg@rapidlasso.com  -  http://rapidlasso.com
-
-  COPYRIGHT:
-
-    (c) 2007-2015, martin isenburg, rapidlasso - fast tools to catch reality
-
-    This is free software; you can redistribute and/or modify it under the
-    terms of the GNU Lesser General Licence as published by the Free Software
-    Foundation. See the LICENSE.txt file for more information.
-
-    This software is distributed WITHOUT ANY WARRANTY and without even the
-    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-  
-  CHANGE HISTORY:
-  
-    19 July 2015 -- created after FOSS4GE in the train back from Lake Como
-  
-===============================================================================
-*/
 #ifndef LAS_ATTRIBUTER_HPP
 #define LAS_ATTRIBUTER_HPP
 
@@ -441,7 +410,7 @@ public:
   {
     I32 index = get_attribute_index(name);
     if (index != -1)
-    { 
+    {
       return remove_attribute(index);
     }
     return FALSE;

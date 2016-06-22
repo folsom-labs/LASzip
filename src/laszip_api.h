@@ -1,43 +1,3 @@
-/*
-===============================================================================
-
-  FILE:  laszip_dll.h
-
-  CONTENTS:
-
-    A simple DLL interface to LASzip
-
-  PROGRAMMERS:
-
-    martin.isenburg@rapidlasso.com  -  http://rapidlasso.com
-
-  COPYRIGHT:
-
-    (c) 2007-2015, martin isenburg, rapidlasso - fast tools to catch reality
-
-    This is free software; you can redistribute and/or modify it under the
-    terms of the GNU Lesser General Licence as published by the Free Software
-    Foundation. See the COPYING file for more information.
-
-    This software is distributed WITHOUT ANY WARRANTY and without even the
-    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-
-  CHANGE HISTORY:
-
-    23 September 2015 -- correct update of bounding box and counters from inventory on closing
-    22 September 2015 -- bug fix for not overwriting description of pre-existing "extra bytes"
-    5 September 2015 -- "LAS 1.4 compatibility mode" now allows pre-existing "extra bytes"
-    3 August 2015 -- incompatible DLL change for QSI-sponsored "LAS 1.4 compatibility mode"
-    8 July 2015 -- adding support for NOAA-sponsored "LAS 1.4 compatibility mode"
-    1 April 2015 -- adding exploitation and creation of spatial indexing information
-    8 August 2013 -- added laszip_get_coordinates() and laszip_set_coordinates()
-    6 August 2013 -- added laszip_auto_offset() and laszip_check_for_integer_overflow()
-    31 July 2013 -- added laszip_get_point_count() for FUSION integration
-    29 July 2013 -- reorganized to create an easy to use LASzip DLL
-
-===============================================================================
-*/
-
 #ifndef LASZIP_DLL_H
 #define LASZIP_DLL_H
 
@@ -46,12 +6,19 @@ extern "C"
 {
 #endif
 
-/*---------------------------------------------------------------------------*/
-/*--------------- DLL variables to pass data to/from LASzip -----------------*/
-/*---------------------------------------------------------------------------*/
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 #include <stdint.h>
 
+#include "mydefs.hpp"
+
 typedef int                laszip_BOOL;
+
+class ByteStreamIn;
+class LASreadPoint;
+class LASattributer;
+class LASindex;
 
 typedef struct laszip_geokey
 {
@@ -166,212 +133,81 @@ typedef struct laszip_point
 
 } laszip_point_struct;
 
-/*---------------------------------------------------------------------------*/
-/*---------------- DLL functions to manage the LASzip DLL -------------------*/
-/*---------------------------------------------------------------------------*/
+class laszip_dll_inventory;
 
-#define LASZIP_API
+typedef struct laszip_dll {
+  laszip_header_struct header;
+  I64 p_count;
+  I64 npoints;
+  laszip_point_struct point;
+  U8** point_items;
+  FILE* file;
+  ByteStreamIn* streamin;
+  LASreadPoint* reader;
+  LASattributer* attributer;
+  CHAR error[1024];
+  CHAR warning[1024];
+  LASindex* lax_index;
+  F64 lax_r_min_x;
+  F64 lax_r_min_y;
+  F64 lax_r_max_x;
+  F64 lax_r_max_y;
+  CHAR* lax_file_name;
+  BOOL lax_create;
+  BOOL lax_append;
+  BOOL lax_exploit;
+  BOOL preserve_generating_software;
+  BOOL request_compatibility_mode;
+  BOOL compatibility_mode;
+  I32 start_scan_angle;
+  I32 start_extended_returns;
+  I32 start_classification;
+  I32 start_flags_and_channel;
+  I32 start_NIR_band;
+  laszip_dll_inventory* inventory;
+} laszip_dll_struct;
 
-/*---------------------------------------------------------------------------*/
-LASZIP_API int32_t
-laszip_create(
-    void **                    pointer
-);
+int32_t laszip_create(laszip_dll_struct **pointer);
+int32_t laszip_get_error(laszip_dll_struct *pointer, char** error);
+int32_t laszip_get_warning(laszip_dll_struct *pointer, char**warning);
+int32_t laszip_clean(laszip_dll_struct *pointer);
+int32_t laszip_destroy(laszip_dll_struct *pointer);
+int32_t laszip_get_header_pointer(laszip_dll_struct *pointer, laszip_header_struct **header_pointer);
+int32_t laszip_get_point_pointer(laszip_dll_struct *pointer, laszip_point_struct **point_pointer);
+int32_t laszip_get_point_count(laszip_dll_struct *pointer, uint64_t *count);
+int32_t laszip_check_for_integer_overflow(laszip_dll_struct *pointer);
+int32_t laszip_auto_offset(laszip_dll_struct *pointer);
+int32_t laszip_get_coordinates(laszip_dll_struct *pointer, double *coordinates);
 
-/*---------------------------------------------------------------------------*/
-LASZIP_API int32_t
-laszip_get_error
-(
-    void *                     pointer
-    , char**                    error
-);
-
-/*---------------------------------------------------------------------------*/
-LASZIP_API int32_t
-laszip_get_warning
-(
-    void *                     pointer
-    , char**                    warning
-);
-
-/*---------------------------------------------------------------------------*/
-LASZIP_API int32_t
-laszip_clean(
-    void *                     pointer
-);
-
-/*---------------------------------------------------------------------------*/
-LASZIP_API int32_t
-laszip_destroy(
-    void *                     pointer
-);
-
-/*---------------------------------------------------------------------------*/
-/*---------- DLL functions to write and read LAS and LAZ files --------------*/
-/*---------------------------------------------------------------------------*/
-
-/*---------------------------------------------------------------------------*/
-LASZIP_API int32_t
-laszip_get_header_pointer(
-    void *                     pointer
-    , laszip_header_struct**           header_pointer
-);
-
-/*---------------------------------------------------------------------------*/
-LASZIP_API int32_t
-laszip_get_point_pointer(
-    void *                     pointer
-    , laszip_point_struct**            point_pointer
-);
-
-/*---------------------------------------------------------------------------*/
-LASZIP_API int32_t
-laszip_get_point_count(
-    void *                     pointer
-    , uint64_t*                      count
-);
-
-/*---------------------------------------------------------------------------*/
-LASZIP_API int32_t
-laszip_check_for_integer_overflow(
-    void *                     pointer
-);
-
-/*---------------------------------------------------------------------------*/
-LASZIP_API int32_t
-laszip_auto_offset(
-    void *                     pointer
-);
-
-/*---------------------------------------------------------------------------*/
-LASZIP_API int32_t
-laszip_get_coordinates(
-    void *                     pointer
-    , double*                      coordinates
-);
-
-/*---------------------------------------------------------------------------*/
-LASZIP_API int32_t
-laszip_add_vlr(
-    void *                     pointer
+int32_t laszip_add_vlr(
+    laszip_dll_struct *                     pointer
     , const char*               user_id
     , uint16_t                       record_id
     , uint16_t                       record_length_after_header
     , const char*               description
-    , const uint8_t*                 data
-);
+    , const uint8_t*                 data);
 
-/*---------------------------------------------------------------------------*/
-LASZIP_API int32_t
-laszip_remove_vlr(
-    void *                     pointer
-    , const char*               user_id
-    , uint16_t                       record_id
-);
+int32_t laszip_remove_vlr(laszip_dll_struct *pointer, const char*user_id, uint16_t record_id);
+int32_t laszip_create_spatial_index(laszip_dll_struct *pointer, const laszip_BOOL create, const laszip_BOOL append);
+int32_t laszip_preserve_generating_software(laszip_dll_struct *pointer, const laszip_BOOL preserve);
+int32_t laszip_request_compatibility_mode(laszip_dll_struct *pointer, const laszip_BOOL request);
+int32_t laszip_update_inventory(laszip_dll_struct *pointer);
+int32_t laszip_exploit_spatial_index(laszip_dll_struct *pointer, const laszip_BOOL exploit);
+int32_t laszip_open_reader(laszip_dll_struct *pointer, const char *file_name, laszip_BOOL *is_compressed);
+int32_t laszip_has_spatial_index(laszip_dll_struct *pointer, laszip_BOOL *is_indexed, laszip_BOOL *is_appended);
 
-/*---------------------------------------------------------------------------*/
-LASZIP_API int32_t
-laszip_create_spatial_index(
-    void *                     pointer
-    , const laszip_BOOL                create
-    , const laszip_BOOL                append
-);
-
-/*---------------------------------------------------------------------------*/
-LASZIP_API int32_t
-laszip_preserve_generating_software(
-    void *                     pointer
-    , const laszip_BOOL                preserve
-);
-
-/*---------------------------------------------------------------------------*/
-LASZIP_API int32_t
-laszip_request_compatibility_mode(
-    void *                     pointer
-    , const laszip_BOOL                request
-);
-
-/*---------------------------------------------------------------------------*/
-LASZIP_API int32_t
-laszip_update_inventory(
-    void *                     pointer
-);
-
-/*---------------------------------------------------------------------------*/
-LASZIP_API int32_t
-laszip_exploit_spatial_index(
-    void *                     pointer
-    , const laszip_BOOL                exploit
-);
-
-/*---------------------------------------------------------------------------*/
-LASZIP_API int32_t
-laszip_open_reader(
-    void *                     pointer
-    , const char*               file_name
-    , laszip_BOOL*                     is_compressed
-);
-
-/*---------------------------------------------------------------------------*/
-LASZIP_API int32_t
-laszip_has_spatial_index(
-    void *                     pointer
-    , laszip_BOOL*                     is_indexed
-    , laszip_BOOL*                     is_appended
-);
-
-/*---------------------------------------------------------------------------*/
-LASZIP_API int32_t
-laszip_inside_rectangle(
-    void *                     pointer
+int32_t laszip_inside_rectangle(
+    laszip_dll_struct *                     pointer
     , double                       min_x
     , double                       min_y
     , double                       max_x
     , double                       max_y
-    , laszip_BOOL*                     is_empty
-);
+    , laszip_BOOL*                     is_empty);
 
-/*---------------------------------------------------------------------------*/
-LASZIP_API int32_t
-laszip_seek_point(
-    void *                     pointer
-    , uint64_t                       index
-);
-
-/*---------------------------------------------------------------------------*/
-LASZIP_API int32_t
-laszip_read_point(
-    void *                     pointer
-);
-
-/*---------------------------------------------------------------------------*/
-LASZIP_API int32_t
-laszip_read_inside_point(
-    void *                     pointer
-    , laszip_BOOL*                     is_done
-);
-
-/*---------------------------------------------------------------------------*/
-LASZIP_API int32_t
-laszip_close_reader(
-    void *                     pointer
-);
-
-/*---------------------------------------------------------------------------*/
-/*---------------- DLL functions to load and unload LASzip ------------------*/
-/*---------------------------------------------------------------------------*/
-
-/*---------------------------------------------------------------------------*/
-LASZIP_API int32_t
-laszip_load_dll
-(
-);
-
-/*---------------------------------------------------------------------------*/
-LASZIP_API int32_t
-laszip_unload_dll
-(
-);
+int32_t laszip_seek_point(laszip_dll_struct *pointer, uint64_t index);
+int32_t laszip_read_point(laszip_dll_struct *pointer);
+int32_t laszip_read_inside_point(laszip_dll_struct *pointer, laszip_BOOL*is_done);
+int32_t laszip_close_reader(laszip_dll_struct *pointer);
 
 #ifdef __cplusplus
 }

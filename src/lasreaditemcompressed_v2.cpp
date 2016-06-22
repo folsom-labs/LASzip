@@ -1,34 +1,3 @@
-/*
-===============================================================================
-
-  FILE:  lasreaditemcompressed_v2.cpp
-  
-  CONTENTS:
-  
-    see corresponding header file
-  
-  PROGRAMMERS:
-
-    martin.isenburg@rapidlasso.com  -  http://rapidlasso.com
-
-  COPYRIGHT:
-
-    (c) 2007-2012, martin isenburg, rapidlasso - fast tools to catch reality
-
-    This is free software; you can redistribute and/or modify it under the
-    terms of the GNU Lesser General Licence as published by the Free Software
-    Foundation. See the COPYING file for more information.
-
-    This software is distributed WITHOUT ANY WARRANTY and without even the
-    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-  
-  CHANGE HISTORY:
-  
-    see corresponding header file
-  
-===============================================================================
-*/
-
 #include "lasreaditemcompressed_v2.hpp"
 
 #include <assert.h>
@@ -127,7 +96,7 @@ BOOL LASreadItemCompressed_POINT10_v2::init(const U8* item)
   /* init last item */
   memcpy(last_item, item, 20);
 
-  /* but set intensity to zero */ 
+  /* but set intensity to zero */
   last_item[12] = 0;
   last_item[13] = 0;
 
@@ -182,7 +151,7 @@ inline void LASreadItemCompressed_POINT10_v2::read(U8* item)
       }
       last_item[15] = (U8)dec->decodeSymbol(m_classification[last_item[15]]);
     }
-    
+
     // decompress the scan_angle_rank ... if it has changed
     if (changed_values & 4)
     {
@@ -248,7 +217,7 @@ inline void LASreadItemCompressed_POINT10_v2::read(U8* item)
 #define LASZIP_GPSTIME_MULTI_UNCHANGED (LASZIP_GPSTIME_MULTI - LASZIP_GPSTIME_MULTI_MINUS + 1)
 #define LASZIP_GPSTIME_MULTI_CODE_FULL (LASZIP_GPSTIME_MULTI - LASZIP_GPSTIME_MULTI_MINUS + 2)
 
-#define LASZIP_GPSTIME_MULTI_TOTAL (LASZIP_GPSTIME_MULTI - LASZIP_GPSTIME_MULTI_MINUS + 6) 
+#define LASZIP_GPSTIME_MULTI_TOTAL (LASZIP_GPSTIME_MULTI - LASZIP_GPSTIME_MULTI_MINUS + 6)
 
 LASreadItemCompressed_GPSTIME11_v2::LASreadItemCompressed_GPSTIME11_v2(ArithmeticDecoder* dec)
 {
@@ -304,7 +273,7 @@ inline void LASreadItemCompressed_GPSTIME11_v2::read(U8* item)
     {
       last_gpstime_diff[last] = ic_gpstime->decompress(0, 0);
       last_gpstime[last].i64 += last_gpstime_diff[last];
-      multi_extreme_counter[last] = 0; 
+      multi_extreme_counter[last] = 0;
     }
     else if (multi == 2) // the difference is huge
     {
@@ -314,7 +283,7 @@ inline void LASreadItemCompressed_GPSTIME11_v2::read(U8* item)
       last_gpstime[next].u64 |= dec->readInt();
       last = next;
       last_gpstime_diff[last] = 0;
-      multi_extreme_counter[last] = 0; 
+      multi_extreme_counter[last] = 0;
     }
     else if (multi > 2) // we switch to another sequence
     {
@@ -388,7 +357,7 @@ inline void LASreadItemCompressed_GPSTIME11_v2::read(U8* item)
       last_gpstime[next].u64 |= dec->readInt();
       last = next;
       last_gpstime_diff[last] = 0;
-      multi_extreme_counter[last] = 0; 
+      multi_extreme_counter[last] = 0;
     }
     else if (multi >=  LASZIP_GPSTIME_MULTI_CODE_FULL)
     {
@@ -460,7 +429,7 @@ inline void LASreadItemCompressed_RGB12_v2::read(U8* item)
     corr = dec->decodeSymbol(m_rgb_diff_0);
     ((U16*)item)[0] = (U16)U8_FOLD(corr + (last_item[0]&255));
   }
-  else 
+  else
   {
     ((U16*)item)[0] = last_item[0]&0xFF;
   }

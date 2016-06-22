@@ -1,37 +1,3 @@
-/*
-===============================================================================
-
-  FILE:  lasquantizer.hpp
-  
-  CONTENTS:
-  
-    This class assists with converting between a fixed-point notation based on
-    scaled integers plus large offsets and standard double-precision floating-
-    point numbers. For efficieny in storage and uniform precision (far from the
-    origin) the LAS format stores all point coordinates as scaled and offset
-    32-bit integers.
-
-  PROGRAMMERS:
-
-    martin.isenburg@rapidlasso.com  -  http://rapidlasso.com
-
-  COPYRIGHT:
-
-    (c) 2007-2015, martin isenburg, rapidlasso - fast tools to catch reality
-
-    This is free software; you can redistribute and/or modify it under the
-    terms of the GNU Lesser General Licence as published by the Free Software
-    Foundation. See the LICENSE.txt file for more information.
-
-    This software is distributed WITHOUT ANY WARRANTY and without even the
-    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-  
-  CHANGE HISTORY:
-  
-    19 July 2015 -- created after FOSS4GE in the train back from Lake Como
-  
-===============================================================================
-*/
 #ifndef LAS_QUANTIZER_HPP
 #define LAS_QUANTIZER_HPP
 
