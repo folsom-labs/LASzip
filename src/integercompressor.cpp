@@ -33,8 +33,9 @@ IntegerCompressor::IntegerCompressor(ArithmeticDecoder* dec, U32 bits, U32 conte
 
   k = 0;
 
-  mBits = 0;
-  mCorrector = 0;
+  mBits = nullptr;
+  mCorrector = nullptr;
+  mCorrector0 = nullptr;
 }
 
 IntegerCompressor::~IntegerCompressor()
@@ -51,7 +52,8 @@ IntegerCompressor::~IntegerCompressor()
 
   if (mCorrector)
   {
-    dec->destroyBitModel((ArithmeticBitModel*)mCorrector[0]);
+    crashif(!mCorrector0);
+    dec->destroyBitModel(mCorrector0);
     for (i = 1; i <= corr_bits; i++)
     {
       dec->destroySymbolModel(mCorrector[i]);
@@ -76,7 +78,7 @@ void IntegerCompressor::initDecompressor()
     }
 
     mCorrector = new ArithmeticModel*[corr_bits+1];
-    mCorrector[0] = (ArithmeticModel*)dec->createBitModel();
+    mCorrector0 = dec->createBitModel();
     for (i = 1; i <= corr_bits; i++)
     {
       if (i <= bits_high)
@@ -96,7 +98,7 @@ void IntegerCompressor::initDecompressor()
     dec->initSymbolModel(mBits[i]);
   }
 
-  dec->initBitModel((ArithmeticBitModel*)mCorrector[0]);
+  dec->initBitModel(mCorrector0);
   for (i = 1; i <= corr_bits; i++)
   {
     dec->initSymbolModel(mCorrector[i]);
@@ -161,7 +163,7 @@ I32 IntegerCompressor::readCorrector(ArithmeticModel* mBits)
   }
   else // then c is either 0 or 1
   {
-    c = dec->decodeBit((ArithmeticBitModel*)mCorrector[0]);
+    c = dec->decodeBit(mCorrector0);
   }
 
   return c;

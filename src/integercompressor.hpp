@@ -17,7 +17,6 @@ public:
   U32 getK() const {return k;};
 
 private:
-  void writeCorrector(I32 c, ArithmeticModel* model);
   I32 readCorrector(ArithmeticModel* model);
 
   U32 k;
@@ -38,6 +37,7 @@ private:
   ArithmeticModel** mBits;
 
   ArithmeticModel** mCorrector;
+  ArithmeticBitModel *mCorrector0;
 };
 
 #endif
