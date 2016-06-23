@@ -94,6 +94,8 @@ BOOL LASreadItemCompressed_POINT10_v1::init(const U8* item)
 
 inline void LASreadItemCompressed_POINT10_v1::read(U8* item)
 {
+  LASpoint10 *lastPoint = (LASpoint10*)last_item;
+
   // find median difference for x and y from 3 preceding differences
   I32 median_x;
   if (last_x_diff[0] < last_x_diff[1])
@@ -137,13 +139,13 @@ inline void LASreadItemCompressed_POINT10_v1::read(U8* item)
 
   // decompress x y z coordinates
   I32 x_diff = ic_dx->decompress(median_x);
-  ((LASpoint10*)last_item)->x += x_diff;
+  lastPoint->x += x_diff;
   // we use the number k of bits corrector bits to switch contexts
   U32 k_bits = ic_dx->getK();
   I32 y_diff = ic_dy->decompress(median_y, (k_bits < 19 ? k_bits : 19));
-  ((LASpoint10*)last_item)->y += y_diff;
+  lastPoint->y += y_diff;
   k_bits = (k_bits + ic_dy->getK())/2;
-  ((LASpoint10*)last_item)->z = ic_z->decompress(((LASpoint10*)last_item)->z, (k_bits < 19 ? k_bits : 19));
+  lastPoint->z = ic_z->decompress(lastPoint->z, (k_bits < 19 ? k_bits : 19));
 
   // decompress which other values have changed
   I32 changed_values = dec->decodeSymbol(m_changed_values);
@@ -153,7 +155,7 @@ inline void LASreadItemCompressed_POINT10_v1::read(U8* item)
     // decompress the intensity if it has changed
     if (changed_values & 32)
     {
-      ((LASpoint10*)last_item)->intensity = (U16)ic_intensity->decompress(((LASpoint10*)last_item)->intensity);
+      lastPoint->intensity = (U16)ic_intensity->decompress(lastPoint->intensity);
     }
 
     // decompress the edge_of_flight_line, scan_direction_flag, ... if it has changed
@@ -198,7 +200,7 @@ inline void LASreadItemCompressed_POINT10_v1::read(U8* item)
     // decompress the point_source_ID ... if it has changed
     if (changed_values & 1)
     {
-      ((LASpoint10*)last_item)->point_source_ID = (U16)ic_point_source_ID->decompress(((LASpoint10*)last_item)->point_source_ID);
+      lastPoint->point_source_ID = (U16)ic_point_source_ID->decompress(lastPoint->point_source_ID);
     }
   }
 
