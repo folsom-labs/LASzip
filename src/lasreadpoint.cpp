@@ -194,69 +194,59 @@ BOOL LASreadPoint::read(U8* const * point)
   crashif(!dec);
   try
   {
-    if (dec)
+    if (chunk_count == chunk_size)
     {
-      if (chunk_count == chunk_size)
+      if (point_start != 0)
       {
-        if (point_start != 0)
+        dec->done();
+        current_chunk++;
+        // check integrity
+        if (current_chunk < tabled_chunks)
         {
-          dec->done();
-          current_chunk++;
-          // check integrity
-          if (current_chunk < tabled_chunks)
+          I64 here = instream->tell();
+          if (chunk_starts[current_chunk] != here)
           {
-            I64 here = instream->tell();
-            if (chunk_starts[current_chunk] != here)
-            {
-              // previous chunk was corrupt
-              current_chunk--;
-              throw 4711;
-            }
+            // previous chunk was corrupt
+            current_chunk--;
+            throw 4711;
           }
         }
-        init_dec();
-        if (current_chunk == tabled_chunks) // no or incomplete chunk table?
-        {
-          if (current_chunk == number_chunks)
-          {
-            number_chunks += 256;
-            chunk_starts = (I64*)realloc(chunk_starts, sizeof(I64)*(number_chunks+1));
-          }
-          chunk_starts[tabled_chunks] = point_start; // needs fixing
-          tabled_chunks++;
-        }
-        else if (chunk_totals) // variable sized chunks?
-        {
-          chunk_size = chunk_totals[current_chunk+1]-chunk_totals[current_chunk];
-        }
-        chunk_count = 0;
       }
-      chunk_count++;
+      init_dec();
+      if (current_chunk == tabled_chunks) // no or incomplete chunk table?
+      {
+        if (current_chunk == number_chunks)
+        {
+          number_chunks += 256;
+          chunk_starts = (I64*)realloc(chunk_starts, sizeof(I64)*(number_chunks+1));
+        }
+        chunk_starts[tabled_chunks] = point_start; // needs fixing
+        tabled_chunks++;
+      }
+      else if (chunk_totals) // variable sized chunks?
+      {
+        chunk_size = chunk_totals[current_chunk+1]-chunk_totals[current_chunk];
+      }
+      chunk_count = 0;
+    }
+    chunk_count++;
 
-      if (readers)
+    if (readers)
+    {
+      for (i = 0; i < num_readers; i++)
       {
-        for (i = 0; i < num_readers; i++)
-        {
-          readers[i]->read(point[i]);
-        }
-      }
-      else
-      {
-        for (i = 0; i < num_readers; i++)
-        {
-          readers_raw[i]->read(point[i]);
-          ((LASreadItemCompressed*)(readers_compressed[i]))->init(point[i]);
-        }
-        readers = readers_compressed;
-        dec->init(instream);
+        readers[i]->read(point[i]);
       }
     }
     else
     {
       for (i = 0; i < num_readers; i++)
       {
-        readers[i]->read(point[i]);
+        readers_raw[i]->read(point[i]);
+        ((LASreadItemCompressed*)(readers_compressed[i]))->init(point[i]);
       }
+      readers = readers_compressed;
+      dec->init(instream);
     }
   }
   catch (I32 exception)
