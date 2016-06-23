@@ -28,7 +28,6 @@ LASreadPoint::LASreadPoint()
   chunk_starts = 0;
   // used for seeking
   point_start = 0;
-  seek_point = 0;
   // used for error and warning reporting
   last_error = 0;
   last_warning = 0;
@@ -107,16 +106,6 @@ BOOL LASreadPoint::setup(U32 num_items, const LASitem* items, const LASzip* lasz
   if (dec)
   {
     readers_compressed = new LASreadItem*[num_readers];
-    // seeks with compressed data need a seek point
-    if (seek_point)
-    {
-      delete [] seek_point[0];
-      delete [] seek_point;
-    }
-    seek_point = new U8*[num_items];
-    if (!seek_point) return FALSE;
-    seek_point[0] = new U8[point_size];
-    if (!seek_point[0]) return FALSE;
     for (i = 0; i < num_readers; i++)
     {
       switch (items[i].type)
@@ -162,7 +151,6 @@ BOOL LASreadPoint::setup(U32 num_items, const LASitem* items, const LASzip* lasz
       default:
         return FALSE;
       }
-      if (i) seek_point[i] = seek_point[i-1]+items[i-1].size;
     }
     if (laszip->compressor == LASZIP_COMPRESSOR_POINTWISE_CHUNKED)
     {
@@ -554,12 +542,6 @@ LASreadPoint::~LASreadPoint()
 
   if (chunk_totals) delete [] chunk_totals;
   if (chunk_starts) free(chunk_starts);
-
-  if (seek_point)
-  {
-    delete [] seek_point[0];
-    delete [] seek_point;
-  }
 
   if (last_error) delete [] last_error;
   if (last_warning) delete [] last_warning;

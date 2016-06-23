@@ -171,7 +171,6 @@ int32_t laszip_auto_offset(laszip_dll_struct *pointer);
 int32_t laszip_preserve_generating_software(laszip_dll_struct *pointer, const laszip_BOOL preserve);
 int32_t laszip_open_reader(laszip_dll_struct *pointer, const char *file_name, laszip_BOOL *is_compressed);
 
-int32_t laszip_seek_point(laszip_dll_struct *pointer, uint64_t index);
 int32_t laszip_read_point(laszip_dll_struct *pointer);
 int32_t laszip_close_reader(laszip_dll_struct *pointer);
 
