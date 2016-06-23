@@ -116,48 +116,50 @@ public:
   inline void read(U8* item)
   {
     instream->getBytes(buffer, 30);
-    ((LAStempReadPoint10*)item)->x = ((LAStempReadPoint14*)buffer)->x;
-    ((LAStempReadPoint10*)item)->y = ((LAStempReadPoint14*)buffer)->y;
-    ((LAStempReadPoint10*)item)->z = ((LAStempReadPoint14*)buffer)->z;
-    ((LAStempReadPoint10*)item)->intensity = ((LAStempReadPoint14*)buffer)->intensity;
-    if (((LAStempReadPoint14*)buffer)->number_of_returns > 7)
+    LAStempReadPoint10 *p10 = (LAStempReadPoint10*)item;
+    LAStempReadPoint14 *p14 = (LAStempReadPoint14*)buffer;
+    p10->x = p14->x;
+    p10->y = p14->y;
+    p10->z = p14->z;
+    p10->intensity = p14->intensity;
+    if (p14->number_of_returns > 7)
     {
-      if (((LAStempReadPoint14*)buffer)->return_number > 6)
+      if (p14->return_number > 6)
       {
-        if (((LAStempReadPoint14*)buffer)->return_number >= ((LAStempReadPoint14*)buffer)->number_of_returns)
+        if (p14->return_number >= p14->number_of_returns)
         {
-          ((LAStempReadPoint10*)item)->return_number = 7;
+          p10->return_number = 7;
         }
         else
         {
-          ((LAStempReadPoint10*)item)->return_number = 6;
+          p10->return_number = 6;
         }
       }
       else
       {
-        ((LAStempReadPoint10*)item)->return_number = ((LAStempReadPoint14*)buffer)->return_number;
+        p10->return_number = p14->return_number;
       }
-      ((LAStempReadPoint10*)item)->number_of_returns = 7;
+      p10->number_of_returns = 7;
     }
     else
     {
-      ((LAStempReadPoint10*)item)->return_number = ((LAStempReadPoint14*)buffer)->return_number;
-      ((LAStempReadPoint10*)item)->number_of_returns = ((LAStempReadPoint14*)buffer)->number_of_returns;
+      p10->return_number = p14->return_number;
+      p10->number_of_returns = p14->number_of_returns;
     }
-    ((LAStempReadPoint10*)item)->scan_direction_flag = ((LAStempReadPoint14*)buffer)->scan_direction_flag;
-    ((LAStempReadPoint10*)item)->edge_of_flight_line = ((LAStempReadPoint14*)buffer)->edge_of_flight_line;
-    ((LAStempReadPoint10*)item)->classification = (((LAStempReadPoint14*)buffer)->classification_flags << 5);
-    if (((LAStempReadPoint14*)buffer)->classification < 32) ((LAStempReadPoint10*)item)->classification |= ((LAStempReadPoint14*)buffer)->classification;
-    ((LAStempReadPoint10*)item)->scan_angle_rank = I8_CLAMP(I16_QUANTIZE(0.006f*((LAStempReadPoint14*)buffer)->scan_angle));
-    ((LAStempReadPoint10*)item)->user_data = ((LAStempReadPoint14*)buffer)->user_data;
-    ((LAStempReadPoint10*)item)->point_source_ID = ((LAStempReadPoint14*)buffer)->point_source_ID;
-    ((LAStempReadPoint10*)item)->extended_scanner_channel = ((LAStempReadPoint14*)buffer)->scanner_channel;
-    ((LAStempReadPoint10*)item)->extended_classification_flags = ((LAStempReadPoint14*)buffer)->classification_flags;
-    ((LAStempReadPoint10*)item)->extended_classification = ((LAStempReadPoint14*)buffer)->classification;
-    ((LAStempReadPoint10*)item)->extended_return_number = ((LAStempReadPoint14*)buffer)->return_number;
-    ((LAStempReadPoint10*)item)->extended_number_of_returns = ((LAStempReadPoint14*)buffer)->number_of_returns;
-    ((LAStempReadPoint10*)item)->extended_scan_angle = ((LAStempReadPoint14*)buffer)->scan_angle;
-    ((LAStempReadPoint10*)item)->gps_time = *((F64*)&buffer[22]);
+    p10->scan_direction_flag = p14->scan_direction_flag;
+    p10->edge_of_flight_line = p14->edge_of_flight_line;
+    p10->classification = (p14->classification_flags << 5);
+    if (p14->classification < 32) p10->classification |= p14->classification;
+    p10->scan_angle_rank = I8_CLAMP(I16_QUANTIZE(0.006f*p14->scan_angle));
+    p10->user_data = p14->user_data;
+    p10->point_source_ID = p14->point_source_ID;
+    p10->extended_scanner_channel = p14->scanner_channel;
+    p10->extended_classification_flags = p14->classification_flags;
+    p10->extended_classification = p14->classification;
+    p10->extended_return_number = p14->return_number;
+    p10->extended_number_of_returns = p14->number_of_returns;
+    p10->extended_scan_angle = p14->scan_angle;
+    p10->gps_time = *((F64*)&buffer[22]);
   }
 private:
   U8 buffer[30];
