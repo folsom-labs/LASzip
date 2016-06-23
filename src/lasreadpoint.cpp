@@ -191,6 +191,7 @@ BOOL LASreadPoint::read(U8* const * point)
 {
   U32 i;
 
+  crashif(!dec);
   try
   {
     if (dec)
