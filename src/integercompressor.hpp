@@ -7,11 +7,9 @@ class IntegerCompressor
 {
 public:
 
-  // Constructor & Deconstructor
-  IntegerCompressor(ArithmeticDecoder* dec, U32 bits=16, U32 contexts=1, U32 bits_high=8, U32 range=0);
+  IntegerCompressor(ArithmeticDecoder* dec, U32 bits, U32 contexts);
   ~IntegerCompressor();
 
-  // Manage Decompressor
   void initDecompressor();
   I32 decompress(I32 iPred, U32 context=0);
 

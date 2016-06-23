@@ -28,12 +28,12 @@ LASreadItemCompressed_POINT10_v1::LASreadItemCompressed_POINT10_v1(ArithmeticDec
   this->dec = dec;
 
   /* create models and integer compressors */
-  ic_dx = new IntegerCompressor(dec, 32);  // 32 bits, 1 context
+  ic_dx = new IntegerCompressor(dec, 32, 1);  // 32 bits, 1 context
   ic_dy = new IntegerCompressor(dec, 32, 20); // 32 bits, 20 contexts
   ic_z = new IntegerCompressor(dec, 32, 20);  // 32 bits, 20 contexts
-  ic_intensity = new IntegerCompressor(dec, 16);
+  ic_intensity = new IntegerCompressor(dec, 16, 1);
   ic_scan_angle_rank = new IntegerCompressor(dec, 8, 2);
-  ic_point_source_ID = new IntegerCompressor(dec, 16);
+  ic_point_source_ID = new IntegerCompressor(dec, 16, 1);
   m_changed_values = dec->createSymbolModel(64);
   for (i = 0; i < 256; i++)
   {
@@ -402,9 +402,9 @@ LASreadItemCompressed_WAVEPACKET13_v1::LASreadItemCompressed_WAVEPACKET13_v1(Ari
   m_offset_diff[1] = dec->createSymbolModel(4);
   m_offset_diff[2] = dec->createSymbolModel(4);
   m_offset_diff[3] = dec->createSymbolModel(4);
-  ic_offset_diff = new IntegerCompressor(dec, 32);
-  ic_packet_size = new IntegerCompressor(dec, 32);
-  ic_return_point = new IntegerCompressor(dec, 32);
+  ic_offset_diff = new IntegerCompressor(dec, 32, 1);
+  ic_packet_size = new IntegerCompressor(dec, 32, 1);
+  ic_return_point = new IntegerCompressor(dec, 32, 1);
   ic_xyz = new IntegerCompressor(dec, 32, 3);
 
   /* create last item */

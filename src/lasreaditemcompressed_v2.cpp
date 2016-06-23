@@ -32,7 +32,7 @@ LASreadItemCompressed_POINT10_v2::LASreadItemCompressed_POINT10_v2(ArithmeticDec
   ic_intensity = new IntegerCompressor(dec, 16, 4);
   m_scan_angle_rank[0] = dec->createSymbolModel(256);
   m_scan_angle_rank[1] = dec->createSymbolModel(256);
-  ic_point_source_ID = new IntegerCompressor(dec, 16);
+  ic_point_source_ID = new IntegerCompressor(dec, 16, 1);
   for (i = 0; i < 256; i++)
   {
     m_bit_byte[i] = 0;

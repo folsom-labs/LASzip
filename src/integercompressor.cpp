@@ -3,33 +3,18 @@
 #include <stdlib.h>
 #include <assert.h>
 
-IntegerCompressor::IntegerCompressor(ArithmeticDecoder* dec, U32 bits, U32 contexts, U32 bits_high, U32 range)
+IntegerCompressor::IntegerCompressor(ArithmeticDecoder* dec, U32 bits, U32 contexts)
 {
-  assert(dec);
+  crashif(!dec);
+  crashif(bits == 0);
+
   this->dec = dec;
   this->bits = bits;
   this->contexts = contexts;
-  this->bits_high = bits_high;
-  this->range = range;
+  this->bits_high = 8;
+  this->range = 0;
 
-  if (range) // the corrector's significant bits and range
-  {
-    corr_bits = 0;
-    corr_range = range;
-    while (range)
-    {
-      range = range >> 1;
-      corr_bits++;
-    }
-    if (corr_range == (1u << (corr_bits-1)))
-    {
-      corr_bits--;
-    }
-		// the corrector must fall into this interval
-    corr_min = -((I32)(corr_range/2));
-  	corr_max = corr_min + corr_range - 1;
-  }
-  else if (bits && bits < 32)
+  if (bits < 32)
   {
     corr_bits = bits;
     corr_range = 1u << bits;
