@@ -535,10 +535,7 @@ LASreadPoint::~LASreadPoint()
     delete [] readers_compressed;
   }
 
-  if (dec)
-  {
-    delete dec;
-  }
+  delete dec;
 
   if (chunk_totals) delete [] chunk_totals;
   if (chunk_starts) free(chunk_starts);

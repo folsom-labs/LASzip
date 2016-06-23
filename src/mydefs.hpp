@@ -124,4 +124,15 @@ inline void crashif(bool cond) {
   }
 }
 
+#include <cstdarg>
+
+void logFV(const char *fmt, va_list args);
+
+inline void logf(const char *fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+    logFV(fmt, args);
+    va_end(args);
+}
+
 #endif

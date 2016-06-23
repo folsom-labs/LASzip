@@ -6,6 +6,29 @@
 #include "bytestreamin_array.hpp"
 #include "lasreadpoint.hpp"
 
+// if true, we will print additional information to stdout, which we will use
+// to validate Go port
+static bool gEnableLogging = true;
+
+static bool bufFmtV(char *buf, size_t bufCchSize, const char *fmt, va_list args)
+{
+    int count = vsnprintf(buf, bufCchSize, fmt, args);
+    buf[bufCchSize-1] = 0;
+    if ((count >= 0) && ((size_t)count < bufCchSize))
+        return true;
+    return false;
+}
+
+void logFV(const char *fmt, va_list args) {
+  if (!gEnableLogging) {
+    return;
+  }
+
+  char buf[1024] = { 0 };
+  bufFmtV(buf, sizeof(buf), fmt, args);
+  printf("%s", buf);
+}
+
 int32_t
 laszip_get_error(
     laszip_dll_struct *                     laszip_dll
