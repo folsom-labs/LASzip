@@ -172,17 +172,10 @@ BOOL LASreadPoint::init(ByteStreamIn* instream)
     ((LASreadItemRaw*)(readers_raw[i]))->init(instream);
   }
 
-  if (dec)
-  {
-    chunk_count = chunk_size;
-    point_start = 0;
-    readers = 0;
-  }
-  else
-  {
-    point_start = instream->tell();
-    readers = readers_raw;
-  }
+  crashif(!dec);
+  chunk_count = chunk_size;
+  point_start = 0;
+  readers = 0;
 
   return TRUE;
 }
