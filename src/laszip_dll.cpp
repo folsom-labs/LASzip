@@ -458,7 +458,7 @@ laszip_open_reader(laszip_dll_struct * laszip_dll, const char* file_name, laszip
       sprintf(laszip_dll->warning, "setvbuf() failed with buffer size 262144\n");
     }
 
-    laszip_dll->streamin = new ByteStreamInFileLE(laszip_dll->file);
+    laszip_dll->streamin = new ByteStreamIn(laszip_dll->file);
 
     if (laszip_dll->streamin == 0)
     {

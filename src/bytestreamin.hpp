@@ -13,62 +13,47 @@ extern "C" int _cdecl _fseeki64(FILE*, __int64, int);
 class ByteStreamIn
 {
 public:
-  ByteStreamIn() { bit_buffer = 0; num_buffer = 0; };
-  virtual ~ByteStreamIn() {};
+  ByteStreamIn(FILE *f);
+  ~ByteStreamIn() {};
 
-  U32 getBits(U32 num_bits)
-  {
-    if (num_buffer < num_bits)
-    {
-      U32 input_bits;
-      get32bitsLE((U8*)&input_bits);
-      bit_buffer = bit_buffer | (((U64)input_bits) << num_buffer);
-      num_buffer = num_buffer + 32;
-    }
-    U32 new_bits = (U32)(bit_buffer & ((1 << num_bits) - 1));
-    bit_buffer = bit_buffer >> num_bits;
-    num_buffer = num_buffer - num_bits;
-    return new_bits;
-  };
-
-  virtual U32 getByte() = 0;
-  virtual void getBytes(U8* bytes, const U32 num_bytes) = 0;
-  virtual void get16bitsLE(U8* bytes) = 0;
-  virtual void get32bitsLE(U8* bytes) = 0;
-  virtual void get64bitsLE(U8* bytes) = 0;
-  virtual BOOL isSeekable() const = 0;
-  virtual I64 tell() const = 0;
-  virtual BOOL seek(const I64 position) = 0;
-  virtual BOOL seekEnd(const I64 distance=0) = 0;
+  U32 getBits(U32 num_bits);
+  U32 getByte();
+  void getBytes(U8* bytes, const U32 num_bytes);
+  void get16bitsLE(U8* bytes);
+  void get32bitsLE(U8* bytes);
+  void get64bitsLE(U8* bytes);
+  BOOL isSeekable() const;
+  I64 tell() const;
+  BOOL seek(const I64 position);
+  BOOL seekEnd(const I64 distance=0);
 private:
   U64 bit_buffer;
   U32 num_buffer;
+
+  FILE *file;
 };
 
-class ByteStreamInFileLE : public ByteStreamIn
-{
-public:
-  ByteStreamInFileLE(FILE* file);
-
-  U32 getByte() override;
-  void getBytes(U8* bytes, const U32 num_bytes) override;
-  void get16bitsLE(U8* bytes) override;
-  void get32bitsLE(U8* bytes) override;
-  void get64bitsLE(U8* bytes) override;
-  virtual BOOL isSeekable() const override;
-  virtual I64 tell() const override;
-  virtual BOOL seek(const I64 position) override;
-  virtual BOOL seekEnd(const I64 distance=0) override;
-
-  FILE* file;
-};
-
-inline ByteStreamInFileLE::ByteStreamInFileLE(FILE* file)
-{
+inline ByteStreamIn::ByteStreamIn(FILE *file) {
   this->file = file;
-}
+  bit_buffer = 0; num_buffer = 0;
+};
 
-inline U32 ByteStreamInFileLE::getByte()
+inline U32 ByteStreamIn::getBits(U32 num_bits)
+{
+  if (num_buffer < num_bits)
+  {
+    U32 input_bits;
+    get32bitsLE((U8*)&input_bits);
+    bit_buffer = bit_buffer | (((U64)input_bits) << num_buffer);
+    num_buffer = num_buffer + 32;
+  }
+  U32 new_bits = (U32)(bit_buffer & ((1 << num_bits) - 1));
+  bit_buffer = bit_buffer >> num_bits;
+  num_buffer = num_buffer - num_bits;
+  return new_bits;
+};
+
+inline U32 ByteStreamIn::getByte()
 {
   int byte = getc(file);
   if (byte == EOF)
@@ -78,7 +63,7 @@ inline U32 ByteStreamInFileLE::getByte()
   return (U32)byte;
 }
 
-inline void ByteStreamInFileLE::getBytes(U8* bytes, const U32 num_bytes)
+inline void ByteStreamIn::getBytes(U8* bytes, const U32 num_bytes)
 {
   if (fread(bytes, 1, num_bytes, file) != num_bytes)
   {
@@ -86,12 +71,12 @@ inline void ByteStreamInFileLE::getBytes(U8* bytes, const U32 num_bytes)
   }
 }
 
-inline BOOL ByteStreamInFileLE::isSeekable() const
+inline BOOL ByteStreamIn::isSeekable() const
 {
   return (file != stdin);
 }
 
-inline I64 ByteStreamInFileLE::tell() const
+inline I64 ByteStreamIn::tell() const
 {
 #if defined _WIN32 && ! defined (__MINGW32__)
   return _ftelli64(file);
@@ -102,7 +87,7 @@ inline I64 ByteStreamInFileLE::tell() const
 #endif
 }
 
-inline BOOL ByteStreamInFileLE::seek(const I64 position)
+inline BOOL ByteStreamIn::seek(const I64 position)
 {
   if (tell() != position)
   {
@@ -117,7 +102,7 @@ inline BOOL ByteStreamInFileLE::seek(const I64 position)
   return TRUE;
 }
 
-inline BOOL ByteStreamInFileLE::seekEnd(const I64 distance)
+inline BOOL ByteStreamIn::seekEnd(const I64 distance)
 {
 #if defined _WIN32 && ! defined (__MINGW32__)
   return !(_fseeki64(file, -distance, SEEK_END));
@@ -128,20 +113,19 @@ inline BOOL ByteStreamInFileLE::seekEnd(const I64 distance)
 #endif
 }
 
-inline void ByteStreamInFileLE::get16bitsLE(U8* bytes)
+inline void ByteStreamIn::get16bitsLE(U8* bytes)
 {
   getBytes(bytes, 2);
 }
 
-inline void ByteStreamInFileLE::get32bitsLE(U8* bytes)
+inline void ByteStreamIn::get32bitsLE(U8* bytes)
 {
   getBytes(bytes, 4);
 }
 
-inline void ByteStreamInFileLE::get64bitsLE(U8* bytes)
+inline void ByteStreamIn::get64bitsLE(U8* bytes)
 {
   getBytes(bytes, 8);
 }
-
 
 #endif
