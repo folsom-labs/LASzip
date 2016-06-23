@@ -3,7 +3,6 @@
 #include "laszip.hpp"
 #include "lasattributer.hpp"
 #include "bytestreamin_file.hpp"
-#include "bytestreamin_array.hpp"
 #include "lasreadpoint.hpp"
 
 // if true, we will print additional information to stdout, which we will use
